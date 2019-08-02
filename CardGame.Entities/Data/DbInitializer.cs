@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CardGame.Entities;
 
-namespace Cards.Data
+namespace CardGame.Entities.Data
 {
 	public static class DbInitializer
 	{

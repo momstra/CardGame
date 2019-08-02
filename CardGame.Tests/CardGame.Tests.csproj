@@ -17,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CardGame.Business\CardGame.Business.csproj" />
+    <ProjectReference Include="..\CardGame.Entities\CardGame.Entities.csproj" />
+    <ProjectReference Include="..\CardGame.Repositories\CardGame.Repositories.csproj" />
     <ProjectReference Include="..\CardGame\CardGame.API.csproj" />
   </ItemGroup>
 
