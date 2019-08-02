@@ -4,4 +4,9 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CardGame.Entities\CardGame.Entities.csproj" />
+    <ProjectReference Include="..\CardGame.Repositories\CardGame.Repositories.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -11,5 +11,10 @@ namespace CardGame.Repositories.Interfaces
 		List<Hand> Hands { get; }
 		List<Player> Players { get; }
 		List<Game> Games { get; }
+
+		Game GetGame(int gameId);
+		Queue<Card> GetCardsRemaining(int gameId);
+
+		void SaveChanges();
 	}
 }

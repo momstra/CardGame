@@ -40,5 +40,14 @@ namespace CardGame.Tests.FakeRepositories
 			mockCard.CardId = id;
 			return mockCard;
 		}
+
+
+
+		public void SaveChanges() {}
+
+		public Game GetGame(int gameId) => Games.Find(g => g.GameId == gameId);
+
+		public Queue<Card> GetCardsRemaining(int gameId) => CardsRemaining;
+
 	}
 }

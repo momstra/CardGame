@@ -21,5 +21,15 @@ namespace CardGame.Repositories
 			_context = context;
 			DbInitializer.Initialize(_context);
 		}
+			   
+		public void SaveChanges()
+		{
+			_context.SaveChanges();
+		}
+
+		public Game GetGame(int gameId) => _context.Games.Find(gameId);
+
+		public Queue<Card> GetCardsRemaining(int gameId) => GetGame(gameId).CardsRemaining;
+
 	}
 }
