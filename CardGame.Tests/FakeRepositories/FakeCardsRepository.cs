@@ -49,5 +49,14 @@ namespace CardGame.Tests.FakeRepositories
 
 		public Queue<Card> GetCardsRemaining(int gameId) => CardsRemaining;
 
+		public Game AddGame(int gameId)
+		{
+			var mock = new Mock<Game>().SetupAllProperties();
+			Game mockGame = mock.Object;
+			mockGame.GameId = gameId;
+			mockGame.Players = new List<Player>();
+			Games.Add(mockGame);
+			return mockGame;
+		}
 	}
 }

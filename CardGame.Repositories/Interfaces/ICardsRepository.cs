@@ -14,7 +14,7 @@ namespace CardGame.Repositories.Interfaces
 
 		Game GetGame(int gameId);
 		Queue<Card> GetCardsRemaining(int gameId);
-
+		Game AddGame(int gameId);
 		void SaveChanges();
 	}
 }

@@ -31,5 +31,16 @@ namespace CardGame.Repositories
 
 		public Queue<Card> GetCardsRemaining(int gameId) => GetGame(gameId).CardsRemaining;
 
+		public Game AddGame(int gameId)
+		{
+			Game game = new Game(gameId);
+			if (game != null)
+			{
+				_context.Games.Add(game);
+				_context.SaveChanges();
+				return _context.Games.Find(gameId);
+			}
+			return null;
+		}
 	}
 }

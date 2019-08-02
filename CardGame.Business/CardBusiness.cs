@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using CardGame.Entities;
-using CardGame.Repositories;
 using CardGame.Repositories.Interfaces;
 
 namespace CardGame.Business
