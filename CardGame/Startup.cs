@@ -8,8 +8,11 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+using CardGame.Entities;
+using CardGame.API.Hubs;
+
 
 namespace CardGame
 {
@@ -26,6 +29,8 @@ namespace CardGame
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+			services.AddDbContext<CardsContext>(options => options.UseInMemoryDatabase("CardGameDb"), optionsLifetime: ServiceLifetime.Singleton);
+			services.AddSignalR();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +46,10 @@ namespace CardGame
 			}
 
 			app.UseHttpsRedirection();
+			app.UseSignalR(routes =>
+			{
+				routes.MapHub<GameHub>("/gamehub");
+			});
 			app.UseMvc();
 		}
 	}
