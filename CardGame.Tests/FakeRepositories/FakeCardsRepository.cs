@@ -55,6 +55,7 @@ namespace CardGame.Tests.FakeRepositories
 			Game mockGame = mock.Object;
 			mockGame.GameId = gameId;
 			mockGame.Players = new List<Player>();
+			mockGame.CardsRemaining = CardsRemaining;
 			Games.Add(mockGame);
 			return mockGame;
 		}

@@ -28,5 +28,43 @@ namespace CardGame.Business
 
 			return 0;
 		}
+
+		public void StartGame(int gameId)
+		{
+			Shuffle(gameId);
+			_repository.GetGame(gameId).GameStarted = true;
+		}
+
+
+		public Card DrawCard(int gameId)
+		{
+			if (_repository.GetCardsRemaining(gameId).Count > 0)
+				return _repository.GetCardsRemaining(gameId).Dequeue();
+
+			return null;
+		}
+
+		public void Shuffle(int gameId)
+		{
+			_repository.GetCardsRemaining(gameId).Clear();
+			List<Card> cards = _repository.Deck.ToList();
+			Shuffle(cards, gameId);
+		}
+
+		public void Shuffle(List<Card> cards, int gameId)
+		{
+			if (cards.Count < 1) return;
+			Random rand = new Random();
+			Card randomCard;
+			while (cards.Count() > 0)
+			{
+				var position = rand.Next(0, cards.Count());
+				randomCard = cards[position];
+				_repository.GetCardsRemaining(gameId).Enqueue(randomCard);
+				cards.RemoveAt(position);
+			}
+		}
+
+
 	}
 }
