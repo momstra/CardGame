@@ -29,6 +29,8 @@ namespace CardGame.Repositories
 
 		public Game GetGame(int gameId) => _context.Games.Find(gameId);
 
+		public Player GetPlayer(string name) => _context.Players.Find(name);
+
 		public Queue<Card> GetCardsRemaining(int gameId) => GetGame(gameId).CardsRemaining;
 
 		public Game AddGame(int gameId)
