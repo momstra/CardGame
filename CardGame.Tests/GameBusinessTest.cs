@@ -74,5 +74,21 @@ namespace CardGame.Tests
 			Assert.NotNull(_business.DrawCard(0));
 			Assert.NotEqual(numberOfCards, _repository.GetCardsRemaining(0).Count);
 		}
+
+		[Fact]
+		public void CheckGameStatusTest()
+		{
+			var id = _business.CreateNewGame();
+			Assert.False(_business.CheckGameStatus(id));
+			_business.StartGame(id);
+			Assert.True(_business.CheckGameStatus(id));
+		}
+
+		[Fact]
+		public void CheckGameExistsTest()
+		{
+			var id = _business.CreateNewGame();
+			Assert.True(_business.CheckGameExists(id));
+		}
 	}
 }

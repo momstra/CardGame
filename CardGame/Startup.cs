@@ -11,6 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
 using CardGame.Entities;
+using CardGame.Business;
+using CardGame.Business.Interfaces;
+using CardGame.Repositories;
+using CardGame.Repositories.Interfaces;
 using CardGame.API.Hubs;
 
 
@@ -29,7 +33,9 @@ namespace CardGame
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-			services.AddDbContext<CardsContext>(options => options.UseInMemoryDatabase("CardGameDb"), optionsLifetime: ServiceLifetime.Singleton);
+			services.AddDbContext<CardsContext>(options => options.UseInMemoryDatabase("CardGameDb"));
+			services.AddScoped<ICardsRepository, CardsRepository>();
+			services.AddScoped<IGameBusiness, GameBusiness>();
 			services.AddSignalR();
 		}
 

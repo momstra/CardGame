@@ -10,7 +10,7 @@ namespace CardGame.Entities
 		public bool GameStarted { get; set; }
 		public int MinPlayers { get; set; }
 		public int MaxPlayers { get; set; }
-		public Player ActivePlayer { get; set; }
+		public int ActivePlayer { get; set; }
 		public List<Player> Players { get; set; }
 		public Queue<Card> CardsRemaining { get; set; }
 		public Stack<Card> CardsPlayed { get; set; }

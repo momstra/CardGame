@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 using CardGame.Entities;
+using CardGame.Business.Interfaces;
 using CardGame.Repositories.Interfaces;
 
 namespace CardGame.Business
 {
-	public class GameBusiness
+	public class GameBusiness : IGameBusiness
 	{
 		private readonly ICardsRepository _repository;
 
@@ -35,6 +36,15 @@ namespace CardGame.Business
 			_repository.GetGame(gameId).GameStarted = true;
 		}
 
+		public bool CheckGameStatus(int gameId) => _repository.GetGame(gameId).GameStarted;
+
+		public bool CheckGameExists(int gameId)
+		{
+			if (_repository.GetGame(gameId) != null)
+				return true;
+
+			return false;
+		}
 
 		public Card DrawCard(int gameId)
 		{
