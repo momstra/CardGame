@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGame.API", "CardGame\CardGame.API.csproj", "{3303F81B-8BE5-4B1D-AD75-9B34A99F64E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardGame.API", "CardGame\CardGame.API.csproj", "{3303F81B-8BE5-4B1D-AD75-9B34A99F64E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGame.Tests", "CardGame.Tests\CardGame.Tests.csproj", "{98EAABBD-FF71-4371-9646-B786F3661159}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardGame.Tests", "CardGame.Tests\CardGame.Tests.csproj", "{98EAABBD-FF71-4371-9646-B786F3661159}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGame.Entities", "CardGame.Entities\CardGame.Entities.csproj", "{50ABAE70-FFD0-4FE3-B3D9-DD97965C16FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardGame.Entities", "CardGame.Entities\CardGame.Entities.csproj", "{50ABAE70-FFD0-4FE3-B3D9-DD97965C16FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGame.Business", "CardGame.Business\CardGame.Business.csproj", "{12E5CAAB-7B64-4008-8731-910B50F05353}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardGame.Services", "CardGame.Business\CardGame.Services.csproj", "{12E5CAAB-7B64-4008-8731-910B50F05353}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGame.Repositories", "CardGame.Repositories\CardGame.Repositories.csproj", "{373B8B04-AA64-4511-BF4B-4A7BB066EDF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardGame.Repositories", "CardGame.Repositories\CardGame.Repositories.csproj", "{373B8B04-AA64-4511-BF4B-4A7BB066EDF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

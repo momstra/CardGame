@@ -11,38 +11,46 @@ namespace CardGame.Repositories
 	{
 		private readonly CardsContext _context;
 
-		public List<Card> Deck { get { return _context.Deck.ToList(); } }
-		public List<Hand> Hands { get { return _context.Hands.ToList(); } }
-		public List<Player> Players { get { return _context.Players.ToList(); } }
-		public List<Game> Games { get { return _context.Games.ToList(); } }
-
 		public CardsRepository(CardsContext context)
 		{
 			_context = context;
 			DbInitializer.Initialize(_context);
 		}
-			   
-		public void SaveChanges()
-		{
-			_context.SaveChanges();
-		}
 
-		public Game GetGame(int gameId) => _context.Games.Find(gameId);
-
-		public Player GetPlayer(string name) => _context.Players.Find(name);
-
-		public Queue<Card> GetCardsRemaining(int gameId) => GetGame(gameId).CardsRemaining;
-
-		public Game AddGame(int gameId)
+		public bool AddGame(int gameId)
 		{
 			Game game = new Game(gameId);
 			if (game != null)
 			{
 				_context.Games.Add(game);
 				_context.SaveChanges();
-				return _context.Games.Find(gameId);
+				if (_context.Games.Find(gameId) != null)
+					return true;
 			}
-			return null;
+			return false;
+		}
+
+		public void AddPlayer(Player player)
+		{
+			_context.Players.Add(player);
+			_context.SaveChanges();
+		}
+
+		public Queue<Card> GetCardsRemaining(int gameId) => GetGame(gameId).CardsRemaining;
+
+		public List<Card> GetDeck() => _context.Deck.ToList();
+
+		public Game GetGame(int gameId) => _context.Games.Find(gameId);
+
+		public List<Game> GetGames() => _context.Games.ToList();
+
+		public Player GetPlayer(string name) => _context.Players.Find(name);
+
+		public List<Player> GetPlayers() => _context.Players.ToList();
+			   
+		public void SaveChanges()
+		{
+			_context.SaveChanges();
 		}
 	}
 }

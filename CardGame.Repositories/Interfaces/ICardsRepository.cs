@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using CardGame.Entities;
 
 namespace CardGame.Repositories.Interfaces
 {
 	public interface ICardsRepository
 	{
-		List<Card> Deck { get; }
-		List<Hand> Hands { get; }
-		List<Player> Players { get; }
-		List<Game> Games { get; }
+		bool AddGame(int gameId);
+		void AddPlayer(Player player);
 
-		Game GetGame(int gameId);
 		Queue<Card> GetCardsRemaining(int gameId);
-		Game AddGame(int gameId);
-		void SaveChanges();
+		List<Card> GetDeck();
+		Game GetGame(int gameId);
+		List<Game> GetGames();
 		Player GetPlayer(string name);
+		List<Player> GetPlayers();
+		void SaveChanges();
 	}
 }

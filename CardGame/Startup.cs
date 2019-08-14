@@ -11,8 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
 using CardGame.Entities;
-using CardGame.Business;
-using CardGame.Business.Interfaces;
+using CardGame.Services;
+using CardGame.Services.Interfaces;
 using CardGame.Repositories;
 using CardGame.Repositories.Interfaces;
 using CardGame.API.Hubs;
@@ -36,7 +36,7 @@ namespace CardGame
 		{
 			services.AddDbContext<CardsContext>(options => options.UseInMemoryDatabase("CardGameDb"));
 			services.AddScoped<ICardsRepository, CardsRepository>();
-			services.AddScoped<IGameBusiness, GameBusiness>();
+			services.AddScoped<IGameService, GameService>();
 			services.AddSignalR();
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			 .AddJwtBearer(options =>
@@ -66,7 +66,7 @@ namespace CardGame
 			{
 				app.UseHsts();
 			}
-
+			app.UseStaticFiles();
 			app.UseHttpsRedirection();
 			app.UseAuthentication();
 			app.UseSignalR(routes =>

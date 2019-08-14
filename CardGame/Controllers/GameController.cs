@@ -5,48 +5,51 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CardGame.Entities;
-using CardGame.Business;
-using CardGame.Business.Interfaces;
+using CardGame.Services;
+using CardGame.Services.Interfaces;
 using CardGame.Repositories;
 using CardGame.Repositories.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 
 namespace CardGame.API.Controllers
 {
     [Route("api/game")]
+	[Authorize]
     [ApiController]
-    public class GameController : ControllerBase
+    public class GameController : Controller
 	{
-		private readonly IGameBusiness _business;
-		private readonly ICardsRepository _repository;
-		private CardsContext _cardsContext;
-		private IConfiguration _config;
+		private readonly IGameService _service;
+		private readonly IConfiguration _config;
+		private readonly ILogger _logger;
 
-		public GameController(IGameBusiness business, ICardsRepository repo, CardsContext ctx, IConfiguration config)
+		public GameController(IGameService service, IConfiguration config, ILogger<GameController> logger)
 		{
-			_repository = repo;
-			_business = business;
-			_cardsContext = ctx;
+			_service = service;
 			_config = config;
+			_logger = logger;
 		}
 
 		[HttpGet]
+		[AllowAnonymous]
 		public IActionResult Index()
 		{
 			return Ok("Hello");
 		}
 
+		[AllowAnonymous]
 		[HttpGet("/api/game/user/create/{user}")]
 		public IActionResult CreatePlayer([FromRoute]string user)
 		{
-			if (_repository.GetPlayer(user) != null)
+			if (_service.GetPlayer(user) != null)
 				return NotFound("Name already in use.");
 			var tokenString = GenerateJWT(user);
+			_service.CreatePlayer(user);
 			return Ok(new { token = tokenString });
 		}
 
@@ -64,29 +67,67 @@ namespace CardGame.API.Controllers
 
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
-
-		[Authorize]
+		
 		[HttpGet("/api/game/create")]
 		public IActionResult CreateNewGame()
 		{
-			int id = _business.CreateNewGame();
-			if (id != 0)
-				return Ok(id);
+			var currentUser = HttpContext.User;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+
+			int gameId = _service.CreateNewGame();
+			_service.JoinGame(playerId, gameId);
+			if (gameId != 0)
+				return Ok(gameId);
 
 			return NotFound();
 		}
-		
-		[HttpGet("/api/game/list")]
-		public IActionResult GetGames()
+
+		[HttpGet("/api/game/list/{id}")]
+		public JsonResult GetGame([FromRoute]int id)
 		{
-			return Ok(_repository.Games);
+			Game game = _service.GetGame(id);
+			_logger.LogInformation("Player list: " + game.Players);
+			return Json(game);
+		}
+
+		[HttpGet("/api/game/list")]
+		public JsonResult GetGames()
+		{
+			return Json(_service.GetGames());
+		}
+
+		[HttpGet("/api/game/join/{id}")]
+		public IActionResult JoinGame([FromRoute] int id)
+		{
+			var currentUser = HttpContext.User;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			var gameid = _service.JoinGame(playerId, id);
+			if (gameid == id)
+				return Ok(gameid);
+
+			return NotFound("Could not join game");
+		}
+
+		[HttpGet("/api/game/start/{id}")]
+		public IActionResult StartGame([FromRoute] int id)
+		{
+			Game game = _service.GetGame(id);
+			if (game != null)
+			{
+				if (_service.StartGame(id))
+					return Ok();
+
+				return NotFound("Game could not be started");
+			}
+
+			return NotFound("Game could not be found");
 		}
 
 		[HttpGet("/api/game/{gameid}/cards/draw")]
-		public IActionResult DrawCard([FromRoute] int gameid)
+		public IActionResult DrawCard([FromRoute] int id)
 		{
 
-			Card card = _business.DrawCard(gameid);
+			Card card = _service.DrawCard(id);
 			if (card != null)
 				return Ok(card);
 

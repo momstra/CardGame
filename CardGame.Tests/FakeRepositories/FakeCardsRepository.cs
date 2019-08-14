@@ -49,15 +49,25 @@ namespace CardGame.Tests.FakeRepositories
 
 		public Queue<Card> GetCardsRemaining(int gameId) => CardsRemaining;
 
-		public Game AddGame(int gameId)
+		public bool AddGame(int gameId)
 		{
-			var mock = new Mock<Game>().SetupAllProperties();
-			Game mockGame = mock.Object;
-			mockGame.GameId = gameId;
-			mockGame.Players = new List<Player>();
-			mockGame.CardsRemaining = CardsRemaining;
-			Games.Add(mockGame);
-			return mockGame;
+			Game game = new Game(gameId);
+			if (game == null)
+				return false;
+
+			Games.Add(game);
+			return true;
 		}
+
+		public Player GetPlayer(string name) => Players.Find(c => c.UserId == name);
+		
+
+		public void AddPlayer(Player player) => Players.Add(player);
+
+		public List<Card> GetDeck() => Deck;
+
+		public List<Game> GetGames() => Games;
+
+		public List<Player> GetPlayers() => Players;
 	}
 }
