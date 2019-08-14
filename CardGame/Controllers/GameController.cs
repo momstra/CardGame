@@ -67,6 +67,16 @@ namespace CardGame.API.Controllers
 
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
+
+		[HttpGet("/api/game/user/{id}/game")]
+		public IActionResult GetPlayerGame([FromRoute]string id)
+		{
+			Game game = _service.GetGame(id);
+			if (game == null)
+				return NotFound("");
+
+			return Ok(game.GameId);
+		}
 		
 		[HttpGet("/api/game/create")]
 		public IActionResult CreateNewGame()

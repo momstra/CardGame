@@ -68,6 +68,13 @@ namespace CardGame.Services
 
 		public Game GetGame(int gameId) => _repository.GetGame(gameId);
 
+		public Game GetGame(string userId)
+		{
+			Player player = GetPlayer(userId);
+			Game game = GetGame(player.GameId);
+			return game;
+		}
+
 		public List<int> GetGamesList()
 		{
 			var games = _repository.GetGames();
