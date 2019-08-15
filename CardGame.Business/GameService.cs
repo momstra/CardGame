@@ -42,6 +42,8 @@ namespace CardGame.Services
 			while (_repository.GetGame(id) != null)
 				id = random.Next(1000, 9999);
 
+			_logger.LogInformation("Game [" + id + "] is being created...");
+
 			if (_repository.AddGame(id) == true)
 				return id;
 
@@ -53,8 +55,10 @@ namespace CardGame.Services
 			if (_repository.GetPlayer(playerId) != null)
 				return null;
 
+			_logger.LogInformation("Creating player [" + playerId + "] ...");
 			Player player = new Player(playerId);
 			_repository.AddPlayer(player);
+			_logger.LogInformation("Player [" + playerId + "] has been created");
 			return player;
 		}
 
@@ -107,11 +111,10 @@ namespace CardGame.Services
 			Player player = _repository.GetPlayers().Find(p => p.UserId == playerId);
 			if (player == null)
 				return 0;
-
-			//game.Players.Add(player);
+			
 			player.GameId = gameId;
 			_repository.SaveChanges();
-			_logger.LogInformation("Player list: " + game.Players);
+			_logger.LogInformation("Player [" + playerId + "] joined game [" + gameId + "]");
 
 			return gameId;
 		}

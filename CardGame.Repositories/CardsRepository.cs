@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using CardGame.Entities;
 using CardGame.Entities.Data;
 using CardGame.Repositories.Interfaces;
@@ -40,7 +41,15 @@ namespace CardGame.Repositories
 
 		public List<Card> GetDeck() => _context.Deck.ToList();
 
-		public Game GetGame(int gameId) => _context.Games.Find(gameId);
+		public Game GetGame(int gameId)
+		{
+			if (_context.Games.Find(gameId) != null)
+				return _context.Games
+					.Include(g => g.Players)
+					.Single(g => g.GameId == gameId);
+
+			return null;
+		}
 
 		public List<Game> GetGames() => _context.Games.ToList();
 

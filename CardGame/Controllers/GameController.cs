@@ -83,11 +83,14 @@ namespace CardGame.API.Controllers
 		{
 			var currentUser = HttpContext.User;
 			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			_logger.LogInformation("Player [" + playerId + "] requested to create a new game");
 
 			int gameId = _service.CreateNewGame();
-			_service.JoinGame(playerId, gameId);
 			if (gameId != 0)
+			{
+				_service.JoinGame(playerId, gameId);
 				return Ok(gameId);
+			}
 
 			return NotFound();
 		}

@@ -14,6 +14,7 @@
 			}
 		});
 	});
+
 	$("#changeuser").click(function () {
 		var username = $("#users option:selected").text();
 		var uri = "/api/game/user/" + username + "/game";
@@ -33,6 +34,7 @@
 			}
 		});
 	});
+
 	$("#creategame").click(function () {
 		var uri = "/api/game/create";
 		var username = $("#activeuser").val();
@@ -48,6 +50,7 @@
 			}
 		});
 	});
+
 	$("#joingame").click(function () {
 		var game = $("#games option:selected").text();
 		var uri = "/api/game/join/" + game;

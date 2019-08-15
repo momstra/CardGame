@@ -11,7 +11,7 @@ namespace CardGame.Entities
 		public int MinPlayers { get; set; }
 		public int MaxPlayers { get; set; }
 		public int ActivePlayer { get; set; }
-		public List<Player> Players { get; set; }
+		public virtual ICollection<Player> Players { get; set; }
 		public Queue<Card> CardsRemaining { get; set; }
 		public Stack<Card> CardsPlayed { get; set; }
 

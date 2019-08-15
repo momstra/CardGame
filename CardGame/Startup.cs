@@ -34,10 +34,7 @@ namespace CardGame
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddDbContext<CardsContext>(options => options.UseInMemoryDatabase("CardGameDb"));
-			services.AddScoped<ICardsRepository, CardsRepository>();
-			services.AddScoped<IGameService, GameService>();
-			services.AddSignalR();
+			//services.AddSignalR();
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			 .AddJwtBearer(options =>
 			 {
@@ -53,6 +50,9 @@ namespace CardGame
 				 };
 			 });
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+			services.AddDbContext<CardsContext>(options => options.UseInMemoryDatabase("CardGameDb"));
+			services.AddScoped<ICardsRepository, CardsRepository>();
+			services.AddScoped<IGameService, GameService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,10 +69,10 @@ namespace CardGame
 			app.UseStaticFiles();
 			app.UseHttpsRedirection();
 			app.UseAuthentication();
-			app.UseSignalR(routes =>
+			/*app.UseSignalR(routes =>
 			{
 				routes.MapHub<GameHub>("/gamehub");
-			});
+			});*/
 			app.UseMvc();
 		}
 	}
