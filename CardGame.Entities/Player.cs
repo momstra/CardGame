@@ -9,9 +9,9 @@ namespace CardGame.Entities
 		public string UserId { get; set; }
 
 		public int HandId { get; set; }
-		public Hand Hand { get; set; }
+		public virtual Hand Hand { get; set; }
 		public int GameId { get; set; }
-		public Game Game { get; set; }
+		public virtual Game Game { get; set; }
 
 		public Player() { }
 

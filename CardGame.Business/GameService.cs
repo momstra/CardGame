@@ -112,16 +112,37 @@ namespace CardGame.Services
 			if (game.GameStarted)
 				return 0;
 
-			Player player = _repository.GetPlayers().Find(p => p.UserId == playerId);
+			Player player = _repository.GetPlayer(playerId);
 			if (player == null)
 				return 0;
 
-			//player.GameId = gameId;
 			game.Players.Add(player);
 			_repository.SaveChanges();
 			_logger.LogInformation("Player [" + playerId + "] joined game [" + gameId + "]");
 
 			return gameId;
+		}
+
+		public bool LeaveGame(string playerId, int? gameId = null)
+		{
+			Player player = _repository.GetPlayer(playerId);
+			if (player == null)
+				return false;
+
+			if (gameId == null)
+				gameId = player.GameId;
+
+			Game game = _repository.GetGame((int)gameId);
+			if (game == null)
+				return false;
+
+			if (game.Players.Remove(player))
+			{
+				_repository.SaveChanges();
+				return true;
+			}
+
+			return false;
 		}
 
 		public void Shuffle(int gameId)
@@ -141,7 +162,7 @@ namespace CardGame.Services
 			{
 				var position = rand.Next(0, cards.Count());
 				randomCard = cards[position];
-				_repository.GetGame(gameId).Deck.Cards.Enqueue(randomCard);
+				_repository.GetGame(gameId).Deck.Cards.Add(randomCard);
 				cards.RemoveAt(position);
 			}
 		}

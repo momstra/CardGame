@@ -116,7 +116,7 @@ namespace CardGame.Tests
 			Assert.Equal(game, _service.GetGame(game2id));		// therefore games should match
 			Assert.NotEqual(before, after);
 			Assert.True(after == before + 1);		// Players count should have increased after joining
-			Assert.Contains(player1, game.Players);	// player1 should be assigned after joining
+			Assert.Contains(player1, game.Players); // player1 should be assigned after joining
 
 			game.MaxPlayers = 1;									// make sure MaxPlayers count has been reached
 			Assert.Equal(0, _service.JoinGame("TestPlayer2", gameId));	// player2 should not be able to join
@@ -128,7 +128,25 @@ namespace CardGame.Tests
 			game.GameStarted = false;									// reset to game has not yet started
 			Assert.NotEqual(0, _service.JoinGame("TestPlayer2", gameId));	// player2 should be able to join
 		}
-		
+
+		[Fact]
+		public void LeaveGameTest()
+		{
+			int gameId = _service.CreateGame();
+			Game game = _repository.Games.Find(g => g.GameId == gameId);
+			string player1Id = "TestPlayer1";
+			Player player1 = _service.CreatePlayer(player1Id);
+
+			var game2id = _service.JoinGame(player1Id, gameId);
+			Assert.Equal(game, _service.GetGame(game2id));
+			Assert.Contains(player1, game.Players);
+
+			Assert.True(_service.LeaveGame(player1Id, gameId));
+			Assert.DoesNotContain(player1, game.Players);
+		}
+
+
+		/*
 		[Fact]
 		public void ShuffleTest()
 		{
@@ -152,7 +170,7 @@ namespace CardGame.Tests
 			Assert.True(areDifferent);
 		}
 
-		/*
+		
 		[Fact]
 		public void StartGameTest()
 		{

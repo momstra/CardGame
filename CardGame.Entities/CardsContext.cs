@@ -15,8 +15,6 @@ namespace CardGame.Entities
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
-			//builder.Entity<Hand>()
-			//	.HasKey(k => k.HandId);
 			builder.Entity<Card>()
 				.Property(p => p.CardId)
 				.ValueGeneratedOnAdd();
@@ -25,6 +23,13 @@ namespace CardGame.Entities
 				.ValueGeneratedOnAdd();
 			builder.Entity<Player>()
 				.HasKey(k => k.UserId);
+			/*builder.Entity<Player>()
+				.HasOne(p => p.Game)
+				.WithMany(g => g.Players)
+				.HasForeignKey(p => p.GameId);
+			builder.Entity<Game>()
+				.HasMany(g => g.Players)
+				.WithOne(p => p.Game);*/
 		}
 	}
 

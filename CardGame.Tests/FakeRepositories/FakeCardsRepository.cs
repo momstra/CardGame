@@ -13,14 +13,12 @@ namespace CardGame.Tests.FakeRepositories
 		public List<Card> Decks { get; set; }
 		public List<Hand> Hands { get; }
 		public List<Player> Players { get; set; }
-		//public Queue<Card> CardsRemaining { get; set; }
 		public Stack<Card> CardsPlayed { get; set; }
 		public List<Game> Games { get; }
 
 		public FakeCardsRepository()
 		{
 			Decks = new List<Card>();
-			//CardsRemaining = new Queue<Card>();
 			Hands = new List<Hand>();
 			Players = new List<Player>();
 			CardsPlayed = new Stack<Card>();
@@ -28,20 +26,12 @@ namespace CardGame.Tests.FakeRepositories
 			
 		}
 
-		/*
-		private Card CreateCard(int id)
+
+		public void SaveChanges()
 		{
-			var mock = new Mock<Card>().SetupAllProperties();
-			Card mockCard = mock.Object;
-			mockCard.CardId = id;
-			return mockCard;
+
 		}
-		*/
-
-
-		public void SaveChanges() {}
-
-		//public Queue<Card> GetCardsRemaining(int gameId) => CardsRemaining;
+		
 
 		public bool AddGame(int gameId, Deck deck)
 		{

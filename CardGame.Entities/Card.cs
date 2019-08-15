@@ -9,12 +9,12 @@ namespace CardGame.Entities
 		public string Rank { get; set; }
 
 		public int DeckId { get; set; }
-		public Deck Deck { get; set; }
+		public virtual Deck Deck { get; set; }
 
 		public int GameId { get; set; }
-		public Game Game { get; set; }
+		public virtual Game Game { get; set; }
 
 		public int HandId { get; set; }
-		public Hand Owner { get; set; }
+		public virtual Hand Owner { get; set; }
 	}
 }

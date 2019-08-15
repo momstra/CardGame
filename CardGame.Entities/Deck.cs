@@ -10,13 +10,13 @@ namespace CardGame.Entities
 		//public int GameId { get; set; }
 		public virtual Game Game { get; set; }
 
-		public virtual Queue<Card> Cards { get; set; }
+		public virtual ICollection<Card> Cards { get; set; }
 
 
 		public Deck() 
 		{
 			DeckSize = 52;
-			Cards = new Queue<Card>();
+			Cards = new List<Card>();
 
 			string[] colors = { "diamond", "heart", "spades", "clubs" };
 			string[] ranks = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
@@ -30,7 +30,7 @@ namespace CardGame.Entities
 						Color = color,
 						Rank = rank
 					};
-					Cards.Enqueue(card);
+					Cards.Add(card);
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace CardGame.Entities
 {
@@ -13,11 +13,10 @@ namespace CardGame.Entities
 		public int ActivePlayer { get; set; }
 
 		public int DeckId { get; set; }
-		public Deck Deck { get; set; }
+		public virtual Deck Deck { get; set; }
 		
-		public virtual IEnumerable<Card> CardsPlayed { get; set; }
+		public virtual ICollection<Card> CardsPlayed { get; set; }
 		public virtual ICollection<Player> Players { get; set; }
-		//public Queue<Card> CardsRemaining { get; set; }
 
 		public Game() { }
 
@@ -28,8 +27,6 @@ namespace CardGame.Entities
 			MinPlayers = min;
 			MaxPlayers = max;
 			Players = new List<Player>();
-			//CardsRemaining = new Queue<Card>();
-			CardsPlayed = new Stack<Card>();
 		}
 	}
 }
