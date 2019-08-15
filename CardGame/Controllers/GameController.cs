@@ -85,7 +85,7 @@ namespace CardGame.API.Controllers
 			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
 			_logger.LogInformation("Player [" + playerId + "] requested to create a new game");
 
-			int gameId = _service.CreateNewGame();
+			int gameId = _service.CreateGame();
 			if (gameId != 0)
 			{
 				_service.JoinGame(playerId, gameId);

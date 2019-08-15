@@ -8,6 +8,10 @@ namespace CardGame.Entities
 		public string Color { get; set; }
 		public string Rank { get; set; }
 
+		public int DeckId { get; set; }
+		public Deck Deck { get; set; }
+
+		public int HandId { get; set; }
 		public Hand Owner { get; set; }
 	}
 }

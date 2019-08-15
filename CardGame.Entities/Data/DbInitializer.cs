@@ -10,6 +10,7 @@ namespace CardGame.Entities.Data
 		{
 			context.Database.EnsureCreated();
 
+			/*
 			if (context.Deck.Any())
 				return;
 
@@ -33,6 +34,7 @@ namespace CardGame.Entities.Data
 				//context.RemainingCards.Add(card);
 			}
 			context.SaveChanges();
+			*/
 		}
 	}
 }

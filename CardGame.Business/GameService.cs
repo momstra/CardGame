@@ -31,7 +31,7 @@ namespace CardGame.Services
 
 		public bool CheckGameStatus(int gameId) => _repository.GetGame(gameId).GameStarted;
 
-		public int CreateNewGame()
+		public int CreateGame()
 		{
 			Random random = new Random();
 			int id = random.Next(1000, 9999);
@@ -111,8 +111,9 @@ namespace CardGame.Services
 			Player player = _repository.GetPlayers().Find(p => p.UserId == playerId);
 			if (player == null)
 				return 0;
-			
-			player.GameId = gameId;
+
+			//player.GameId = gameId;
+			game.Players.Add(player);
 			_repository.SaveChanges();
 			_logger.LogInformation("Player [" + playerId + "] joined game [" + gameId + "]");
 

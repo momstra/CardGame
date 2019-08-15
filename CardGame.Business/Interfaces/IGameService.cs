@@ -9,7 +9,7 @@ namespace CardGame.Services.Interfaces
 {
 	public interface IGameService
 	{
-		int CreateNewGame();
+		int CreateGame();
 		Player CreatePlayer(string playerId);
 		Card DrawCard(int gameId);
 		Game GetGame(int gameId);

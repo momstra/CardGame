@@ -31,7 +31,7 @@ namespace CardGame.Tests
 		[Fact]
 		public void CheckGameStatusTest()
 		{
-			var id = _service.CreateNewGame();
+			var id = _service.CreateGame();
 			Assert.False(_service.CheckGameStatus(id));	// game should not have been started yet
 			_service.GetGame(id).GameStarted = true;
 			Assert.True(_service.CheckGameStatus(id));	// now it should have
@@ -40,7 +40,7 @@ namespace CardGame.Tests
 		[Fact]
 		public void CheckGameExistsTest()
 		{
-			var id = _service.CreateNewGame();
+			var id = _service.CreateGame();
 			Assert.True(_service.CheckGameExists(id));		// game with id should exist
 			Assert.False(_service.CheckGameExists(123));	// game with impossible id should not
 		}
@@ -48,10 +48,10 @@ namespace CardGame.Tests
 		[Fact]
 		public void CreateNewGameTest()
 		{
-			var id = _service.CreateNewGame();
+			var id = _service.CreateGame();
 			Assert.IsType<int>(id);			// CreateNewGame should return an integer (GameId)
 			Assert.InRange(id, 1000, 9999);	// in this range
-			var id2 = _service.CreateNewGame();
+			var id2 = _service.CreateGame();
 			Assert.NotNull(_service.GetGame(id));
 			Assert.NotNull(_service.GetGame(id2));
 		}
@@ -71,7 +71,7 @@ namespace CardGame.Tests
 		[Fact]
 		public void DrawCardTest()
 		{
-			int gameId = _service.CreateNewGame();
+			int gameId = _service.CreateGame();
 			_service.Shuffle(gameId);
 			int numberOfCards = _repository.GetCardsRemaining(gameId).Count;
 			Assert.IsAssignableFrom<Card>(_service.DrawCard(gameId));	// drawing should return object of type Card
@@ -84,12 +84,12 @@ namespace CardGame.Tests
 		{
 			int gamesCount = _service.GetGames().Count; // there may already be games in list
 
-			int game1Id = _service.CreateNewGame();
+			int game1Id = _service.CreateGame();
 			int gamesList1Count = _service.GetGames().Count;
 			Assert.NotEqual(gamesCount, gamesList1Count);	
 			Assert.Equal(gamesCount + 1, gamesList1Count); // there should be one more game in list
 
-			int game2Id = _service.CreateNewGame();
+			int game2Id = _service.CreateGame();
 			var gamesList2Count = _service.GetGames().Count;
 			Assert.NotEqual(gamesList1Count, gamesList2Count);	// gamesList2 should hold on more game
 			Assert.Equal(gamesCount + 2, gamesList2Count);			// or two more than original count
@@ -98,7 +98,7 @@ namespace CardGame.Tests
 		[Fact]
 		public void JoinGameTest()
 		{
-			int gameId = _service.CreateNewGame();
+			int gameId = _service.CreateGame();
 			Game game = _repository.Games.Find(g => g.GameId == gameId);
 			string player1Id = "TestPlayer1";
 			string player2Id = "TestPlayer2";
@@ -128,7 +128,7 @@ namespace CardGame.Tests
 		[Fact]
 		public void ShuffleTest()
 		{
-			int gameId = _service.CreateNewGame();
+			int gameId = _service.CreateGame();
 			_service.Shuffle(gameId);
 			Card card1 = _repository.GetCardsRemaining(gameId).Dequeue();	// safe topmost card after shuffling
 			int turn = 0;
@@ -151,7 +151,7 @@ namespace CardGame.Tests
 		[Fact]
 		public void StartGameTest()
 		{
-			var id = _service.CreateNewGame();
+			var id = _service.CreateGame();
 			var cards = _repository.GetCardsRemaining(id);	
 			
 			Assert.NotEqual(0, id);				// id would be 0 if game creation fails

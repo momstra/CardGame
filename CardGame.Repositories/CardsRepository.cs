@@ -39,7 +39,7 @@ namespace CardGame.Repositories
 
 		public Queue<Card> GetCardsRemaining(int gameId) => GetGame(gameId).CardsRemaining;
 
-		public List<Card> GetDeck() => _context.Deck.ToList();
+		public List<Card> GetDeck() => null; // _context.Deck.ToList();
 
 		public Game GetGame(int gameId)
 		{
