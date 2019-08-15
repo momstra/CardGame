@@ -10,29 +10,25 @@ namespace CardGame.Tests.FakeRepositories
 {
 	public class FakeCardsRepository : ICardsRepository
 	{
-		public List<Card> Deck { get; set; }
+		public List<Card> Decks { get; set; }
 		public List<Hand> Hands { get; }
 		public List<Player> Players { get; set; }
-		public Queue<Card> CardsRemaining { get; set; }
+		//public Queue<Card> CardsRemaining { get; set; }
 		public Stack<Card> CardsPlayed { get; set; }
 		public List<Game> Games { get; }
 
 		public FakeCardsRepository()
 		{
-			Deck = new List<Card>();
-			CardsRemaining = new Queue<Card>();
+			Decks = new List<Card>();
+			//CardsRemaining = new Queue<Card>();
 			Hands = new List<Hand>();
 			Players = new List<Player>();
 			CardsPlayed = new Stack<Card>();
 			Games = new List<Game>();
-
-			for (int i = 1; i < 53; i++)
-			{
-				Card card = CreateCard(i);
-				Deck.Add(card);
-			}
+			
 		}
 
+		/*
 		private Card CreateCard(int id)
 		{
 			var mock = new Mock<Card>().SetupAllProperties();
@@ -40,33 +36,32 @@ namespace CardGame.Tests.FakeRepositories
 			mockCard.CardId = id;
 			return mockCard;
 		}
-
+		*/
 
 
 		public void SaveChanges() {}
 
-		public Game GetGame(int gameId) => Games.Find(g => g.GameId == gameId);
+		//public Queue<Card> GetCardsRemaining(int gameId) => CardsRemaining;
 
-		public Queue<Card> GetCardsRemaining(int gameId) => CardsRemaining;
-
-		public bool AddGame(int gameId)
+		public bool AddGame(int gameId, Deck deck)
 		{
 			Game game = new Game(gameId);
 			if (game == null)
 				return false;
 
+			game.Deck = deck;
 			Games.Add(game);
 			return true;
 		}
-
-		public Player GetPlayer(string name) => Players.Find(c => c.UserId == name);
 		
 
 		public void AddPlayer(Player player) => Players.Add(player);
 
-		public List<Card> GetDeck() => Deck;
+		public Game GetGame(int gameId) => Games.Find(g => g.GameId == gameId);
 
 		public List<Game> GetGames() => Games;
+
+		public Player GetPlayer(string name) => Players.Find(c => c.UserId == name);
 
 		public List<Player> GetPlayers() => Players;
 	}

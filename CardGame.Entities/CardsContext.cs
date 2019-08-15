@@ -17,6 +17,12 @@ namespace CardGame.Entities
 		{
 			//builder.Entity<Hand>()
 			//	.HasKey(k => k.HandId);
+			builder.Entity<Card>()
+				.Property(p => p.CardId)
+				.ValueGeneratedOnAdd();
+			builder.Entity<Deck>()
+				.Property(p => p.DeckId)
+				.ValueGeneratedOnAdd();
 			builder.Entity<Player>()
 				.HasKey(k => k.UserId);
 		}

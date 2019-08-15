@@ -30,7 +30,7 @@ namespace CardGame.Services
 		}
 
 		public bool CheckGameStatus(int gameId) => _repository.GetGame(gameId).GameStarted;
-
+		
 		public int CreateGame()
 		{
 			Random random = new Random();
@@ -42,9 +42,11 @@ namespace CardGame.Services
 			while (_repository.GetGame(id) != null)
 				id = random.Next(1000, 9999);
 
-			_logger.LogInformation("Game [" + id + "] is being created...");
+			_logger.LogInformation("Deck for game [" + id + "] is being created...");
+			Deck deck = new Deck();
 
-			if (_repository.AddGame(id) == true)
+			_logger.LogInformation("Game [" + id + "] is being created...");
+			if (_repository.AddGame(id, deck) == true)
 				return id;
 
 			return 0;
@@ -62,6 +64,7 @@ namespace CardGame.Services
 			return player;
 		}
 
+		/*
 		public Card DrawCard(int gameId)
 		{
 			if (_repository.GetCardsRemaining(gameId).Count > 0)
@@ -69,6 +72,7 @@ namespace CardGame.Services
 
 			return null;
 		}
+		*/
 
 		public Game GetGame(int gameId) => _repository.GetGame(gameId);
 
@@ -122,8 +126,9 @@ namespace CardGame.Services
 
 		public void Shuffle(int gameId)
 		{
-			_repository.GetGame(gameId).CardsRemaining.Clear();
-			List<Card> cards = _repository.GetDeck().ToList();
+			//_repository.GetGame(gameId).CardsRemaining.Clear();
+			List<Card> cards = _repository.GetGame(gameId).Deck.Cards.ToList();
+			
 			Shuffle(cards, gameId);
 		}
 
@@ -136,7 +141,7 @@ namespace CardGame.Services
 			{
 				var position = rand.Next(0, cards.Count());
 				randomCard = cards[position];
-				_repository.GetCardsRemaining(gameId).Enqueue(randomCard);
+				_repository.GetGame(gameId).Deck.Cards.Enqueue(randomCard);
 				cards.RemoveAt(position);
 			}
 		}

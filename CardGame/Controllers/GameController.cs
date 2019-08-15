@@ -136,6 +136,7 @@ namespace CardGame.API.Controllers
 			return NotFound("Game could not be found");
 		}
 
+		/*
 		[HttpGet("/api/game/{gameid}/cards/draw")]
 		public IActionResult DrawCard([FromRoute] int id)
 		{
@@ -146,5 +147,6 @@ namespace CardGame.API.Controllers
 
 			return NotFound();
 		}
+		*/
 	}
 }

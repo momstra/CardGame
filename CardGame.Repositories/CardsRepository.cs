@@ -18,11 +18,12 @@ namespace CardGame.Repositories
 			DbInitializer.Initialize(_context);
 		}
 
-		public bool AddGame(int gameId)
+		public bool AddGame(int gameId, Deck deck)
 		{
 			Game game = new Game(gameId);
 			if (game != null)
 			{
+				game.Deck = deck;
 				_context.Games.Add(game);
 				_context.SaveChanges();
 				if (_context.Games.Find(gameId) != null)
@@ -37,15 +38,12 @@ namespace CardGame.Repositories
 			_context.SaveChanges();
 		}
 
-		public Queue<Card> GetCardsRemaining(int gameId) => GetGame(gameId).CardsRemaining;
-
-		public List<Card> GetDeck() => null; // _context.Deck.ToList();
-
 		public Game GetGame(int gameId)
 		{
 			if (_context.Games.Find(gameId) != null)
 				return _context.Games
 					.Include(g => g.Players)
+					.Include(g => g.CardsPlayed)
 					.Single(g => g.GameId == gameId);
 
 			return null;
