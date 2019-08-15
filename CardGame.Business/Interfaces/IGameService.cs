@@ -19,6 +19,7 @@ namespace CardGame.Services.Interfaces
 		Player GetPlayer(string playerId);
 		List<Player> GetPlayers();
 		int JoinGame(string playerId, int gameId);
+		bool LeaveGame(string playerId, int? gameId = null);
 		void Shuffle(int gameId);
 		void Shuffle(List<Card> cards, int gameId);
 		bool StartGame(int gameId);

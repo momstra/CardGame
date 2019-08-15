@@ -121,6 +121,17 @@ namespace CardGame.API.Controllers
 			return NotFound("Could not join game");
 		}
 
+		[HttpGet("/api/game/leave")]
+		public IActionResult LeaveGame()
+		{
+			var currentUser = HttpContext.User;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			if (_service.LeaveGame(playerId))
+				return Ok();
+
+			return NotFound();
+		}
+
 		[HttpGet("/api/game/start/{id}")]
 		public IActionResult StartGame([FromRoute] int id)
 		{

@@ -66,4 +66,20 @@
 			}
 		});
 	});
+
+	$("#leavegame").click(function () {
+		var game = $("#usergame").val();
+		var uri = "/api/game/leave";
+		var username = $("#activeuser").val();
+		var token = $('#' + username).val();
+		$.ajax({
+			url: uri,
+			headers: {
+				"Authorization": "Bearer " + token
+			},
+			success: function () {
+				$("#usergame").val("");
+			}
+		});
+	});
 });

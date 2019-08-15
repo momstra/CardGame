@@ -23,11 +23,12 @@ namespace CardGame.Entities
 				.ValueGeneratedOnAdd();
 			builder.Entity<Player>()
 				.HasKey(k => k.UserId);
-			/*builder.Entity<Player>()
+			builder.Entity<Player>()
 				.HasOne(p => p.Game)
 				.WithMany(g => g.Players)
-				.HasForeignKey(p => p.GameId);
-			builder.Entity<Game>()
+				.HasForeignKey(p => p.GameId)
+				.OnDelete(DeleteBehavior.SetNull);
+			/*builder.Entity<Game>()
 				.HasMany(g => g.Players)
 				.WithOne(p => p.Game);*/
 		}

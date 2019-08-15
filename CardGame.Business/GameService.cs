@@ -79,8 +79,13 @@ namespace CardGame.Services
 		public Game GetGame(string userId)
 		{
 			Player player = GetPlayer(userId);
-			Game game = GetGame(player.GameId);
-			return game;
+			if (player.GameId != null)
+			{
+				Game game = GetGame((int)player.GameId);
+				return game;
+			}
+
+			return null;
 		}
 
 		public List<int> GetGamesList()
