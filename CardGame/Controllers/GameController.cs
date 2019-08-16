@@ -197,7 +197,10 @@ namespace CardGame.API.Controllers
 		[HttpGet("/api/game/users")]
 		public JsonResult GetGamePlayers()
 		{
-			return null;
+			var currentUser = HttpContext.User;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			Game game = _service.GetGame(playerId);
+			return Json(_service.GetPlayersIds(game.GameId));
 		}
 
 

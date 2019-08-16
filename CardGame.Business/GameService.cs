@@ -136,7 +136,7 @@ namespace CardGame.Services
 
 		// get list of players in game with GameId
 		// returns List<String> of all PlayerIds
-		public List<String> GetPlayersIds(int gameId)
+		public List<string> GetPlayersIds(int gameId)
 		{
 			var players = _repository.GetGame(gameId).Players.ToList();
 			List<string> playerIds = new List<string>();

@@ -1,7 +1,24 @@
 ﻿$(document).ready(function () {
 	// get game's player list
-	function GetGamePlayer(gameid) {
-		var uri = "/api/game/"
+	function GetGamePlayer() {
+		var uri = "/api/game/users";
+		var username = $("#activeuser").val();
+		var token = $('#' + username).val();
+		$.ajax({
+			url: uri,
+			headers: {
+				"Authorization": "Bearer " + token
+			},
+			success: function (json) {
+				$("#ingameusers").empty();
+				$.each(json, function (key, player) {
+					$("#ingameusers").append('<option>' + player + '</option>');
+				});
+			},
+			error: function () {
+				$("#ingameusers").empty();
+			}
+		});
 	}
 
 
@@ -18,6 +35,7 @@
 				$("#activeuser").val(username);
 				$("#usertoken").val(token);
 				$("#usergame").val(" ");
+				$("#ingameusers").empty();
 			}
 		});
 	});
@@ -36,9 +54,11 @@
 			},
 			success: function (gameid) {
 				$("#usergame").val(gameid);
+				GetGamePlayer();
 			},
 			error: function () {
 				$("#usergame").val(" ");
+				$("#ingameusers").empty();
 			}
 		});
 	});
@@ -56,6 +76,7 @@
 			success: function (gameid) {
 				$("#usergame").val(gameid);
 				$("#games").append('<option>' + gameid + '</option>');
+				GetGamePlayer();
 			}
 		});
 	});
@@ -73,6 +94,7 @@
 			},
 			success: function (gameid) {
 				$("#usergame").val(gameid);
+				GetGamePlayer();
 			}
 		});
 	});
@@ -90,6 +112,7 @@
 			},
 			success: function () {
 				$("#usergame").val("");
+				$("#ingameusers").empty();
 			}
 		});
 	});
