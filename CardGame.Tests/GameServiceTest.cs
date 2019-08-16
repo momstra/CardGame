@@ -155,15 +155,18 @@ namespace CardGame.Tests
 		public void ShuffleTest()
 		{
 			int gameId = _service.CreateGame();
+			Game game = _service.GetGame(gameId);
 			_service.Shuffle(gameId);
-			Card card1 = _service.GetGame(gameId).CardsRemaining.Dequeue();	// safe topmost card after shuffling
+			Card card1 = game.CardsRemaining[0];    // safe topmost card after shuffling
+			game.CardsRemaining.RemoveAt(0);
 			int turn = 0;
 			bool areDifferent = false;
 			do
 			{
 				_service.Shuffle(gameId);
-				Card card2 = _service.GetGame(gameId).CardsRemaining.Dequeue();	// safe topmost card after another shuffle
-				if (card1 != card2)											// and make sure both cards differ
+				Card card2 = game.CardsRemaining[0];    // safe topmost card after another shuffle
+				game.CardsRemaining.RemoveAt(0);
+				if (card1 != card2)						// and make sure both cards differ
 				{
 					areDifferent = true;
 					break;
@@ -174,15 +177,14 @@ namespace CardGame.Tests
 			Assert.True(areDifferent);
 		}
 
-		/*
 		[Fact]
 		public void StartGameTest()
 		{
 			var id = _service.CreateGame();
-			var cards = _repository.GetCardsRemaining(id);	
+			var cards = _service.GetGame(id).CardsRemaining;	
 			
 			Assert.NotEqual(0, id);				// id would be 0 if game creation fails
-			Assert.IsType<Queue<Card>>(cards);	// deck of CardsRemaining should exist,
+			Assert.IsType<List<Card>>(cards);	// deck of CardsRemaining should exist,
 			Assert.Empty(cards);                // but be empty
 
 			_service.GetGame(id).MinPlayers = 0;
@@ -190,6 +192,5 @@ namespace CardGame.Tests
 			Assert.NotEmpty(cards);								// starting game should fill CardsRemaining deck
 			Assert.True(_repository.GetGame(id).GameStarted);	// and set GameStarted
 		}
-		*/
 	}
 }

@@ -168,7 +168,7 @@ namespace CardGame.Services
 			{
 				var position = rand.Next(0, cards.Count());
 				randomCard = cards[position];
-				_repository.GetGame(gameId).CardsRemaining.Enqueue(randomCard);
+				_repository.GetGame(gameId).CardsRemaining.Add(randomCard);
 				cards.RemoveAt(position);
 			}
 		}
