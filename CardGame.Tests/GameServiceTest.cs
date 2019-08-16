@@ -135,6 +135,34 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
+		public void GetPlayersIds_Game_Test()
+		{
+			int gameId = _service.CreateGame();
+			Game game = _service.GetGame(gameId);
+			Player player1 = _service.CreatePlayer("GetIdsGamePlayer1");
+			Player player2 = _service.CreatePlayer("GetIdsGamePlayer2");
+			List<string> playerIds = new List<string>
+			{
+				"GetIdsGamePlayer1",
+				"GetIdsGamePlayer2"
+			};
+			game.Players.Clear();
+			game.Players.Add(player1);
+			game.Players.Add(player2);
+			var playerIds2 = _service.GetPlayersIds(gameId);
+
+			Assert.IsType<List<string>>(playerIds2);	// should have returned a List<string>
+			Assert.NotEmpty(playerIds2);                // that should not be empty
+			Assert.Equal(playerIds, playerIds2);        // but equal to control list
+
+			game.Players.Remove(player1);
+			var playerIds3 = _service.GetPlayersIds(gameId);
+			Assert.NotEqual(playerIds, playerIds3);        // should not be equal to control list anymore
+			playerIds.Remove("GetIdsGamePlayer1");
+			Assert.Equal(playerIds, playerIds3);		// should be equal to control list again
+		}
+
+		[Fact]
 		public void JoinGameTest()
 		{
 			int gameId = _service.CreateGame();

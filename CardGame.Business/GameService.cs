@@ -21,6 +21,8 @@ namespace CardGame.Services
 			_logger = logger;
 		}
 
+		// check game's existence
+		// returns bool
 		public bool CheckGameExists(int gameId)
 		{
 			if (_repository.GetGame(gameId) != null)
@@ -29,8 +31,12 @@ namespace CardGame.Services
 			return false;
 		}
 
+		// check GameStarted
+		// returns true if started
 		public bool CheckGameStatus(int gameId) => _repository.GetGame(gameId).GameStarted;
 		
+		// create new game (and deck)
+		// returns GameId on success, otherwise 0
 		public int CreateGame()
 		{
 			Random random = new Random();
@@ -53,6 +59,8 @@ namespace CardGame.Services
 			return 0;
 		}
 
+		// create new player
+		// returns Player object on success, otherwise null
 		public Player CreatePlayer(string playerId)
 		{
 			if (_repository.GetPlayer(playerId) != null)
@@ -65,6 +73,8 @@ namespace CardGame.Services
 			return player;
 		}
 
+		// draw card from CardsRemaining 
+		// returns Card object on success, otherwise null
 		public Card DrawCard(int gameId)
 		{
 			Game game = _repository.GetGame(gameId);
@@ -78,8 +88,12 @@ namespace CardGame.Services
 			return null;
 		}
 
+		// get game by id
+		// returns Game object or null
 		public Game GetGame(int gameId) => _repository.GetGame(gameId);
 
+		// get game by joined player's id
+		// returns Game object on success, otherwise null
 		public Game GetGame(string userId)
 		{
 			Player player = GetPlayer(userId);
@@ -92,6 +106,8 @@ namespace CardGame.Services
 			return null;
 		}
 
+		// get list of all games
+		// returns List<int> of GameId's
 		public List<int> GetGamesList()
 		{
 			var games = _repository.GetGames();
@@ -102,14 +118,36 @@ namespace CardGame.Services
 			return gameIds;
 		}
 
+		// get list with all games
+		// returns a List<Game> with all games
 		public List<Game> GetGames() => _repository.GetGames();
 
+		// get player by PlayerId
+		// returns Player object or null
 		public Player GetPlayer(string playerId) => _repository.GetPlayer(playerId);
 
+		// get all players
+		// returns List<Player> of all players
 		public List<Player> GetPlayers() => _repository.GetPlayers();
 
+		// get players in game with GameId
+		// returns List<Player> of all players in game
 		public List<Player> GetPlayers(int gameId) => _repository.GetGame(gameId).Players.ToList();
 
+		// get list of players in game with GameId
+		// returns List<String> of all PlayerIds
+		public List<String> GetPlayersIds(int gameId)
+		{
+			var players = _repository.GetGame(gameId).Players.ToList();
+			List<string> playerIds = new List<string>();
+			foreach (Player player in players)
+				playerIds.Add(player.UserId);
+
+			return playerIds;
+		}
+
+		// join player with PlayerId to game with GameId
+		// returns GameId of joined game on success, otherwise 0
 		public int JoinGame(string playerId, int gameId)
 		{
 			_logger.LogInformation("Joining player [" + playerId + "] to game [" + gameId + "].");
@@ -134,6 +172,8 @@ namespace CardGame.Services
 			return gameId;
 		}
 
+		// remove player with PlayerID from game with GameId
+		// return true on success
 		public bool LeaveGame(string playerId, int? gameId = null)
 		{
 			Player player = _repository.GetPlayer(playerId);
@@ -156,6 +196,8 @@ namespace CardGame.Services
 			return false;
 		}
 
+		// initiate shuffling for game with GameId
+		// returns nothing
 		public void Shuffle(int gameId)
 		{
 			_repository.GetGame(gameId).CardsRemaining.Clear();
@@ -164,6 +206,8 @@ namespace CardGame.Services
 			Shuffle(cards, gameId);
 		}
 
+		// shuffle cards from list for game with GameId
+		// returns nothing
 		public void Shuffle(List<Card> cards, int gameId)
 		{
 			if (cards.Count < 1) return;
@@ -178,6 +222,8 @@ namespace CardGame.Services
 			}
 		}
 
+		// start game with GameId
+		// returns true on success
 		public bool StartGame(int gameId)
 		{
 			Game game = _repository.GetGame(gameId);

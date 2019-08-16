@@ -1,4 +1,10 @@
 ﻿$(document).ready(function () {
+	// get game's player list
+	function GetGamePlayer(gameid) {
+		var uri = "/api/game/"
+	}
+
+
 	// create new user
 	$("#createuser").click(function () {
 		var username = $("#username").val();
@@ -19,7 +25,7 @@
 	// on user change get new users game
 	$("#changeuser").click(function () {
 		var username = $("#users option:selected").text();
-		var uri = "/api/user/" + username + "/game";
+		var uri = "/api/user/game";
 		$("#activeuser").val(username);
 		var token = $('#' + username).val();
 		$("#usertoken").val(token);
