@@ -108,6 +108,8 @@ namespace CardGame.Services
 
 		public List<Player> GetPlayers() => _repository.GetPlayers();
 
+		public List<Player> GetPlayers(int gameId) => _repository.GetGame(gameId).Players.ToList();
+
 		public int JoinGame(string playerId, int gameId)
 		{
 			_logger.LogInformation("Joining player [" + playerId + "] to game [" + gameId + "].");

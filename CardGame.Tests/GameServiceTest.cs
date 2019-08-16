@@ -111,6 +111,30 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
+		public void GetPlayers_Game_Test()
+		{
+			int gameId = _service.CreateGame();
+			Game game = _service.GetGame(gameId);
+			Player player1 = _service.CreatePlayer("GetGamePlayer1");
+			Player player2 = _service.CreatePlayer("GetGamePlayer2");
+			int beforeJoin = _service.GetPlayers(gameId).Count;
+			game.Players.Add(player1);
+			int after1stJoin = _service.GetPlayers(gameId).Count;
+			Assert.Contains(player1, _service.GetPlayers(gameId));	// returned list should hold player1
+			Assert.True(beforeJoin == after1stJoin - 1);			// and have increased by one
+
+			game.Players.Add(player2);
+			int after2ndJoin = _service.GetPlayers(gameId).Count;
+			Assert.Contains(player2, _service.GetPlayers(gameId));	// returned list should hold player2
+			Assert.True(after1stJoin == after2ndJoin - 1);          // and have increased by one
+
+			game.Players.Remove(player1);
+			Assert.Contains(player2, _service.GetPlayers(gameId));			// returned list should still hold player2
+			Assert.DoesNotContain(player1, _service.GetPlayers(gameId));    // but not player1 anymore
+			Assert.True(_service.GetPlayers(gameId).Count == after1stJoin);	// and number should be the same as after 1st join
+		}
+
+		[Fact]
 		public void JoinGameTest()
 		{
 			int gameId = _service.CreateGame();
