@@ -65,15 +65,18 @@ namespace CardGame.Services
 			return player;
 		}
 
-		/*
 		public Card DrawCard(int gameId)
 		{
-			if (_repository.GetCardsRemaining(gameId).Count > 0)
-				return _repository.GetCardsRemaining(gameId).Dequeue();
+			Game game = _repository.GetGame(gameId);
+			if (game.CardsRemaining.Count > 0)
+			{
+				Card card = game.CardsRemaining[0];
+				game.CardsRemaining.RemoveAt(0);
+				return card;
+			}
 
 			return null;
 		}
-		*/
 
 		public Game GetGame(int gameId) => _repository.GetGame(gameId);
 

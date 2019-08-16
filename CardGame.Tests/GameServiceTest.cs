@@ -71,18 +71,28 @@ namespace CardGame.Tests
 			Assert.Null(_service.CreatePlayer("CreatePlayer"));	// player should not be created as id already exists
 		}
 		
-		/*
 		[Fact]
 		public void DrawCardTest()
 		{
 			int gameId = _service.CreateGame();
+			Game game = _service.GetGame(gameId);
 			_service.Shuffle(gameId);
-			int numberOfCards = _repository.GetCardsRemaining(gameId).Count;
+			int beforeDraw = game.CardsRemaining.Count;     // number of cards before drawing
+			Card card1 = _service.DrawCard(gameId);
+			int after1stDraw = game.CardsRemaining.Count;	// number of cards after drawing first card
+			Card card2 = _service.DrawCard(gameId);
+			int after2ndDraw = game.CardsRemaining.Count;	// number of cards after drawing another
+
 			Assert.IsAssignableFrom<Card>(_service.DrawCard(gameId));	// drawing should return object of type Card
-			Assert.NotNull(_service.DrawCard(gameId)); 
-			Assert.NotEqual(numberOfCards, _repository.GetCardsRemaining(gameId).Count); // number of remaining cards should have decreased
+			Assert.NotNull(_service.DrawCard(gameId));
+			Assert.IsType<Card>(card1);
+			Assert.IsType<Card>(card2);
+			Assert.NotEqual(card1, card2);					// drawn cards should be different ones
+			Assert.True(after1stDraw == beforeDraw - 1);	// number of remaining cards should have decreased after 1st draw
+			Assert.True(after2ndDraw == after1stDraw - 1);  // number should have decreased further
+			Assert.DoesNotContain(card1, game.CardsRemaining);
+			Assert.DoesNotContain(card2, game.CardsRemaining);	// after drawing cards should not be in list anymore
 		}
-		*/
 
 		[Fact]
 		public void GetGamesTest()
@@ -148,8 +158,6 @@ namespace CardGame.Tests
 			Assert.True(_service.LeaveGame(player1Id, gameId));	// leave returns true if successfull
 			Assert.DoesNotContain(player1, game.Players);		// should not contain player1 any longer
 		}
-
-
 		
 		[Fact]
 		public void ShuffleTest()

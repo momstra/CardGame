@@ -1,7 +1,8 @@
 ﻿$(document).ready(function () {
+	// create new user
 	$("#createuser").click(function () {
 		var username = $("#username").val();
-		var uri = "/api/game/user/create/" + username;
+		var uri = "/api/user/create/" + username;
 		$.ajax({
 			url: uri,
 			success: function (tok) {
@@ -15,9 +16,10 @@
 		});
 	});
 
+	// on user change get new users game
 	$("#changeuser").click(function () {
 		var username = $("#users option:selected").text();
-		var uri = "/api/game/user/" + username + "/game";
+		var uri = "/api/user/" + username + "/game";
 		$("#activeuser").val(username);
 		var token = $('#' + username).val();
 		$("#usertoken").val(token);
@@ -35,6 +37,7 @@
 		});
 	});
 
+	// create new game
 	$("#creategame").click(function () {
 		var uri = "/api/game/create";
 		var username = $("#activeuser").val();
@@ -51,9 +54,10 @@
 		});
 	});
 
+	// active user join game [game]
 	$("#joingame").click(function () {
 		var game = $("#games option:selected").text();
-		var uri = "/api/game/join/" + game;
+		var uri = "/api/user/join/" + game;
 		var username = $("#activeuser").val();
 		var token = $('#' + username).val();
 		$.ajax({
@@ -67,9 +71,10 @@
 		});
 	});
 
+	// active user leave current game
 	$("#leavegame").click(function () {
 		var game = $("#usergame").val();
-		var uri = "/api/game/leave";
+		var uri = "/api/user/leave";
 		var username = $("#activeuser").val();
 		var token = $('#' + username).val();
 		$.ajax({

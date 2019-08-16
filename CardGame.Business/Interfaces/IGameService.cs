@@ -11,7 +11,7 @@ namespace CardGame.Services.Interfaces
 	{
 		int CreateGame();
 		Player CreatePlayer(string playerId);
-		//Card DrawCard(int gameId);
+		Card DrawCard(int gameId);
 		Game GetGame(int gameId);
 		Game GetGame(string userId);
 		List<Game> GetGames();

@@ -43,7 +43,7 @@ namespace CardGame.API.Controllers
 		}
 
 		[AllowAnonymous]
-		[HttpGet("/api/game/user/create/{user}")]
+		[HttpGet("/api/user/create/{user}")]
 		public IActionResult CreatePlayer([FromRoute]string user)
 		{
 			if (_service.GetPlayer(user) != null)
@@ -68,7 +68,7 @@ namespace CardGame.API.Controllers
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
 
-		[HttpGet("/api/game/user/{id}/game")]
+		[HttpGet("/api/user/{id}/game")]
 		public IActionResult GetPlayerGame([FromRoute]string id)
 		{
 			Game game = _service.GetGame(id);
@@ -95,7 +95,7 @@ namespace CardGame.API.Controllers
 			return NotFound();
 		}
 
-		[HttpGet("/api/game/list/{id}")]
+		[HttpGet("/api/game/{id}/list")]
 		public JsonResult GetGame([FromRoute]int id)
 		{
 			Game game = _service.GetGame(id);
@@ -109,7 +109,7 @@ namespace CardGame.API.Controllers
 			return Json(_service.GetGames());
 		}
 
-		[HttpGet("/api/game/join/{id}")]
+		[HttpGet("/api/user/join/{id}")]
 		public IActionResult JoinGame([FromRoute] int id)
 		{
 			var currentUser = HttpContext.User;
@@ -121,7 +121,7 @@ namespace CardGame.API.Controllers
 			return NotFound("Could not join game");
 		}
 
-		[HttpGet("/api/game/leave")]
+		[HttpGet("/api/user/leave")]
 		public IActionResult LeaveGame()
 		{
 			var currentUser = HttpContext.User;
@@ -132,7 +132,7 @@ namespace CardGame.API.Controllers
 			return NotFound();
 		}
 
-		[HttpGet("/api/game/start/{id}")]
+		[HttpGet("/api/game/{id}/start")]
 		public IActionResult StartGame([FromRoute] int id)
 		{
 			Game game = _service.GetGame(id);
@@ -147,17 +147,15 @@ namespace CardGame.API.Controllers
 			return NotFound("Game could not be found");
 		}
 
-		/*
-		[HttpGet("/api/game/{gameid}/cards/draw")]
+		[HttpGet("/api/game/{id}/draw")]
 		public IActionResult DrawCard([FromRoute] int id)
 		{
-
 			Card card = _service.DrawCard(id);
 			if (card != null)
 				return Ok(card);
 
 			return NotFound();
 		}
-		*/
+		
 	}
 }
