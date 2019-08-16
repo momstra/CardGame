@@ -8,7 +8,8 @@ namespace CardGame.Repositories.Interfaces
 	{
 		bool AddGame(int gameId, Deck deck);
 		void AddPlayer(Player player);
-		
+		bool CreateCards(Deck deck);
+		Deck CreateDeck();
 		Game GetGame(int gameId);
 		List<Game> GetGames();
 		Player GetPlayer(string name);

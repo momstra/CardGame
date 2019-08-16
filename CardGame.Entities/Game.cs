@@ -11,11 +11,12 @@ namespace CardGame.Entities
 		public int MinPlayers { get; set; }
 		public int MaxPlayers { get; set; }
 		public int ActivePlayer { get; set; }
+		public Queue<Card> CardsRemaining { get; set; }
+		public Stack<Card> CardsPlayed { get; set; }
 
 		public int DeckId { get; set; }
 		public virtual Deck Deck { get; set; }
 		
-		public virtual ICollection<Card> CardsPlayed { get; set; }
 		public virtual ICollection<Player> Players { get; set; }
 
 		public Game() { }
@@ -26,7 +27,8 @@ namespace CardGame.Entities
 			GameStarted = false;
 			MinPlayers = min;
 			MaxPlayers = max;
-			Players = new List<Player>();
+			CardsRemaining = new Queue<Card>();
+			CardsPlayed = new Stack<Card>();
 		}
 	}
 }

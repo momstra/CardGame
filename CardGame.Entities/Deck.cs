@@ -17,22 +17,6 @@ namespace CardGame.Entities
 		{
 			DeckSize = 52;
 			Cards = new List<Card>();
-
-			string[] colors = { "diamond", "heart", "spades", "clubs" };
-			string[] ranks = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
-
-			foreach (string color in colors)
-			{
-				foreach (string rank in ranks)
-				{
-					Card card = new Card
-					{
-						Color = color,
-						Rank = rank
-					};
-					Cards.Add(card);
-				}
-			}
 		}
 	}
 }

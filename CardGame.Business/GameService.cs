@@ -43,7 +43,8 @@ namespace CardGame.Services
 				id = random.Next(1000, 9999);
 
 			_logger.LogInformation("Deck for game [" + id + "] is being created...");
-			Deck deck = new Deck();
+			Deck deck = _repository.CreateDeck();
+			_repository.CreateCards(deck);
 
 			_logger.LogInformation("Game [" + id + "] is being created...");
 			if (_repository.AddGame(id, deck) == true)
@@ -152,7 +153,7 @@ namespace CardGame.Services
 
 		public void Shuffle(int gameId)
 		{
-			//_repository.GetGame(gameId).CardsRemaining.Clear();
+			_repository.GetGame(gameId).CardsRemaining.Clear();
 			List<Card> cards = _repository.GetGame(gameId).Deck.Cards.ToList();
 			
 			Shuffle(cards, gameId);
@@ -167,7 +168,7 @@ namespace CardGame.Services
 			{
 				var position = rand.Next(0, cards.Count());
 				randomCard = cards[position];
-				_repository.GetGame(gameId).Deck.Cards.Add(randomCard);
+				_repository.GetGame(gameId).CardsRemaining.Enqueue(randomCard);
 				cards.RemoveAt(position);
 			}
 		}

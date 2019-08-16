@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
+using Moq;
 using CardGame.Tests.FakeRepositories;
 using CardGame.Services;
 using CardGame.Entities;
@@ -61,13 +62,13 @@ namespace CardGame.Tests
 		[Fact]
 		public void CreatePlayerTest()
 		{
-			int count = _repository.Players.Count;
-			Player player = _service.CreatePlayer("TestPlayer");
+			int count = _repository.GetPlayers().Count;
+			Player player = _service.CreatePlayer("CreatePlayer");
 
-			Assert.NotEqual(_repository.Players.Count, count);
-			Assert.True(_repository.Players.Count == count + 1);	// Players count should have increased
-			Assert.Equal(_repository.Players.Find(p => p.UserId == "TestPlayer"), player);	// player should match saved player
-			Assert.Null(_service.CreatePlayer("TestPlayer"));	// player should not be created as id already exists
+			Assert.NotEqual(_repository.GetPlayers().Count, count);
+			Assert.True(_repository.GetPlayers().Count == count + 1);	// Players count should have increased
+			Assert.Equal(_repository.GetPlayers().Find(p => p.UserId == "CreatePlayer"), player);	// player should match saved player
+			Assert.Null(_service.CreatePlayer("CreatePlayer"));	// player should not be created as id already exists
 		}
 		
 		/*
@@ -103,62 +104,65 @@ namespace CardGame.Tests
 		public void JoinGameTest()
 		{
 			int gameId = _service.CreateGame();
-			Game game = _repository.Games.Find(g => g.GameId == gameId);
-			string player1Id = "TestPlayer1";
-			string player2Id = "TestPlayer2";
+			Game game = _repository.GetGames().Find(g => g.GameId == gameId);
+			string player1Id = "JoinPlayer1";
+			string player2Id = "JoinPlayer2";
 			Player player1 = _service.CreatePlayer(player1Id);
 			Player player2 = _service.CreatePlayer(player2Id);
 
-			int before = game.Players.Count;
+			int before = 0;
+			if (game.Players != null)
+				before = game.Players.Count;
 			var game2id = _service.JoinGame(player1Id, gameId);	// returns game, which player has been joined to
 			int after = game.Players.Count;						// 
 																// 
 			Assert.Equal(game, _service.GetGame(game2id));		// therefore games should match
 			Assert.NotEqual(before, after);
-			Assert.True(after == before + 1);		// Players count should have increased after joining
+			Assert.True(after == before + 1);       // Players count should have increased after joining
+			Assert.Equal(player1.GameId, game.GameId);
 			Assert.Contains(player1, game.Players); // player1 should be assigned after joining
 
 			game.MaxPlayers = 1;									// make sure MaxPlayers count has been reached
-			Assert.Equal(0, _service.JoinGame("TestPlayer2", gameId));	// player2 should not be able to join
+			Assert.Equal(0, _service.JoinGame("JoinPlayer2", gameId));	// player2 should not be able to join
 
 			game.MaxPlayers = 2;									// make sure MaxPlayers count has not been reached,
 			game.GameStarted = true;								// but game has already started
-			Assert.Equal(0, _service.JoinGame("TestPlayer2", gameId));	// player2 should not be able to join
+			Assert.Equal(0, _service.JoinGame("JoinPlayer2", gameId));	// player2 should not be able to join
 
 			game.GameStarted = false;									// reset to game has not yet started
-			Assert.NotEqual(0, _service.JoinGame("TestPlayer2", gameId));	// player2 should be able to join
+			Assert.NotEqual(0, _service.JoinGame("JoinPlayer2", gameId));	// player2 should be able to join
 		}
 
 		[Fact]
 		public void LeaveGameTest()
 		{
 			int gameId = _service.CreateGame();
-			Game game = _repository.Games.Find(g => g.GameId == gameId);
-			string player1Id = "TestPlayer1";
+			Game game = _repository.GetGames().Find(g => g.GameId == gameId);
+			string player1Id = "LeavePlayer1";
 			Player player1 = _service.CreatePlayer(player1Id);
 
 			var game2id = _service.JoinGame(player1Id, gameId);
-			Assert.Equal(game, _service.GetGame(game2id));
+			Assert.Equal(game, _service.GetGame(game2id));	// make sure player1 is assigned to game
 			Assert.Contains(player1, game.Players);
 
-			Assert.True(_service.LeaveGame(player1Id, gameId));
-			Assert.DoesNotContain(player1, game.Players);
+			Assert.True(_service.LeaveGame(player1Id, gameId));	// leave returns true if successfull
+			Assert.DoesNotContain(player1, game.Players);		// should not contain player1 any longer
 		}
 
 
-		/*
+		
 		[Fact]
 		public void ShuffleTest()
 		{
 			int gameId = _service.CreateGame();
 			_service.Shuffle(gameId);
-			Card card1 = _service.GetGame(gameId).Deck.Cards.Dequeue();	// safe topmost card after shuffling
+			Card card1 = _service.GetGame(gameId).CardsRemaining.Dequeue();	// safe topmost card after shuffling
 			int turn = 0;
 			bool areDifferent = false;
 			do
 			{
 				_service.Shuffle(gameId);
-				Card card2 = _service.GetGame(gameId).Deck.Cards.Dequeue();	// safe topmost card after another shuffle
+				Card card2 = _service.GetGame(gameId).CardsRemaining.Dequeue();	// safe topmost card after another shuffle
 				if (card1 != card2)											// and make sure both cards differ
 				{
 					areDifferent = true;
@@ -170,7 +174,7 @@ namespace CardGame.Tests
 			Assert.True(areDifferent);
 		}
 
-		
+		/*
 		[Fact]
 		public void StartGameTest()
 		{

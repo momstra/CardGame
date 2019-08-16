@@ -5,32 +5,23 @@ using System.Text;
 using CardGame.Repositories.Interfaces;
 using CardGame.Entities;
 using Moq;
+using Microsoft.EntityFrameworkCore;
 
 namespace CardGame.Tests.FakeRepositories
 {
 	public class FakeCardsRepository : ICardsRepository
 	{
-		public List<Card> Decks { get; set; }
-		public List<Hand> Hands { get; }
-		public List<Player> Players { get; set; }
-		public Stack<Card> CardsPlayed { get; set; }
-		public List<Game> Games { get; }
+		private readonly CardsContext _context;
 
 		public FakeCardsRepository()
 		{
-			Decks = new List<Card>();
-			Hands = new List<Hand>();
-			Players = new List<Player>();
-			CardsPlayed = new Stack<Card>();
-			Games = new List<Game>();
-			
+			var options = new DbContextOptionsBuilder<CardsContext>()
+				.UseInMemoryDatabase("TestCardsDatabase").Options;
+			_context = new CardsContext(options);
 		}
 
 
-		public void SaveChanges()
-		{
-
-		}
+		public void SaveChanges() => _context.SaveChanges();
 		
 
 		public bool AddGame(int gameId, Deck deck)
@@ -40,19 +31,58 @@ namespace CardGame.Tests.FakeRepositories
 				return false;
 
 			game.Deck = deck;
-			Games.Add(game);
+			_context.Games.Add(game);
+			SaveChanges();
 			return true;
 		}
-		
 
-		public void AddPlayer(Player player) => Players.Add(player);
 
-		public Game GetGame(int gameId) => Games.Find(g => g.GameId == gameId);
+		public void AddPlayer(Player player)
+		{
+			_context.Players.Add(player);
+			SaveChanges();
+		}
 
-		public List<Game> GetGames() => Games;
+		public bool CreateCards(Deck deck)
+		{
 
-		public Player GetPlayer(string name) => Players.Find(c => c.UserId == name);
+			string[] colors = { "diamond", "heart", "spades", "clubs" };
+			string[] ranks = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
 
-		public List<Player> GetPlayers() => Players;
+			foreach (string color in colors)
+			{
+				foreach (string rank in ranks)
+				{
+					Card card = new Card
+					{
+						Color = color,
+						Rank = rank
+					};
+					deck.Cards.Add(card);
+				}
+			}
+			SaveChanges();
+
+			return true;
+		}
+
+		public Deck CreateDeck() => new Deck();
+
+		public Game GetGame(int gameId)
+		{
+			if (_context.Games.Find(gameId) != null)
+				return _context.Games
+					.Include(g => g.Players)
+					.Include(g => g.Deck)
+					.First(g => g.GameId == gameId);
+
+			return null;
+		}
+
+		public List<Game> GetGames() => _context.Games.ToList();
+
+		public Player GetPlayer(string name) => _context.Players.Find(name);
+
+		public List<Player> GetPlayers() => _context.Players.ToList();
 	}
 }

@@ -11,10 +11,7 @@ namespace CardGame.Entities
 		public int DeckId { get; set; }
 		public virtual Deck Deck { get; set; }
 
-		public int GameId { get; set; }
-		public virtual Game Game { get; set; }
-
-		public int HandId { get; set; }
+		public int? HandId { get; set; }
 		public virtual Hand Owner { get; set; }
 	}
 }
