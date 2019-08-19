@@ -1,4 +1,27 @@
-﻿$(document).ready(function () {
+﻿
+
+$(document).ready(function () {
+
+	var connection;
+
+	// connect to gamehub
+	function ConnectR(token) {
+		connection = new signalR.HubConnectionBuilder()
+			.withUrl("/hub", { accessTokenFactory: () => token })
+			.configureLogging(signalR.LogLevel.Information)
+			.build();
+
+		connection.on("ReceiveMessage", (message) => {
+			$("#answertext").val(message);
+		});
+
+		connection.start();
+	}
+
+	$("#sendmessage").click(function () {
+		var message = $("#textmessage").val();
+		connection.invoke("SendMessage", message).catch(err => console.error(err));
+	});
 	// get game's player list
 	function GetGamePlayer() {
 		var uri = "/api/game/users";
@@ -36,6 +59,7 @@
 				$("#usertoken").val(token);
 				$("#usergame").val(" ");
 				$("#ingameusers").empty();
+				ConnectR(token);
 			}
 		});
 	});
@@ -55,10 +79,16 @@
 			success: function (gameid) {
 				$("#usergame").val(gameid);
 				GetGamePlayer();
+				var username = $("#users option:selected").text();
+				var token = $('#' + username).val();
+				ConnectR(token);
 			},
 			error: function () {
 				$("#usergame").val(" ");
 				$("#ingameusers").empty();
+				var username = $("#users option:selected").text();
+				var token = $('#' + username).val();
+				ConnectR(token);
 			}
 		});
 	});

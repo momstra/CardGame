@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CardGame.Entities;
-using CardGame.Services;
 using CardGame.Services.Interfaces;
-using CardGame.Repositories;
-using CardGame.Repositories.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -65,7 +60,7 @@ namespace CardGame.API.Controllers
 		{
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-			var claims = new[] { new Claim("Username", user) };
+			var claims = new[] { new Claim(ClaimTypes.Name, user) };
 
 			var token = new JwtSecurityToken(_config["Jwt:Issuer"],
 			  _config["Jwt:Issuer"],
@@ -82,7 +77,7 @@ namespace CardGame.API.Controllers
 		public IActionResult GetPlayerGame()
 		{
 			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
 			Game game = _service.GetGame(playerId);
 			if (game == null)
 				return NotFound("");
@@ -97,7 +92,7 @@ namespace CardGame.API.Controllers
 		public IActionResult JoinGame([FromRoute] int id)
 		{
 			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
 			var gameid = _service.JoinGame(playerId, id);
 			if (gameid == id)
 				return Ok(gameid);
@@ -111,7 +106,7 @@ namespace CardGame.API.Controllers
 		public IActionResult LeaveGame()
 		{
 			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
 			if (_service.LeaveGame(playerId))
 				return Ok();
 
@@ -129,7 +124,7 @@ namespace CardGame.API.Controllers
 		public IActionResult CreateGame()
 		{
 			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
 			_logger.LogInformation("Player [" + playerId + "] requested to create a new game");
 
 			int gameId = _service.CreateGame();
@@ -148,7 +143,7 @@ namespace CardGame.API.Controllers
 		public IActionResult DrawCard()
 		{
 			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
 			Game game = _service.GetGame(playerId);
 			if (game != null && game.GameStarted)
 			{
@@ -178,7 +173,7 @@ namespace CardGame.API.Controllers
 		public JsonResult GetGame()
 		{
 			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
 			Game game = _service.GetGame(playerId);
 
 			return Json(game);
@@ -198,7 +193,7 @@ namespace CardGame.API.Controllers
 		public JsonResult GetGamePlayers()
 		{
 			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
 			Game game = _service.GetGame(playerId);
 			return Json(_service.GetPlayersIds(game.GameId));
 		}
@@ -210,7 +205,7 @@ namespace CardGame.API.Controllers
 		public IActionResult StartGame()
 		{
 			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == "Username").Value;
+			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
 			Game game = _service.GetGame(playerId);
 			if (game != null)
 			{
