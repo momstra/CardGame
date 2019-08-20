@@ -18,6 +18,10 @@ $(document).ready(function () {
 			GetGameList();
 		});
 
+		connection.on("GameStarted", () => {
+
+		});
+
 		connection.on("JoinSuccess", (gameid) => {
 			$("#usergame").val(gameid);
 			GetGamePlayer();

@@ -5,6 +5,7 @@ namespace CardGame.API.Hubs
 	public interface IGameClient
 	{
 		Task GameAdded(int gameId);
+		Task GameStarted();
 		Task JoinSuccess(int gameId);
 		Task LeaveSuccess();
 		Task NewUser(string name);

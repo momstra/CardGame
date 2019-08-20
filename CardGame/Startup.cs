@@ -61,6 +61,7 @@ namespace CardGame
 			services.AddDbContext<CardsContext>(options => options.UseInMemoryDatabase("CardGameDb"));
 			services.AddScoped<ICardsRepository, CardsRepository>();
 			services.AddScoped<IGameService, GameService>();
+			services.AddScoped<IPlayerService, PlayerService>();
 			services.AddSignalR();
 			services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 		}

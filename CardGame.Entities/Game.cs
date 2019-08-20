@@ -28,6 +28,7 @@ namespace CardGame.Entities
 			MinPlayers = min;
 			MaxPlayers = max;
 			CardsRemaining = new List<Card>();
+			//Players = new List<Player>();
 			//CardsPlayed = new Stack<Card>();
 		}
 	}

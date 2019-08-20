@@ -19,12 +19,14 @@ namespace CardGame.API.Controllers
     [ApiController]
     public class GameController : Controller
 	{
-		private readonly IGameService _service;
+		private readonly IGameService _gameService;
+		private readonly IPlayerService _playerService;
 		private readonly ILogger _logger;
 
-		public GameController(IGameService service, ILogger<GameController> logger)
+		public GameController(IGameService gameService, IPlayerService playerService, ILogger<GameController> logger)
 		{
-			_service = service;
+			_gameService = gameService;
+			_playerService = playerService;
 			_logger = logger;
 		}
 
@@ -45,11 +47,11 @@ namespace CardGame.API.Controllers
 		[HttpGet("/api/user/create/{user}")]
 		public IActionResult CreatePlayer([FromRoute]string user)
 		{
-			if (_service.GetPlayer(user) != null)
+			if (_playerService.GetPlayer(user) != null)
 				return NotFound("Name already in use.");
 
-			var tokenString = _service.GenerateJWT(user);
-			_service.CreatePlayer(user);
+			var tokenString = _playerService.GenerateJWT(user);
+			_playerService.CreatePlayer(user);
 			return Ok(new { token = tokenString });
 		}
 
@@ -60,7 +62,7 @@ namespace CardGame.API.Controllers
 		{
 			var currentUser = HttpContext.User;
 			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			Game game = _service.GetGame(playerId);
+			Game game = _gameService.GetGame(playerId);
 			if (game == null)
 				return NotFound("");
 
@@ -75,7 +77,7 @@ namespace CardGame.API.Controllers
 		{
 			var currentUser = HttpContext.User;
 			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			var gameid = _service.JoinGame(playerId, id);
+			var gameid = _gameService.JoinGame(playerId, id);
 			if (gameid == id)
 				return Ok(gameid);
 
@@ -89,7 +91,7 @@ namespace CardGame.API.Controllers
 		{
 			var currentUser = HttpContext.User;
 			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			if (_service.LeaveGame(playerId))
+			if (_gameService.LeaveGame(playerId))
 				return Ok();
 
 			return NotFound();
@@ -109,10 +111,10 @@ namespace CardGame.API.Controllers
 			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			_logger.LogInformation("Player [" + playerId + "] requested to create a new game");
 
-			int gameId = _service.CreateGame();
+			int gameId = _gameService.CreateGame();
 			if (gameId != 0)
 			{
-				_service.JoinGame(playerId, gameId);
+				_gameService.JoinGame(playerId, gameId);
 				return Ok(gameId);
 			}
 
@@ -126,10 +128,10 @@ namespace CardGame.API.Controllers
 		{
 			var currentUser = HttpContext.User;
 			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			Game game = _service.GetGame(playerId);
+			Game game = _gameService.GetGame(playerId);
 			if (game != null && game.GameStarted)
 			{
-				Card card = _service.DrawCard(game.GameId);
+				Card card = _gameService.DrawCard(game.GameId);
 				if (card != null)
 					return Ok(card);
 			}
@@ -156,7 +158,7 @@ namespace CardGame.API.Controllers
 		{
 			var currentUser = HttpContext.User;
 			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			Game game = _service.GetGame(playerId);
+			Game game = _gameService.GetGame(playerId);
 
 			return Json(game);
 		}
@@ -166,7 +168,7 @@ namespace CardGame.API.Controllers
 		[HttpGet("/api/game/list")]
 		public JsonResult GetGames()
 		{
-			return Json(_service.GetGamesList());
+			return Json(_gameService.GetGamesList());
 		}
 
 		// ask for players in current game
@@ -176,8 +178,8 @@ namespace CardGame.API.Controllers
 		{
 			var currentUser = HttpContext.User;
 			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			Game game = _service.GetGame(playerId);
-			return Json(_service.GetPlayersIds(game.GameId));
+			Game game = _gameService.GetGame(playerId);
+			return Json(_gameService.GetPlayersIds(game.GameId));
 		}
 
 
@@ -188,10 +190,10 @@ namespace CardGame.API.Controllers
 		{
 			var currentUser = HttpContext.User;
 			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			Game game = _service.GetGame(playerId);
+			Game game = _gameService.GetGame(playerId);
 			if (game != null)
 			{
-				if (_service.StartGame(game.GameId))
+				if (_gameService.StartGame(game.GameId))
 					return Ok();
 
 				return NotFound("Game could not be started");

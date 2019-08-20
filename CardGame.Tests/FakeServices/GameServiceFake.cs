@@ -11,22 +11,18 @@ using Moq;
 
 using CardGame.Entities;
 using CardGame.Services.Interfaces;
-using CardGame.Repositories.Interfaces;
+using CardGame.Tests.FakeRepositories;
 using Microsoft.Extensions.Configuration;
 
 namespace CardGame.Tests.FakeServices
 {
 	public class GameServiceFake : IGameService
 	{
-		private readonly List<Game> _games;
-		private readonly List<Player> _players;
-		private readonly List<Card> _cards;
+		private readonly FakeServicesRepository _repository;
 
 		public GameServiceFake()
 		{
-			_games = new List<Game>();
-			_players = new List<Player>();
-			_cards = new List<Card>();
+			_repository = new FakeServicesRepository();
 		}
 
 		public int CreateGame()
@@ -35,16 +31,8 @@ namespace CardGame.Tests.FakeServices
 			var gameId = random.Next(10, 20);
 			var mockGame = new Mock<Game>();
 			mockGame.Object.GameId = gameId;
-			_games.Add(mockGame.Object);
+			_repository.Games.Add(mockGame.Object);
 			return gameId;
-		}
-
-		public Player CreatePlayer(string playerId)
-		{
-			var mockPlayer = new Mock<Player>();
-			mockPlayer.Object.UserId = playerId;
-			_players.Add(mockPlayer.Object);
-			return mockPlayer.Object;
 		}
 
 		public Card DrawCard(int gameId)
@@ -52,36 +40,27 @@ namespace CardGame.Tests.FakeServices
 			throw new NotImplementedException();
 		}
 
-		public string GenerateJWT(string user)
-		{
-			return "JWT" + user;
-		}
+		public Game GetGame(int gameId) => _repository.Games.Find(g => g.GameId == gameId);
 
-		public Game GetGame(int gameId) => _games.Find(g => g.GameId == gameId);
+		public Game GetGame(string userId) => _repository.Players.Find(p => p.UserId == userId).Game;
 
-		public Game GetGame(string userId) => _players.Find(p => p.UserId == userId).Game;
-
-		public List<Game> GetGames() => _games;
+		public List<Game> GetGames() => _repository.Games;
 
 		public List<int> GetGamesList()
 		{
 			var list = new List<int>();
-			foreach(Game game in _games)
+			foreach(Game game in _repository.Games)
 				list.Add(game.GameId);
 
 			return list;
 		}
 
-		public Player GetPlayer(string playerId) => _players.Find(p => p.UserId == playerId);
-
-		public List<Player> GetPlayers() => _players;
-
-		public List<Player> GetPlayers(int gameId) => _games.Find(g => g.GameId == gameId).Players.ToList();
+		public List<Player> GetPlayers(int gameId) => _repository.Games.Find(g => g.GameId == gameId).Players.ToList();
 
 		public List<string> GetPlayersIds(int gameId)
 		{
 			var list = new List<string>();
-			var players = _games.Find(g => g.GameId == gameId).Players;
+			var players = _repository.Games.Find(g => g.GameId == gameId).Players;
 			foreach (Player player in players)
 				list.Add(player.UserId);
 
@@ -90,8 +69,8 @@ namespace CardGame.Tests.FakeServices
 
 		public int JoinGame(string playerId, int gameId)
 		{
-			var game = _games.Find(g => g.GameId == gameId);
-			var player = _players.Find(p => p.UserId == playerId);
+			var game = _repository.Games.Find(g => g.GameId == gameId);
+			var player = _repository.Players.Find(p => p.UserId == playerId);
 			game.Players.Add(player);
 
 			return game.GameId;
@@ -99,8 +78,8 @@ namespace CardGame.Tests.FakeServices
 
 		public bool LeaveGame(string playerId, int? gameId = null)
 		{
-			var game = _games.Find(g => g.GameId == gameId);
-			var player = _players.Find(p => p.UserId == playerId);
+			var game = _repository.Games.Find(g => g.GameId == gameId);
+			var player = _repository.Players.Find(p => p.UserId == playerId);
 			return game.Players.Remove(player);
 		}
 
