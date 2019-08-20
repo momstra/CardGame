@@ -41,6 +41,7 @@ namespace CardGame.API.Hubs
 
 			await Clients.All.GameAdded(gameId);
 			await Clients.Group(gameId.ToString()).PlayerJoined(playerId);
+			await Clients.Caller.JoinSuccess(gameId);
 		}
 
 		public async Task JoinGame(int id)
@@ -53,6 +54,19 @@ namespace CardGame.API.Hubs
 				await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
 				await Clients.Group(gameId.ToString()).PlayerJoined(playerId);
 				await Clients.Caller.JoinSuccess(gameId);
+			}
+		}
+
+		public async Task LeaveGame()
+		{
+			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			int gameId = _service.GetGame(playerId).GameId;
+
+			if (_service.LeaveGame(playerId))
+			{
+				await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameId.ToString());
+				await Clients.Group(gameId.ToString()).PlayerLeft(playerId);
+				await Clients.Caller.LeaveSuccess();
 			}
 		}
 

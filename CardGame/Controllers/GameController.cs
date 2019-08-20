@@ -20,13 +20,11 @@ namespace CardGame.API.Controllers
     public class GameController : Controller
 	{
 		private readonly IGameService _service;
-		private readonly IConfiguration _config;
 		private readonly ILogger _logger;
 
-		public GameController(IGameService service, IConfiguration config, ILogger<GameController> logger)
+		public GameController(IGameService service, ILogger<GameController> logger)
 		{
 			_service = service;
-			_config = config;
 			_logger = logger;
 		}
 

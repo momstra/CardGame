@@ -14,13 +14,18 @@ $(document).ready(function () {
 			.build();
 
 		connection.on("GameAdded", (gameid) => {
-			$("#games").append('<option>' + gameid + '</option>');
-			//GetGameList();
+			//$("#games").append('<option>' + gameid + '</option>');
+			GetGameList();
 		});
 
-		connection.on("JoinSuccess", () => {
+		connection.on("JoinSuccess", (gameid) => {
 			$("#usergame").val(gameid);
 			GetGamePlayer();
+		});
+
+		connection.on("LeaveSuccess", () => {
+			$("#usergame").val("");
+			$("#ingameusers").empty();
 		});
 
 		connection.on("ReceiveMessage", (message) => {
@@ -29,6 +34,10 @@ $(document).ready(function () {
 
 		connection.on("PlayerJoined", (username) => {
 			//$("#ingameusers").append('<option>' + username + '</option>');
+			GetGamePlayer();
+		});
+
+		connection.on("PlayerLeft", (username) => {
 			GetGamePlayer();
 		});
 
@@ -42,7 +51,7 @@ $(document).ready(function () {
 
 	// get list of games
 	function GetGameList() {
-		var uri = "/api/game/users";
+		var uri = "/api/game/list";
 		$.ajax({
 			url: uri,
 			headers: {
@@ -94,6 +103,7 @@ $(document).ready(function () {
 				$("#usertoken").val(token);
 				$("#usergame").val(" ");
 				$("#ingameusers").empty();
+				GetGameList();
 				ConnectR(token);
 			}
 		});
@@ -130,50 +140,60 @@ $(document).ready(function () {
 
 	// create new game
 	$("#creategame").click(function () {
-		connection.invoke("CreateGame").catch(err => console.error(err));
-		/*var uri = "/api/game/create";
-		$.ajax({
-			url: uri,
-			headers: {
-				"Authorization": "Bearer " + token
-			},
-			success: function (gameid) {
-				$("#usergame").val(gameid);
-				$("#games").append('<option>' + gameid + '</option>');
-				GetGamePlayer();
-			}
-		});*/
+		if (connection != null) {
+			connection.invoke("CreateGame").catch(err => console.error(err));
+		} else {
+			var uri = "/api/game/create";
+			$.ajax({
+				url: uri,
+				headers: {
+					"Authorization": "Bearer " + token
+				},
+				success: function (gameid) {
+					$("#usergame").val(gameid);
+					$("#games").append('<option>' + gameid + '</option>');
+					GetGamePlayer();
+				}
+			});
+		}
 	});
 
 	// active user join game [game]
 	$("#joingame").click(function () {
 		var game = $("#games option:selected").text();
-		connection.invoke("JoinGame", game);
-		/*var uri = "/api/user/join/" + game;
-		$.ajax({
-			url: uri,
-			headers: {
-				"Authorization": "Bearer " + token
-			},
-			success: function (gameid) {
-				$("#usergame").val(gameid);
-				GetGamePlayer();
-			}
-		});*/
+		if (connection != null) {
+			connection.invoke("JoinGame", game);
+		} else {
+			var uri = "/api/user/join/" + game;
+			$.ajax({
+				url: uri,
+				headers: {
+					"Authorization": "Bearer " + token
+				},
+				success: function (gameid) {
+					$("#usergame").val(gameid);
+					GetGamePlayer();
+				}
+			});
+		}
 	});
 
 	// active user leave current game
 	$("#leavegame").click(function () {
-		var uri = "/api/user/leave";
-		$.ajax({
-			url: uri,
-			headers: {
-				"Authorization": "Bearer " + token
-			},
-			success: function () {
-				$("#usergame").val("");
-				$("#ingameusers").empty();
-			}
-		});
+		if (connection != null) {
+			connection.invoke("LeaveGame");
+		} else {
+			var uri = "/api/user/leave";
+			$.ajax({
+				url: uri,
+				headers: {
+					"Authorization": "Bearer " + token
+				},
+				success: function () {
+					$("#usergame").val("");
+					$("#ingameusers").empty();
+				}
+			});
+		}
 	});
 });

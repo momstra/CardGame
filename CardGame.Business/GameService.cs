@@ -29,6 +29,12 @@ namespace CardGame.Services
 			_logger = logger;
 		}
 
+		public GameService(ICardsRepository repository, ILogger<GameService> logger)
+		{
+			_repository = repository;
+			_logger = logger;
+		}
+
 		// check game's existence
 		// returns bool
 		public bool CheckGameExists(int gameId)

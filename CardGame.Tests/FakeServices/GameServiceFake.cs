@@ -16,7 +16,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace CardGame.Tests.FakeServices
 {
-	class GameServiceFake : IGameService
+	public class GameServiceFake : IGameService
 	{
 		private readonly List<Game> _games;
 		private readonly List<Player> _players;

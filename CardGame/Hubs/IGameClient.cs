@@ -6,8 +6,10 @@ namespace CardGame.API.Hubs
 	{
 		Task GameAdded(int gameId);
 		Task JoinSuccess(int gameId);
+		Task LeaveSuccess();
 		Task NewUser(string name);
 		Task ReceiveMessage(string message);
 		Task PlayerJoined(string username);
+		Task PlayerLeft(string username);
 	}
 }

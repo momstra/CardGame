@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace CardGame.Test
+namespace CardGame.Tests
 {
 	public class XUnitLoggerProvider : ILoggerProvider
 	{
