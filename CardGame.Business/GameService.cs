@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 
 using CardGame.Entities;
 using CardGame.Services.Interfaces;
 using CardGame.Repositories.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace CardGame.Services
 {
@@ -14,10 +20,12 @@ namespace CardGame.Services
 	{
 		private readonly ICardsRepository _repository;
 		private readonly ILogger _logger;
+		private readonly IConfiguration _config;
 
-		public GameService(ICardsRepository repository, ILogger<GameService> logger)
+		public GameService(ICardsRepository repository, IConfiguration config, ILogger<GameService> logger)
 		{
 			_repository = repository;
+			_config = config;
 			_logger = logger;
 		}
 
@@ -86,6 +94,23 @@ namespace CardGame.Services
 			}
 
 			return null;
+		}
+
+		// token creation for player authorization
+		// returns JWT with claim for ("Username": {user})
+		public string GenerateJWT(string user)
+		{
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+			var claims = new[] { new Claim(ClaimTypes.NameIdentifier, user) };
+
+			var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+			  _config["Jwt:Issuer"],
+			  claims,
+			  expires: DateTime.Now.AddMinutes(120),
+			  signingCredentials: credentials);
+
+			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
 
 		// get game by id

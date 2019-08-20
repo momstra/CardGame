@@ -7,6 +7,7 @@ namespace CardGame.Entities
 	public class Player
 	{
 		public string UserId { get; set; }
+		public string HubId { get; set; }
 
 		public int HandId { get; set; }
 		public virtual Hand Hand { get; set; }

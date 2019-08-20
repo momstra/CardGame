@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CardGame.API.signalr.auth
@@ -10,7 +11,7 @@ namespace CardGame.API.signalr.auth
 	{
 		public string GetUserId(HubConnectionContext context)
 		{
-			return context.User?.Identity?.Name;
+			return context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 		}
 	}
 }

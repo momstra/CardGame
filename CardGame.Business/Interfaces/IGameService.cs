@@ -12,6 +12,7 @@ namespace CardGame.Services.Interfaces
 		int CreateGame();
 		Player CreatePlayer(string playerId);
 		Card DrawCard(int gameId);
+		string GenerateJWT(string user);
 		Game GetGame(int gameId);
 		Game GetGame(string userId);
 		List<Game> GetGames();

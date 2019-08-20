@@ -3,6 +3,8 @@
 $(document).ready(function () {
 
 	var connection;
+	var token;
+	var username;
 
 	// connect to gamehub
 	function ConnectR(token) {
@@ -11,8 +13,23 @@ $(document).ready(function () {
 			.configureLogging(signalR.LogLevel.Information)
 			.build();
 
+		connection.on("GameAdded", (gameid) => {
+			$("#games").append('<option>' + gameid + '</option>');
+			//GetGameList();
+		});
+
+		connection.on("JoinSuccess", () => {
+			$("#usergame").val(gameid);
+			GetGamePlayer();
+		});
+
 		connection.on("ReceiveMessage", (message) => {
 			$("#answertext").val(message);
+		});
+
+		connection.on("PlayerJoined", (username) => {
+			//$("#ingameusers").append('<option>' + username + '</option>');
+			GetGamePlayer();
 		});
 
 		connection.start();
@@ -22,11 +39,30 @@ $(document).ready(function () {
 		var message = $("#textmessage").val();
 		connection.invoke("SendMessage", message).catch(err => console.error(err));
 	});
+
+	// get list of games
+	function GetGameList() {
+		var uri = "/api/game/users";
+		$.ajax({
+			url: uri,
+			headers: {
+				"Authorization": "Bearer " + token
+			},
+			success: function (json) {
+				$("#games").empty();
+				$.each(json, function (key, game) {
+					$("#games").append('<option>' + game + '</option>');
+				});
+			},
+			error: function () {
+				$("#games").empty();
+			}
+		});
+	}
+
 	// get game's player list
 	function GetGamePlayer() {
 		var uri = "/api/game/users";
-		var username = $("#activeuser").val();
-		var token = $('#' + username).val();
 		$.ajax({
 			url: uri,
 			headers: {
@@ -47,15 +83,14 @@ $(document).ready(function () {
 
 	// create new user
 	$("#createuser").click(function () {
-		var username = $("#username").val();
-		var uri = "/api/user/create/" + username;
+		var name = $("#username").val();
+		var uri = "/api/user/create/" + name;
 		$.ajax({
 			url: uri,
 			success: function (tok) {
-				var token = tok.token.toString();
-				$("#userform").append('<input type="hidden" id="' + username + '" value="' + token + '" />');
-				$("#users").append('<option>' + username + '</option>');
-				$("#activeuser").val(username);
+				token = tok.token.toString();
+				$("#userform").append('<input type="hidden" id="' + name + '" value="' + token + '" />');
+				$("#activeuser").val(name);
 				$("#usertoken").val(token);
 				$("#usergame").val(" ");
 				$("#ingameusers").empty();
@@ -66,10 +101,10 @@ $(document).ready(function () {
 
 	// on user change get new users game
 	$("#changeuser").click(function () {
-		var username = $("#users option:selected").text();
+		username = $("#users option:selected").text();
 		var uri = "/api/user/game";
 		$("#activeuser").val(username);
-		var token = $('#' + username).val();
+		token = $('#' + username).val();
 		$("#usertoken").val(token);
 		$.ajax({
 			url: uri,
@@ -79,15 +114,15 @@ $(document).ready(function () {
 			success: function (gameid) {
 				$("#usergame").val(gameid);
 				GetGamePlayer();
-				var username = $("#users option:selected").text();
-				var token = $('#' + username).val();
+				username = $("#users option:selected").text();
+				token = $('#' + username).val();
 				ConnectR(token);
 			},
 			error: function () {
 				$("#usergame").val(" ");
 				$("#ingameusers").empty();
-				var username = $("#users option:selected").text();
-				var token = $('#' + username).val();
+				username = $("#users option:selected").text();
+				token = $('#' + username).val();
 				ConnectR(token);
 			}
 		});
@@ -95,9 +130,8 @@ $(document).ready(function () {
 
 	// create new game
 	$("#creategame").click(function () {
-		var uri = "/api/game/create";
-		var username = $("#activeuser").val();
-		var token = $('#' + username).val();
+		connection.invoke("CreateGame").catch(err => console.error(err));
+		/*var uri = "/api/game/create";
 		$.ajax({
 			url: uri,
 			headers: {
@@ -108,15 +142,14 @@ $(document).ready(function () {
 				$("#games").append('<option>' + gameid + '</option>');
 				GetGamePlayer();
 			}
-		});
+		});*/
 	});
 
 	// active user join game [game]
 	$("#joingame").click(function () {
 		var game = $("#games option:selected").text();
-		var uri = "/api/user/join/" + game;
-		var username = $("#activeuser").val();
-		var token = $('#' + username).val();
+		connection.invoke("JoinGame", game);
+		/*var uri = "/api/user/join/" + game;
 		$.ajax({
 			url: uri,
 			headers: {
@@ -126,15 +159,12 @@ $(document).ready(function () {
 				$("#usergame").val(gameid);
 				GetGamePlayer();
 			}
-		});
+		});*/
 	});
 
 	// active user leave current game
 	$("#leavegame").click(function () {
-		var game = $("#usergame").val();
 		var uri = "/api/user/leave";
-		var username = $("#activeuser").val();
-		var token = $('#' + username).val();
 		$.ajax({
 			url: uri,
 			headers: {
