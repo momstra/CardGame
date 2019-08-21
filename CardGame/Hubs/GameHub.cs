@@ -69,8 +69,8 @@ namespace CardGame.API.Hubs
 			if (_gameService.LeaveGame(playerId))
 			{
 				await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameId.ToString());
-				await Clients.Group(gameId.ToString()).PlayerLeft(playerId);
 				await Clients.Caller.LeaveSuccess();
+				await Clients.Group(gameId.ToString()).PlayerLeft(playerId);
 			}
 		}
 

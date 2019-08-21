@@ -1,140 +1,164 @@
-﻿using System;
-using System.Linq;
+﻿using CardGame.Entities;
+using CardGame.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CardGame.Entities;
-using CardGame.Services.Interfaces;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 
 namespace CardGame.API.Controllers
 {
     [Route("api/game")]
 	[Authorize]
-    //[ApiController]
     public class GameController : BaseController
 	{
 		private readonly IGameService _gameService;
-		private readonly IPlayerService _playerService;
+		private readonly IAuthService _authService;
 		private readonly ILogger _logger;
 
-		public GameController(IGameService gameService, IPlayerService playerService, ILogger<GameController> logger)
+		public GameController(IGameService gameService, IAuthService authService, ILogger<GameController> logger)
 		{
 			_gameService = gameService;
-			_playerService = playerService;
+			_authService = authService;
 			_logger = logger;
 		}
 
 		[HttpGet]
 		[AllowAnonymous]
-		public IActionResult Index()
-		{
-			return Ok("Hello");
-		}
+		public IActionResult Index() => Ok("Hello");
 
 
-		// create new game and join asking player
-		// returns new game's GameId on success
+		// create game and join asking player
+		// returns GameId on success
 		[HttpGet("create")]
 		public IActionResult CreateGame()
 		{
-			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			//var currentUser = HttpContext.User;
+			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			string playerId = _authService.GetUserId(HttpContext);
 			_logger.LogInformation("Player [" + playerId + "] requested to create a new game");
 
 			int gameId = _gameService.CreateGame();
-			if (gameId != 0)
-			{
-				_gameService.JoinGame(playerId, gameId);
-				return Ok(gameId);
-			}
+			if (gameId == 0)
+				return NotFound("Game could not be created");
+		
+			if (_gameService.JoinGame(playerId, gameId) == 0)
+				return NotFound("Player could not be joined");
 
-			return NotFound();
+			return Ok(gameId);
 		}
-
-		// player asking to draw card 
+		
 		// returns drawn card on success
 		[HttpGet("draw")]
 		public IActionResult DrawCard()
 		{
-			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			//var currentUser = HttpContext.User;
+			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			string playerId = _authService.GetUserId(HttpContext);
 			Game game = _gameService.GetGame(playerId);
-			if (game != null && game.GameStarted)
-			{
-				Card card = _gameService.DrawCard(game.GameId);
-				if (card != null)
-					return Ok(card.Color + card.Rank);
-			}
+			if (game == null)
+				return NotFound("Game not found");
 
-			return NotFound();
+			if (!game.GameStarted)
+				return NotFound("Game not started");
+
+			Card card = _gameService.DrawCard(game.GameId);
+			if (card == null)
+				return NotFound("Card not found");
+
+			return Ok(card.Color + card.Rank);
 		}
-
-		/*		__if needed again, implement with care
-				// return serialized object for specified game
-				// {id} => game to return
-				[HttpGet("/api/game/show/{id}")]
-				public JsonResult GetGame([FromRoute]int id)
-				{
-					Game game = _service.GetGame(id);
-					_logger.LogInformation("Player list: " + game.Players);
-					return Json(game);
-				}
-		*/
-
-		// asks for player's current game
-		// returns serialized game object
+		
+		// returns serialized game object for player's current game
 		[HttpGet("show")]
 		public JsonResult GetGame()
 		{
-			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			//var currentUser = HttpContext.User;
+			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			string playerId = _authService.GetUserId(HttpContext);
 			Game game = _gameService.GetGame(playerId);
+			if (game == null)
+				return null;
 
 			return Json(game);
 		}
-
-		// ask for list of all games
-		// returns serialized List<int> of all GameIds
+		
+		// returns serialized List<int> of all existing game's ids
 		[HttpGet("list")]
-		public JsonResult GetGames()
-		{
-			return Json(_gameService.GetGamesList());
-		}
+		public JsonResult GetGames() => Json(_gameService.GetGamesList());
 
-		// ask for players in current game
-		// returns serialized List<string> of PlayerIds
+		// returns serialized List<string> of current game's joined player's ids
 		[HttpGet("users")]
 		public JsonResult GetGamePlayers()
 		{
-			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			//var currentUser = HttpContext.User;
+			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			string playerId = _authService.GetUserId(HttpContext);
 			Game game = _gameService.GetGame(playerId);
+			if (game == null)
+				return null;
+
 			return Json(_gameService.GetPlayersIds(game.GameId));
+		}
+
+		// get asking player's currently joined game
+		[HttpGet("get")]
+		public IActionResult GetPlayerGame()
+		{
+			//var currentUser = HttpContext.User;
+			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			string playerId = _authService.GetUserId(HttpContext);
+			Game game = _gameService.GetGame(playerId);
+			if (game == null)
+				return NotFound("");
+
+			return Ok(game.GameId);
+		}
+		
+		// {id} => game to join
+		// returns GameId of joined game on success
+		[HttpGet("join/{id}")]
+		public IActionResult JoinGame([FromRoute] int id)
+		{
+			//var currentUser = HttpContext.User;
+			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			string playerId = _authService.GetUserId(HttpContext);
+			var gameid = _gameService.JoinGame(playerId, id);
+			if (gameid != id)
+				return NotFound("Could not join game");
+
+			return Ok(gameid);
+		}
+
+		// asking to remove player from currently joined game
+		[HttpGet("leave")]
+		public IActionResult LeaveGame()
+		{
+			//var currentUser = HttpContext.User;
+			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			string playerId = _authService.GetUserId(HttpContext);
+			if (!_gameService.LeaveGame(playerId))
+				return NotFound();
+
+			return Ok();
 		}
 
 		// player asking to start current game
 		[HttpGet("/api/game/start")]
 		public IActionResult StartGame()
 		{
-			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			//var currentUser = HttpContext.User;
+			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			string playerId = _authService.GetUserId(HttpContext);
 			Game game = _gameService.GetGame(playerId);
-			if (game != null)
-			{
-				if (_gameService.StartGame(game.GameId))
-					return Ok();
+			if (game == null)
+				return NotFound("Game could not be found");
 
+			if (_gameService.StartGame(game.GameId))
 				return NotFound("Game could not be started");
-			}
 
-			return NotFound("Game could not be found");
+			return Ok();
 		}
 	}
 }

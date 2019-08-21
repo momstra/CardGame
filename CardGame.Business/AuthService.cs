@@ -11,45 +11,31 @@ using CardGame.Entities;
 using CardGame.Services.Interfaces;
 using CardGame.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 
 namespace CardGame.Services
 {
-	public class PlayerService : IPlayerService
+	public class AuthService : IAuthService
 	{
-		private readonly ICardsRepository _repository;
 		private readonly ILogger _logger;
 		private readonly IConfiguration _config;
 
-		public PlayerService(ICardsRepository repository, IConfiguration config, ILogger<PlayerService> logger)
+		public AuthService(IConfiguration config, ILogger<AuthService> logger)
 		{
-			_repository = repository;
 			_config = config;
 			_logger = logger;
 		}
 
-		// for testing
-		public PlayerService(ICardsRepository repository, ILogger<PlayerService> logger)
+		public string GetUserId(HttpContext context)
 		{
-			_repository = repository;
-			_logger = logger;
-		}
-
-		// create new player
-		// returns Player object on success, otherwise null
-		public Player CreatePlayer(string playerId)
-		{
-			if (_repository.GetPlayer(playerId) != null)
+			var currentUser = context.User;
+			if (currentUser.Claims == null)
 				return null;
 
-			_logger.LogInformation("Creating player [" + playerId + "] ...");
-			Player player = new Player(playerId);
-			_repository.AddPlayer(player);
-			_logger.LogInformation("Player [" + playerId + "] has been created");
-			return player;
+			return currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 		}
-/*
-		// token creation for player authorization
-		// returns JWT with claim for (ClaimTypes.NameIdentifier: {user})
+		
+		// generate JWT with claim for (ClaimTypes.NameIdentifier: {user})
 		public string GenerateJWT(string user)
 		{
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -64,11 +50,5 @@ namespace CardGame.Services
 
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
-*/
-		// get player by PlayerId
-		public Player GetPlayer(string playerId) => _repository.GetPlayer(playerId);
-
-		// get all players
-		public List<Player> GetPlayers() => _repository.GetPlayers();
 	}
 }

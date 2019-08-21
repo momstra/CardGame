@@ -131,7 +131,7 @@ $(document).ready(function () {
 	// on user change get new users game
 	$("#changeuser").click(function () {
 		username = $("#users option:selected").text();
-		var uri = "/api/user/game";
+		var uri = "/api/game/get";
 		$("#activeuser").val(username);
 		token = $('#' + username).val();
 		$("#usertoken").val(token);
@@ -159,9 +159,8 @@ $(document).ready(function () {
 
 	// create new game
 	$("#creategame").click(function () {
-		if (connection != null) {
-			connection.invoke("CreateGame").catch(err => console.error(err));
-		} else {
+		connection.invoke("CreateGame").catch(err => console.error(err));
+		/*
 			var uri = "/api/game/create";
 			$.ajax({
 				url: uri,
@@ -174,16 +173,15 @@ $(document).ready(function () {
 					GetGamePlayer();
 				}
 			});
-		}
+		*/
 	});
 
 	// active user join game [game]
 	$("#joingame").click(function () {
 		var game = $("#games option:selected").text();
-		if (connection != null) {
-			connection.invoke("JoinGame", game);
-		} else {
-			var uri = "/api/user/join/" + game;
+		connection.invoke("JoinGame", game);
+		/*
+			var uri = "/api/game/join/" + game;
 			$.ajax({
 				url: uri,
 				headers: {
@@ -194,15 +192,14 @@ $(document).ready(function () {
 					GetGamePlayer();
 				}
 			});
-		}
+		*/
 	});
 
 	// active user leave current game
 	$("#leavegame").click(function () {
-		if (connection != null) {
 			connection.invoke("LeaveGame");
-		} else {
-			var uri = "/api/user/leave";
+		/*
+			var uri = "/api/game/leave";
 			$.ajax({
 				url: uri,
 				headers: {
@@ -213,7 +210,7 @@ $(document).ready(function () {
 					$("#ingameusers").empty();
 				}
 			});
-		}
+		*/
 	});
 
 	// start game

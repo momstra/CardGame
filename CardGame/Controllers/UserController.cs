@@ -19,25 +19,21 @@ namespace CardGame.API.Controllers
 	[Authorize]
     public class UserController : BaseController
 	{
-		private readonly IGameService _gameService;
 		private readonly IPlayerService _playerService;
 		private readonly ILogger _logger;
+		private readonly IAuthService _authService;
 
-		public UserController(IGameService gameService, IPlayerService playerService, ILogger<GameController> logger)
+		public UserController(IPlayerService playerService, ILogger<UserController> logger, IAuthService authService)
 		{
-			_gameService = gameService;
 			_playerService = playerService;
 			_logger = logger;
+			_authService = authService;
 		}
 
 		[HttpGet]
 		[AllowAnonymous]
-		public IActionResult Index()
-		{
-			return Ok("Hello");
-		}
-
-		
+		public IActionResult Index() => Ok("Hello");
+				
 
 		// player creation
 		// {user} => PlayerId == username
@@ -49,17 +45,18 @@ namespace CardGame.API.Controllers
 			if (_playerService.GetPlayer(user) != null)
 				return NotFound("Name already in use.");
 
-			var tokenString = _playerService.GenerateJWT(user);
+			var tokenString = _authService.GenerateJWT(user);// _playerService.GenerateJWT(user);
 			_playerService.CreatePlayer(user);
-			return Ok(new { token = tokenString });
+			return Ok(new TokenContainer(tokenString));
 		}
 
 		// ask for lisk of cards currently in hand
 		[HttpGet("hand")]
 		public JsonResult GetHand()
 		{
-			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			//var currentUser = HttpContext.User;
+			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			var playerId = _authService.GetUserId(HttpContext);
 			var cards = _playerService.GetPlayer(playerId).Hand.Cards;
 			List<string> list = new List<string>();
 			foreach (Card card in cards)
@@ -67,47 +64,6 @@ namespace CardGame.API.Controllers
 
 			return Json(list);
 		}
-
-		// get asking player's currently joined game
-		[HttpGet("game")]
-		public IActionResult GetPlayerGame()
-		{
-			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			Game game = _gameService.GetGame(playerId);
-			if (game == null)
-				return NotFound("");
-
-			return Ok(game.GameId);
-		}
-
-		// join asking player to game with specified GameId
-		// {id} => game to join
-		// returns GameId of joined game on success
-		[HttpGet("join/{id}")]
-		public IActionResult JoinGame([FromRoute] int id)
-		{
-			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			var gameid = _gameService.JoinGame(playerId, id);
-			if (gameid == id)
-				return Ok(gameid);
-
-			return NotFound("Could not join game");
-		}
-
-		// asking to remove player from currently joined game
-		[HttpGet("leave")]
-		public IActionResult LeaveGame()
-		{
-			var currentUser = HttpContext.User;
-			string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			if (_gameService.LeaveGame(playerId))
-				return Ok();
-
-			return NotFound();
-		}
-		
 
 
 		

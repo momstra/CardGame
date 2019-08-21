@@ -62,6 +62,7 @@ namespace CardGame
 			services.AddScoped<ICardsRepository, CardsRepository>();
 			services.AddScoped<IGameService, GameService>();
 			services.AddScoped<IPlayerService, PlayerService>();
+			services.AddScoped<IAuthService, AuthService>();
 			services.AddSignalR();
 			services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 		}

@@ -16,8 +16,8 @@ namespace CardGame.Tests
 	public class GameControllerTest
 	{
 		private readonly GameController _controller;
-		private readonly IGameService _gameService;
-		private readonly IPlayerService _playerService;
+		private readonly IGameService _service;
+		private readonly IAuthService _authService;
 		private readonly ILogger<GameController> _logger;
 
 		public GameControllerTest()
@@ -28,21 +28,11 @@ namespace CardGame.Tests
 			var factory = serviceProvider.GetService<ILoggerFactory>();
 			_logger = factory.CreateLogger<GameController>();
 
-			_gameService = new GameServiceFake();
-			_playerService = new PlayerServiceFake();
-			_controller = new GameController(_gameService, _playerService, _logger);
+			_service = new GameServiceFake();
+			_authService = new AuthServiceFake();
+			_controller = new GameController(_service, _authService, _logger);
 		}
-
-		[Fact]
-		public void CreatePlayer()
-		{
-			var id = "TestplayerCreate";
-			var before = _playerService.GetPlayers().Count;
-			var okResult = _controller.CreatePlayer(id);
-			var after = _playerService.GetPlayers().Count;
-			
-			Assert.True(before == after - 1);
-		}
+		
 
 
 	}
