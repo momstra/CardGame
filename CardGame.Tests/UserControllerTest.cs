@@ -7,6 +7,7 @@ using CardGame.API.Controllers;
 using CardGame.Entities;
 using CardGame.Services.Interfaces;
 using CardGame.Tests.FakeServices;
+using CardGame.Tests.FakeRepositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -19,11 +20,15 @@ namespace CardGame.Tests
 		private readonly UserController _controller;
 		private readonly IPlayerService _service;
 		private readonly IAuthService _authService;
+		private readonly AuthRepository _authRepository;
+		private readonly FakeServicesRepository _repository;
 
 		public UserControllerTest()
 		{
 			_service = new PlayerServiceFake();
 			_authService = new AuthServiceFake();
+			_authRepository = new AuthRepository();
+			_repository = new FakeServicesRepository();
 			_controller = new UserController(_service, new Mock<ILogger<UserController>>().Object, _authService);
 		}
 
@@ -36,7 +41,6 @@ namespace CardGame.Tests
 			var okResult = result as OkObjectResult;	// cast from IActionResult
 			var after = _service.GetPlayers().Count;    // count after creation
 			
-
 			Assert.True(before == after - 1);	// player count before and after creation should differ
 			Assert.Equal(id, ((TokenContainer)okResult.Value).Token);	// result should be "token" which is id for test purposes
 		}
@@ -46,8 +50,9 @@ namespace CardGame.Tests
 		{
 			var id = "TestPlayerHand";
 			var result = _controller.CreatePlayer(id);
-			var okResult = result as OkObjectResult;    // cast from IActionResult
-			var token = okResult.Value.ToString();		
+			var okResult = result as OkObjectResult;  
+			var token = ((TokenContainer)okResult.Value).Token;		
+
 			var player = _service.GetPlayer(id);		// get player object
 			List<Card> cards = new List<Card>()			// create cards for test hand
 			{
@@ -67,33 +72,25 @@ namespace CardGame.Tests
 			foreach (Card card in cards)
 				cardsControl.Add(card.Color + card.Rank);
 
-			var jsonControl = JsonConvert.SerializeObject(cardsControl);	
-
 			player.Hand = new Hand()					// create test Hand
 			{
 				HandId = 1,
 				Cards = cards,
 			};
 
-			var httpContext = new DefaultHttpContext();		// setup fake HttpContext for Authorization
-			httpContext.Request.Headers["Authorization"] = "Bearer JWT" + id;
-
-			var controllerContext = new ControllerContext()	// create fake ControllerContext
+			var httpContext = _authRepository.CreateFakeContext(id);		// setup fake HttpContext for Authorization
+			var controllerContext = new ControllerContext()					// create fake ControllerContext
 			{
 				HttpContext = httpContext,
 			};
-			/*var controller = new UserController(_service, _logger)	
-			{
-				ControllerContext = controllerContext,
-			};*/
 
-			_controller.ControllerContext = controllerContext;	// and feed it to UserController
+			_controller.ControllerContext = controllerContext;				// and feed it to UserController
 
 			// Act
 			JsonResult jsonResult = _controller.GetHand();
 
 			// Assert
-			Assert.Equal(jsonControl, jsonResult.Value);
+			Assert.Equal(cardsControl, jsonResult.Value);
 		}
 	}
 }

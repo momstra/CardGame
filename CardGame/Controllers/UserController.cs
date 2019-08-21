@@ -54,10 +54,15 @@ namespace CardGame.API.Controllers
 		[HttpGet("hand")]
 		public JsonResult GetHand()
 		{
-			//var currentUser = HttpContext.User;
-			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			var playerId = _authService.GetUserId(HttpContext);
-			var cards = _playerService.GetPlayer(playerId).Hand.Cards;
+			var player = _playerService.GetPlayer(playerId);
+			if (player == null)
+				return null;
+
+			var cards = player.Hand.Cards;
+			if (cards == null)
+				return null;
+
 			List<string> list = new List<string>();
 			foreach (Card card in cards)
 				list.Add(card.Color + card.Rank);

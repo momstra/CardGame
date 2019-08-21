@@ -19,10 +19,12 @@ namespace CardGame.Tests
 	{
 		private readonly FakeCardsRepository _repository;
 		private readonly AuthService _service;
+		private readonly AuthRepository _authRepository;
 
 		public AuthServiceTest()
 		{
 			_repository = new FakeCardsRepository();
+			_authRepository = new AuthRepository();
 			_service = new AuthService(new Mock<IConfiguration>().Object, new Mock<ILogger<AuthService>>().Object);
 		}
 
@@ -30,11 +32,7 @@ namespace CardGame.Tests
 		public void GetUserIdTest()
 		{
 			string userId = "TestUser";
-			var claims = new[] { new Claim(ClaimTypes.NameIdentifier, userId) };
-			var httpContext = new DefaultHttpContext()
-			{
-				User = new ClaimsPrincipal(new ClaimsIdentity(claims))
-			};
+			var httpContext = _authRepository.CreateFakeContext(userId);
 
 			var response = _service.GetUserId(httpContext);
 

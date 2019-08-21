@@ -29,10 +29,11 @@ namespace CardGame.Tests.FakeServices
 
 		public Player CreatePlayer(string playerId)
 		{
-			var mockPlayer = new Mock<Player>();
-			mockPlayer.Object.UserId = playerId;
-			_repository.Players.Add(mockPlayer.Object);
-			return mockPlayer.Object;
+			Player player = new Player();
+			player.UserId = playerId;
+			player.Hand = new Hand();
+			_repository.Players.Add(player);
+			return player;
 		}
 
 		public Player GetPlayer(string playerId) => _repository.Players.Find(p => p.UserId == playerId);

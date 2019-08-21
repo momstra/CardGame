@@ -30,7 +30,7 @@ namespace CardGame.Repositories
 			return false;
 		}
 
-		public void AddPlayer(Player player)
+		public void AddPlayer(Player player)	// obsolete
 		{
 			_context.Players.Add(player);
 			_context.SaveChanges();
@@ -50,14 +50,37 @@ namespace CardGame.Repositories
 						Color = color,
 						Rank = rank
 					};
+					_context.Cards.Add(card);
 					deck.Cards.Add(card);
 				}
 			}
+			SaveChanges();
 
 			return true;
 		}
 
-		public Deck CreateDeck() => new Deck();
+		public Deck CreateDeck()
+		{
+			Deck deck = new Deck();
+			_context.Decks.Add(deck);
+			SaveChanges();
+
+			return deck;
+		}
+	
+		public Player CreatePlayer(string playerId)
+		{
+			Player player = new Player(playerId);
+			_context.Players.Add(player);
+
+			Hand hand = new Hand();
+			_context.Hands.Add(hand);
+			player.Hand = hand;
+
+			SaveChanges();
+
+			return player;
+		}
 
 		public Game GetGame(int gameId)
 		{

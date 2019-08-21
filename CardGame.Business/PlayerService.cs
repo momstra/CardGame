@@ -33,8 +33,7 @@ namespace CardGame.Services
 			_repository = repository;
 			_logger = logger;
 		}
-
-		// create new player
+		
 		// returns Player object on success, otherwise null
 		public Player CreatePlayer(string playerId)
 		{
@@ -42,29 +41,17 @@ namespace CardGame.Services
 				return null;
 
 			_logger.LogInformation("Creating player [" + playerId + "] ...");
-			Player player = new Player(playerId);
-			_repository.AddPlayer(player);
+			Player player = _repository.CreatePlayer(playerId);
+			if (player == null)
+			{
+				_logger.LogInformation("Player creation failed [" + playerId + "]");
+				return null;
+			}
+
 			_logger.LogInformation("Player [" + playerId + "] has been created");
 			return player;
 		}
-/*
-		// token creation for player authorization
-		// returns JWT with claim for (ClaimTypes.NameIdentifier: {user})
-		public string GenerateJWT(string user)
-		{
-			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-			var claims = new[] { new Claim(ClaimTypes.NameIdentifier, user) };
 
-			var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-			  _config["Jwt:Issuer"],
-			  claims,
-			  expires: DateTime.Now.AddMinutes(120),
-			  signingCredentials: credentials);
-
-			return new JwtSecurityTokenHandler().WriteToken(token);
-		}
-*/
 		// get player by PlayerId
 		public Player GetPlayer(string playerId) => _repository.GetPlayer(playerId);
 

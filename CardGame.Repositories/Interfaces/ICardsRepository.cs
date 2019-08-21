@@ -10,6 +10,7 @@ namespace CardGame.Repositories.Interfaces
 		void AddPlayer(Player player);
 		bool CreateCards(Deck deck);
 		Deck CreateDeck();
+		Player CreatePlayer(string playerId);
 		Game GetGame(int gameId);
 		List<Game> GetGames();
 		Player GetPlayer(string name);

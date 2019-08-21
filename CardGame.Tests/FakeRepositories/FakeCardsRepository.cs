@@ -46,7 +46,7 @@ namespace CardGame.Tests.FakeRepositories
 		public bool CreateCards(Deck deck)
 		{
 
-			string[] colors = { "diamond", "heart", "spades", "clubs" };
+			string[] colors = { "D", "H", "S", "C" };
 			string[] ranks = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
 
 			foreach (string color in colors)
@@ -58,6 +58,7 @@ namespace CardGame.Tests.FakeRepositories
 						Color = color,
 						Rank = rank
 					};
+					_context.Cards.Add(card);
 					deck.Cards.Add(card);
 				}
 			}
@@ -66,7 +67,28 @@ namespace CardGame.Tests.FakeRepositories
 			return true;
 		}
 
-		public Deck CreateDeck() => new Deck();
+		public Deck CreateDeck()
+		{
+			Deck deck = new Deck();
+			_context.Decks.Add(deck);
+			SaveChanges();
+
+			return deck;
+		}
+
+		public Player CreatePlayer(string playerId)
+		{
+			Player player = new Player(playerId);
+			_context.Players.Add(player);
+
+			Hand hand = new Hand();
+			_context.Hands.Add(hand);
+			player.Hand = hand;
+
+			SaveChanges();
+
+			return player;
+		}
 
 		public Game GetGame(int gameId)
 		{
