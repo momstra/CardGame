@@ -30,6 +30,29 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
+		public void AddCardToHandTest()
+		{
+			var id = "TestPlayerCardAdd";
+			int gameId = 2;
+			int cardId = 1;
+			Hand hand = _repository.CreateHand();
+			var player = _service.CreatePlayer(id);        // get player object
+			player.Hand = hand;
+
+			Deck deck = new Deck();
+			Card card = new Card()
+			{
+				CardId = cardId,
+			};
+			deck.Cards.Add(card);
+			_repository.AddGame(gameId, deck);
+
+			_service.AddCardToHand(cardId, hand.HandId);
+
+			Assert.Contains(card, player.Hand.Cards);
+		}
+
+		[Fact]
 		public void CreatePlayerTest()
 		{
 			int count = _repository.GetPlayers().Count;

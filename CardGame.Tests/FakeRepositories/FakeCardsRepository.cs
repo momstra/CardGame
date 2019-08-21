@@ -76,19 +76,28 @@ namespace CardGame.Tests.FakeRepositories
 			return deck;
 		}
 
+		public Hand CreateHand()
+		{
+			Hand hand = new Hand();
+			_context.Hands.Add(hand);
+			SaveChanges();
+
+			return hand;
+		}
+
 		public Player CreatePlayer(string playerId)
 		{
 			Player player = new Player(playerId);
 			_context.Players.Add(player);
 
-			Hand hand = new Hand();
-			_context.Hands.Add(hand);
-			player.Hand = hand;
+			player.Hand = CreateHand();
 
 			SaveChanges();
 
 			return player;
 		}
+
+		public Card GetCard(int cardId) => _context.Cards.Find(cardId);
 
 		public Game GetGame(int gameId)
 		{
@@ -102,6 +111,8 @@ namespace CardGame.Tests.FakeRepositories
 		}
 
 		public List<Game> GetGames() => _context.Games.ToList();
+
+		public Hand GetHand(int handId) => _context.Hands.Find(handId);
 
 		public Player GetPlayer(string name) => _context.Players.Find(name);
 

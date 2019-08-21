@@ -62,7 +62,7 @@ namespace CardGame.API.Controllers
 			Card card = _gameService.DrawCard(game.GameId);
 			if (card == null)
 				return NotFound("Card not found");
-
+			
 			return Ok(card.Color + card.Rank);
 		}
 

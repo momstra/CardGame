@@ -56,8 +56,11 @@ namespace CardGame.Tests
 		public void DrawCardTest()
 		{
 			string playerId = "TestPlayerDC";
-			var player = new Player(playerId);
-			_repository.Players.Add(player);
+			var player = new Player(playerId);		// create player
+			player.Hand = new Hand();
+			player.Hand.Cards = new List<Card>();
+			_repository.Players.Add(player);		// add player to database
+
 			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(playerId);  // set up context for controller
 
 			int gameId = 1;	
@@ -69,32 +72,35 @@ namespace CardGame.Tests
 			player.Game = game;
 			player.GameId = gameId;
 
-			List<Card> cards = new List<Card>()		// create cards for test deck
+			Card card1 = new Card()			// create cards for test deck
 			{
-				new Card()
-				{
-					Color = "T",
-					Rank = "r1"
-				},
-				new Card()
-				{
-					Color = "T",
-					Rank = "r2"
-				},
+				Color = "T",
+				Rank = "r1"
 			};
-			Deck deck = new Deck()		// create deck for test game
+			Card card2 = new Card()
+			{
+				Color = "T",
+				Rank = "r2"
+			};
+			List<Card> cards = new List<Card>()		
+			{
+				card1,
+				card2,
+			};
+
+			Deck deck = new Deck()			// create deck for test game
 			{
 				Cards = cards,
 			};
 			game.Deck = deck;
-			game.GameStarted = true;
-			_repository.Games.Add(game);
+			game.GameStarted = true;		// "start" test game 
+			_repository.Games.Add(game);	// add game to database
 
 			var result = _controller.DrawCard();
 			var okResult = result as OkObjectResult;
-			var card = okResult.Value;
+			var cardResult = okResult.Value;
 
-			Assert.Equal("Tr1", card);
+			Assert.Equal("Tr1", cardResult);
 		}
 	}
 }

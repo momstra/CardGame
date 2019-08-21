@@ -18,21 +18,24 @@ namespace CardGame.Services
 	{
 		private readonly ICardsRepository _repository;
 		private readonly ILogger _logger;
-		private readonly IConfiguration _config;
 
-		public PlayerService(ICardsRepository repository, IConfiguration config, ILogger<PlayerService> logger)
-		{
-			_repository = repository;
-			_config = config;
-			_logger = logger;
-		}
-
-		// for testing
 		public PlayerService(ICardsRepository repository, ILogger<PlayerService> logger)
 		{
 			_repository = repository;
 			_logger = logger;
 		}
+
+		public bool AddCardToHand(int cardId, int handId)
+		{
+			Hand hand = _repository.GetHand(handId);
+			Card card = _repository.GetCard(cardId);
+
+			hand.Cards.Add(card);
+			if (card.HandId != handId)
+				return false;
+
+			return true;
+		} 
 		
 		// returns Player object on success, otherwise null
 		public Player CreatePlayer(string playerId)

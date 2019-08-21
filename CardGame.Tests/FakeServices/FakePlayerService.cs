@@ -25,7 +25,15 @@ namespace CardGame.Tests.FakeServices
 		public FakePlayerService()
 		{
 			_repository = new FakeServicesRepository();
-			}
+		}
+
+		public bool AddCardToHand(int cardId, int handId)
+		{
+			Hand hand = _repository.Hands.Find(h => h.HandId == handId);
+			Card card = _repository.Cards.Find(c => c.CardId == cardId);
+			hand.Cards.Add(card);
+			return true;
+		}
 
 		public Player CreatePlayer(string playerId)
 		{
