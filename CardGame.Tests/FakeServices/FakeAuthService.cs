@@ -17,11 +17,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace CardGame.Tests.FakeServices
 {
-	public class AuthServiceFake : IAuthService
+	public class FakeAuthService : IAuthService
 	{
 		private readonly FakeServicesRepository _repository;
 
-		public AuthServiceFake()
+		public FakeAuthService()
 		{
 			_repository = new FakeServicesRepository();
 		}

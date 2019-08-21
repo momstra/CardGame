@@ -34,8 +34,6 @@ namespace CardGame.API.Controllers
 		[HttpGet("create")]
 		public IActionResult CreateGame()
 		{
-			//var currentUser = HttpContext.User;
-			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			string playerId = _authService.GetUserId(HttpContext);
 			_logger.LogInformation("Player [" + playerId + "] requested to create a new game");
 
@@ -53,8 +51,6 @@ namespace CardGame.API.Controllers
 		[HttpGet("draw")]
 		public IActionResult DrawCard()
 		{
-			//var currentUser = HttpContext.User;
-			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			string playerId = _authService.GetUserId(HttpContext);
 			Game game = _gameService.GetGame(playerId);
 			if (game == null)
@@ -69,45 +65,11 @@ namespace CardGame.API.Controllers
 
 			return Ok(card.Color + card.Rank);
 		}
-		
-		// returns serialized game object for player's current game
-		[HttpGet("show")]
-		public JsonResult GetGame()
-		{
-			//var currentUser = HttpContext.User;
-			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			string playerId = _authService.GetUserId(HttpContext);
-			Game game = _gameService.GetGame(playerId);
-			if (game == null)
-				return null;
-
-			return Json(game);
-		}
-		
-		// returns serialized List<int> of all existing game's ids
-		[HttpGet("list")]
-		public JsonResult GetGames() => Json(_gameService.GetGamesList());
-
-		// returns serialized List<string> of current game's joined player's ids
-		[HttpGet("users")]
-		public JsonResult GetGamePlayers()
-		{
-			//var currentUser = HttpContext.User;
-			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			string playerId = _authService.GetUserId(HttpContext);
-			Game game = _gameService.GetGame(playerId);
-			if (game == null)
-				return null;
-
-			return Json(_gameService.GetPlayersIds(game.GameId));
-		}
 
 		// get asking player's currently joined game
 		[HttpGet("get")]
 		public IActionResult GetPlayerGame()
 		{
-			//var currentUser = HttpContext.User;
-			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			string playerId = _authService.GetUserId(HttpContext);
 			Game game = _gameService.GetGame(playerId);
 			if (game == null)
@@ -121,8 +83,6 @@ namespace CardGame.API.Controllers
 		[HttpGet("join/{id}")]
 		public IActionResult JoinGame([FromRoute] int id)
 		{
-			//var currentUser = HttpContext.User;
-			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			string playerId = _authService.GetUserId(HttpContext);
 			var gameid = _gameService.JoinGame(playerId, id);
 			if (gameid != id)
@@ -135,21 +95,33 @@ namespace CardGame.API.Controllers
 		[HttpGet("leave")]
 		public IActionResult LeaveGame()
 		{
-			//var currentUser = HttpContext.User;
-			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			string playerId = _authService.GetUserId(HttpContext);
 			if (!_gameService.LeaveGame(playerId))
 				return NotFound();
 
 			return Ok();
 		}
+		
+		// returns serialized List<int> of all existing game's ids
+		[HttpGet("list")]
+		public JsonResult GetGames() => Json(_gameService.GetGamesList());
+		
+		// returns serialized game object for player's current game
+		[HttpGet("show")]
+		public JsonResult GetGame()
+		{
+			string playerId = _authService.GetUserId(HttpContext);
+			Game game = _gameService.GetGame(playerId);
+			if (game == null)
+				return null;
+
+			return Json(game);
+		}
 
 		// player asking to start current game
-		[HttpGet("/api/game/start")]
+		[HttpGet("start")]
 		public IActionResult StartGame()
 		{
-			//var currentUser = HttpContext.User;
-			//string playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			string playerId = _authService.GetUserId(HttpContext);
 			Game game = _gameService.GetGame(playerId);
 			if (game == null)
@@ -159,6 +131,18 @@ namespace CardGame.API.Controllers
 				return NotFound("Game could not be started");
 
 			return Ok();
+		}
+
+		// returns serialized List<string> of current game's joined player's ids
+		[HttpGet("users")]
+		public JsonResult GetGamePlayers()
+		{
+			string playerId = _authService.GetUserId(HttpContext);
+			Game game = _gameService.GetGame(playerId);
+			if (game == null)
+				return null;
+
+			return Json(_gameService.GetPlayersIds(game.GameId));
 		}
 	}
 }

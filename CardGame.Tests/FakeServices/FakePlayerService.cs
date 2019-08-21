@@ -18,11 +18,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace CardGame.Tests.FakeServices
 {
-	public class PlayerServiceFake : IPlayerService
+	public class FakePlayerService : IPlayerService
 	{
 		private readonly FakeServicesRepository _repository;
 
-		public PlayerServiceFake()
+		public FakePlayerService()
 		{
 			_repository = new FakeServicesRepository();
 			}

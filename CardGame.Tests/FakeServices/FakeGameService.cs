@@ -16,22 +16,26 @@ using Microsoft.Extensions.Configuration;
 
 namespace CardGame.Tests.FakeServices
 {
-	public class GameServiceFake : IGameService
+	public class FakeGameService : IGameService
 	{
 		private readonly FakeServicesRepository _repository;
 
-		public GameServiceFake()
+		public FakeGameService()
 		{
 			_repository = new FakeServicesRepository();
+		}
+
+		public FakeGameService(FakeServicesRepository repository)
+		{
+			_repository = repository;
 		}
 
 		public int CreateGame()
 		{
 			Random random = new Random();
 			var gameId = random.Next(10, 20);
-			var mockGame = new Mock<Game>();
-			mockGame.Object.GameId = gameId;
-			_repository.Games.Add(mockGame.Object);
+			var game = new Game(gameId);
+			_repository.Games.Add(game);
 			return gameId;
 		}
 
@@ -72,6 +76,8 @@ namespace CardGame.Tests.FakeServices
 			var game = _repository.Games.Find(g => g.GameId == gameId);
 			var player = _repository.Players.Find(p => p.UserId == playerId);
 			game.Players.Add(player);
+			player.Game = game;
+			player.GameId = gameId;
 
 			return game.GameId;
 		}

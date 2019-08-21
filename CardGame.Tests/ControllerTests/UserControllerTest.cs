@@ -25,8 +25,8 @@ namespace CardGame.Tests
 
 		public UserControllerTest()
 		{
-			_service = new PlayerServiceFake();
-			_authService = new AuthServiceFake();
+			_service = new FakePlayerService();
+			_authService = new FakeAuthService();
 			_authRepository = new AuthRepository();
 			_repository = new FakeServicesRepository();
 			_controller = new UserController(_service, new Mock<ILogger<UserController>>().Object, _authService);
@@ -41,7 +41,7 @@ namespace CardGame.Tests
 			var okResult = result as OkObjectResult;	// cast from IActionResult
 			var after = _service.GetPlayers().Count;    // count after creation
 			
-			Assert.True(before == after - 1);	// player count before and after creation should differ
+			Assert.True(before == after - 1);							// player count before and after creation should differ
 			Assert.Equal(id, ((TokenContainer)okResult.Value).Token);	// result should be "token" which is id for test purposes
 		}
 
@@ -68,29 +68,26 @@ namespace CardGame.Tests
 				},
 			};
 
-			List<string> cardsControl = new List<string>();		// create control for comparison
+			List<string> cardsControl = new List<string>();			// create control for comparison
 			foreach (Card card in cards)
 				cardsControl.Add(card.Color + card.Rank);
 
-			player.Hand = new Hand()					// create test Hand
+			player.Hand = new Hand()								// create test Hand
 			{
 				HandId = 1,
 				Cards = cards,
 			};
-
-			var httpContext = _authRepository.CreateFakeContext(id);		// setup fake HttpContext for Authorization
-			var controllerContext = new ControllerContext()					// create fake ControllerContext
-			{
-				HttpContext = httpContext,
-			};
-
-			_controller.ControllerContext = controllerContext;				// and feed it to UserController
+			
+			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(id);	// set up context for UserController
 
 			// Act
 			JsonResult jsonResult = _controller.GetHand();
 
 			// Assert
 			Assert.Equal(cardsControl, jsonResult.Value);
+			Assert.Contains("Tr1", cardsControl);
+			Assert.Contains("Tr2", cardsControl);
+			Assert.DoesNotContain("Tr3", cardsControl);
 		}
 	}
 }

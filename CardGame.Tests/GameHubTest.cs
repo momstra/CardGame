@@ -38,7 +38,7 @@ namespace CardGame.Tests
 				.Build();
 		}
 
-		[Fact]
+		//[Fact]
 		public async Task HubIsWorking()
 		{
 			var message = "GameHub message";
