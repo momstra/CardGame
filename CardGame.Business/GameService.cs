@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
 
 
 using CardGame.Entities;
@@ -123,11 +118,12 @@ namespace CardGame.Services
 		// get list of all players (ids) in game with GameId
 		public List<string> GetPlayersIds(int gameId)
 		{
-			var players = _repository.GetGame(gameId).Players.ToList();
+			var players = _repository.GetGame(gameId).Players;
 			List<string> playerIds = new List<string>();
 			foreach (Player player in players)
+			{
 				playerIds.Add(player.UserId);
-
+			}
 			return playerIds;
 		}
 
@@ -153,6 +149,9 @@ namespace CardGame.Services
 
 			game.Players.Add(player);
 			_repository.SaveChanges();
+			if (player.Game != game)
+				return 0;
+
 			_logger.LogInformation("Player [" + playerId + "] joined game [" + gameId + "]");
 
 			return gameId;
@@ -179,6 +178,28 @@ namespace CardGame.Services
 			}
 
 			return false;
+		}
+
+		// serve cards 
+		public bool ServeCards(int gameId)
+		{
+			Game game = GetGame(gameId);
+			if (game == null)
+				return false;
+
+			for (int i = 0; i < game.StartingHand; i++)
+			{
+				foreach (Player player in game.Players)
+				{
+					var card = DrawCard(gameId);
+					if (card == null)
+						return false;
+
+					player.Hand.Cards.Add(card);
+				}
+			}
+
+			return true;
 		}
 
 		// initiate shuffling for game with GameId

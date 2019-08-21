@@ -214,6 +214,30 @@ namespace CardGame.Tests
 			Assert.True(_gameService.LeaveGame(player1Id, gameId));	// leave returns true if successfull
 			Assert.DoesNotContain(player1, game.Players);		// should not contain player1 any longer
 		}
+
+		[Fact]
+		public void ServeCardsTest()
+		{
+			int gameId = _gameService.CreateGame();
+			Game game = _repository.GetGames().Find(g => g.GameId == gameId);
+			game.MinPlayers = 2;
+			//var mockPlayer1 = new Mock<Player>();
+			//var mockPlayer2 = new Mock<Player>();
+			var player1 = new Player();// mockPlayer1.Object;
+			var player2 = new Player();// mockPlayer2.Object;
+			player1.Hand = new Hand();
+			player2.Hand = new Hand();
+			game.Players.Add(player1);
+			game.Players.Add(player2);
+			game.StartingHand = 4;
+			_gameService.StartGame(gameId);
+
+			Assert.True(_gameService.ServeCards(gameId));   // serve method returns true when successfull
+			Assert.Equal(4, player1.Hand.Cards.Count);
+			Assert.Equal(player2.Hand.Cards.Count, player1.Hand.Cards.Count); //both hands should hold 4 cards
+			Assert.NotEqual(player1.Hand.Cards, player2.Hand.Cards);
+		}
+
 		
 		[Fact]
 		public void ShuffleTest()

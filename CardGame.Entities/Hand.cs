@@ -10,7 +10,10 @@ namespace CardGame.Entities
 
 		public virtual ICollection<Card> Cards { get; set; }
 
-		public Hand() { }
+		public Hand()
+		{
+			Cards = new List<Card>();
+		}
 
 		public Hand(int handId)
 		{

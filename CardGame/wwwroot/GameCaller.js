@@ -14,12 +14,11 @@ $(document).ready(function () {
 			.build();
 
 		connection.on("GameAdded", (gameid) => {
-			//$("#games").append('<option>' + gameid + '</option>');
 			GetGameList();
 		});
 
 		connection.on("GameStarted", () => {
-
+			GetHand();
 		});
 
 		connection.on("JoinSuccess", (gameid) => {
@@ -37,7 +36,6 @@ $(document).ready(function () {
 		});
 
 		connection.on("PlayerJoined", (username) => {
-			//$("#ingameusers").append('<option>' + username + '</option>');
 			GetGamePlayer();
 		});
 
@@ -63,7 +61,7 @@ $(document).ready(function () {
 			},
 			success: function (json) {
 				$("#games").empty();
-				$.each(json, function (key, game) {
+				$.each(json, function (_key, game) {
 					$("#games").append('<option>' + game + '</option>');
 				});
 			},
@@ -83,12 +81,28 @@ $(document).ready(function () {
 			},
 			success: function (json) {
 				$("#ingameusers").empty();
-				$.each(json, function (key, player) {
+				$.each(json, function (_key, player) {
 					$("#ingameusers").append('<option>' + player + '</option>');
 				});
 			},
 			error: function () {
 				$("#ingameusers").empty();
+			}
+		});
+	}
+
+	// retrieve player's hand
+	function GetHand() {
+		var uri = "/api/user/hand";
+		$.ajax({
+			url: uri,
+			headers: {
+				"Authorization": "Bearer " + token
+			},
+			success: function (json) {
+				$.each(json, function (_key, card) {
+					$("#cardcontainer").append('<input type="button" id="' + card + '" value="' + card + '" />');
+				});
 			}
 		});
 	}
@@ -103,6 +117,7 @@ $(document).ready(function () {
 			success: function (tok) {
 				token = tok.token.toString();
 				$("#userform").append('<input type="hidden" id="' + name + '" value="' + token + '" />');
+				$("#users").append('<option>' + name + '</option>');
 				$("#activeuser").val(name);
 				$("#usertoken").val(token);
 				$("#usergame").val(" ");
@@ -199,5 +214,10 @@ $(document).ready(function () {
 				}
 			});
 		}
+	});
+
+	// start game
+	$("#startgame").click(function () {
+		connection.invoke("StartGame");
 	});
 });
