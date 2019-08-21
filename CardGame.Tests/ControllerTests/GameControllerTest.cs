@@ -52,5 +52,49 @@ namespace CardGame.Tests
 			Assert.Contains(player, game.Players);
 		}
 
+		[Fact]
+		public void DrawCardTest()
+		{
+			string playerId = "TestPlayerDC";
+			var player = new Player(playerId);
+			_repository.Players.Add(player);
+			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(playerId);  // set up context for controller
+
+			int gameId = 1;	
+			var game = new Game(gameId);		// create game and add player
+			game.Players = new List<Player>()
+			{
+				player,
+			};
+			player.Game = game;
+			player.GameId = gameId;
+
+			List<Card> cards = new List<Card>()		// create cards for test deck
+			{
+				new Card()
+				{
+					Color = "T",
+					Rank = "r1"
+				},
+				new Card()
+				{
+					Color = "T",
+					Rank = "r2"
+				},
+			};
+			Deck deck = new Deck()		// create deck for test game
+			{
+				Cards = cards,
+			};
+			game.Deck = deck;
+			game.GameStarted = true;
+			_repository.Games.Add(game);
+
+			var result = _controller.DrawCard();
+			var okResult = result as OkObjectResult;
+			var card = okResult.Value;
+
+			Assert.Equal("Tr1", card);
+		}
 	}
 }

@@ -35,13 +35,26 @@ namespace CardGame.Tests.FakeServices
 			Random random = new Random();
 			var gameId = random.Next(10, 20);
 			var game = new Game(gameId);
+			game.Deck = new Deck();
 			_repository.Games.Add(game);
+
 			return gameId;
 		}
 
 		public Card DrawCard(int gameId)
 		{
-			throw new NotImplementedException();
+			Game game = GetGame(gameId);
+			if (game == null)
+				return null;
+
+			List<Card> cards = game.Deck.Cards as List<Card>;
+			if (cards == null)
+				return null;
+
+			Card card = cards[0];
+			cards.RemoveAt(0);
+
+			return card;
 		}
 
 		public Game GetGame(int gameId) => _repository.Games.Find(g => g.GameId == gameId);
