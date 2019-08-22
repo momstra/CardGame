@@ -201,7 +201,7 @@ namespace CardGame.Services
 					if (card == null)
 						return false;
 
-					player.Cards.Add(card);
+					player.Hand.Add(card);
 				}
 			}
 

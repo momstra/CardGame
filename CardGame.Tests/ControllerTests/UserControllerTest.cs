@@ -67,7 +67,7 @@ namespace CardGame.Tests
 					Rank = "r2"
 				},
 			};
-			player.Cards = cards;						// add cards to player
+			player.Hand = cards;						// add cards to player
 
 			List<string> cardsControl = new List<string>();			// create control for comparison
 			foreach (Card card in cards)

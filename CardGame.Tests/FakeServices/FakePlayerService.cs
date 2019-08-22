@@ -31,7 +31,7 @@ namespace CardGame.Tests.FakeServices
 		{
 			Player player = _repository.Players.Find(p => p.UserId == playerId);
 			Card card = _repository.Cards.Find(c => c.CardId == cardId);
-			player.Cards.Add(card);
+			player.Hand.Add(card);
 			return true;
 		}
 

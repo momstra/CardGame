@@ -8,12 +8,9 @@ namespace CardGame.Entities
 	{
 		public string UserId { get; set; }
 		public string HubId { get; set; }
-
-		//public int HandId { get; set; }
-		//public virtual Hand Hand { get; set; }
 		
 		// players hand 
-		public virtual ICollection<Card> Cards { get; set; }
+		public virtual ICollection<Card> Hand { get; set; }
 
 		// game player has joined
 		public int? GameId { get; set; }
@@ -24,7 +21,7 @@ namespace CardGame.Entities
 		public Player(string userId)
 		{
 			UserId = userId;
-			Cards = new List<Card>();
+			Hand = new List<Card>();
 		}
 	}
 }

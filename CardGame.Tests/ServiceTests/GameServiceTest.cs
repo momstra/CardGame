@@ -231,9 +231,9 @@ namespace CardGame.Tests
 			_gameService.StartGame(gameId);
 
 			Assert.True(_gameService.ServeStartingHands(gameId));   // serve method returns true when successfull
-			Assert.Equal(4, player1.Cards.Count);
-			Assert.Equal(player2.Cards.Count, player1.Cards.Count); //both hands should hold 4 cards
-			Assert.NotEqual(player1.Cards, player2.Cards);
+			Assert.Equal(4, player1.Hand.Count);
+			Assert.Equal(player2.Hand.Count, player1.Hand.Count); //both hands should hold 4 cards
+			Assert.NotEqual(player1.Hand, player2.Hand);
 		}
 
 		

@@ -30,7 +30,7 @@ namespace CardGame.Services
 			Player player = _repository.GetPlayer(playerId);
 			Card card = _repository.GetCard(cardId);
 
-			player.Cards.Add(card);
+			player.Hand.Add(card);
 			if (card.UserId != playerId)
 				return false;
 

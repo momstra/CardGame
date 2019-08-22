@@ -93,7 +93,7 @@ namespace CardGame.Repositories
 
 		public List<Game> GetGames() => _context.Games.ToList();
 
-		public List<Card> GetHand(string playerId) => _context.Players.Find(playerId).Cards.ToList();
+		public List<Card> GetHand(string playerId) => _context.Players.Find(playerId).Hand.ToList();
 
 		public Player GetPlayer(string name) => _context.Players.Find(name);
 

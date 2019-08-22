@@ -45,7 +45,7 @@ namespace CardGame.Tests
 			_service.AddCardToHand(cardId, id);
 
 			// Assert
-			Assert.Contains(card, player.Cards);	// card should be in player's hand
+			Assert.Contains(card, player.Hand);	// card should be in player's hand
 		}
 
 		[Fact]
