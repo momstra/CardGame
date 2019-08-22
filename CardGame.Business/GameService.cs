@@ -98,7 +98,7 @@ namespace CardGame.Services
 		}
 
 		// get list of all games (ids)
-		public List<int> GetGamesList()
+		public List<int> GetGameIdsList()
 		{
 			var games = _repository.GetGames();
 			List<int> gameIds = new List<int>();

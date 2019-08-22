@@ -63,7 +63,7 @@ namespace CardGame.Tests.FakeServices
 
 		public List<Game> GetGames() => _repository.Games;
 
-		public List<int> GetGamesList()
+		public List<int> GetGameIdsList()
 		{
 			var list = new List<int>();
 			foreach(Game game in _repository.Games)

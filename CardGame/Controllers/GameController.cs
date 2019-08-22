@@ -104,7 +104,7 @@ namespace CardGame.API.Controllers
 		
 		// returns serialized List<int> of all existing game's ids
 		[HttpGet("list")]
-		public JsonResult GetGames() => Json(_gameService.GetGamesList());
+		public JsonResult GetGames() => Json(_gameService.GetGameIdsList());
 		
 		// returns serialized game object for player's current game
 		[HttpGet("show")]

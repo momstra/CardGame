@@ -14,7 +14,7 @@ namespace CardGame.Services.Interfaces
 		Game GetGame(int gameId);
 		Game GetGame(string userId);
 		List<Game> GetGames();
-		List<int> GetGamesList();
+		List<int> GetGameIdsList();
 		List<Player> GetPlayers(int gameId);
 		List<string> GetPlayersIds(int gameId);
 		int JoinGame(string playerId, int gameId);

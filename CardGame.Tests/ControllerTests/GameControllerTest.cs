@@ -202,6 +202,48 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
+		public void GetGameIdsTest()
+		{
+			string playerId = "TestPlayerList";
+			var player = new Player(playerId);      // create player
+			_repository.Players.Add(player);        // add player to database
+
+			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(playerId);  // set up context for controller
+
+			int gameId1 = 1;
+			int gameId2 = 2;
+			var game1 = new Game(gameId1);			// create games
+			var game2 = new Game(gameId2);
+			_repository.Games.Add(game1);			// add game to database
+
+			// Act
+			var result = _controller.GetGames();
+			var result1 = result as JsonResult;
+
+			_repository.Games.Add(game2);
+			result = _controller.GetGames();
+			var result2 = result as JsonResult;
+
+			_repository.Games.Remove(game2);
+			result = _controller.GetGames();
+			var result3 = result as JsonResult;
+
+			// Assert
+			Assert.IsType<JsonResult>(result1);							// result1 should contain serialized list of all game's ids
+			Assert.Contains(gameId1, result1.Value as List<int>);		// result1 should contain game1
+			Assert.DoesNotContain(gameId2, result1.Value as List<int>);  // but not game2 as it is not yet added to database
+
+			Assert.IsType<JsonResult>(result2);                    
+			Assert.Contains(gameId1, result2.Value as List<int>);			// result2 should contain game1
+			Assert.Contains(gameId2, result2.Value as List<int>);			// and game2 as it is now added to database
+			Assert.DoesNotContain(3, result2.Value as List<int>); // but not any random game
+
+			Assert.IsType<JsonResult>(result3);                   
+			Assert.Contains(gameId1, result3.Value as List<int>);        // result1 should still contain game1
+			Assert.DoesNotContain(gameId2, result3.Value as List<int>);  // but game2 not anymore as it was removed from database
+		}
+
+		[Fact]
 		public void GetGameTest()
 		{
 			string playerId = "TestPlayerShow";
