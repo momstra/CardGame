@@ -15,53 +15,52 @@ namespace CardGame.Tests
 	{
 		private readonly FakeCardsRepository _repository;
 		private readonly PlayerService _service;
-		private readonly ILogger<PlayerService> _logger;
 
 		public PlayerServiceTest()
 		{
-			var serviceProvider = new ServiceCollection()
-				.AddLogging()
-				.BuildServiceProvider();
-			var factory = serviceProvider.GetService<ILoggerFactory>();
-			_logger = factory.CreateLogger<PlayerService>();
-
 			_repository = new FakeCardsRepository();
-			_service = new PlayerService(_repository, _logger);
+			_service = new PlayerService(_repository, new Mock<ILogger<PlayerService>>().Object);
 		}
 
 		[Fact]
 		public void AddCardToHandTest()
 		{
 			var id = "TestPlayerCardAdd";
-			int gameId = 2;
-			int cardId = 1;
-			Hand hand = _repository.CreateHand();
-			var player = _service.CreatePlayer(id);        // get player object
-			player.Hand = hand;
+			int gameId = 22;
+			int cardId = 1111;
 
-			Deck deck = new Deck();
-			Card card = new Card()
+			// build test player
+			var player = _service.CreatePlayer(id);		// create player 
+
+			// build test game
+			Deck deck = new Deck();						// create deck for test game
+			Card card = new Card()						// create a card and add it
 			{
 				CardId = cardId,
 			};
-			deck.Cards.Add(card);
-			_repository.AddGame(gameId, deck);
+			deck.Cards.Add(card);					
+			_repository.AddGame(gameId, deck);			// add game to database
 
-			_service.AddCardToHand(cardId, hand.HandId);
+			// Act
+			_service.AddCardToHand(cardId, id);
 
-			Assert.Contains(card, player.Hand.Cards);
+			// Assert
+			Assert.Contains(card, player.Cards);	// card should be in player's hand
 		}
 
 		[Fact]
 		public void CreatePlayerTest()
 		{
-			int count = _repository.GetPlayers().Count;
-			Player player = _service.CreatePlayer("CreatePlayer");
+			int count = _repository.GetPlayers().Count;	// get player count before action
+			string id = "CreatePlayer";
 
-			Assert.NotEqual(_repository.GetPlayers().Count, count);
-			Assert.True(_repository.GetPlayers().Count == count + 1);   // Players count should have increased
-			Assert.Equal(_repository.GetPlayers().Find(p => p.UserId == "CreatePlayer"), player);   // player should match saved player
-			Assert.Null(_service.CreatePlayer("CreatePlayer")); // player should not be created as id already exists
+			// Act
+			Player player = _service.CreatePlayer(id);
+
+			// Assert	
+			Assert.True(_repository.GetPlayers().Count == count + 1);					// player count should have increased
+			Assert.Equal(_repository.GetPlayers().Find(p => p.UserId == id), player);   // player should match saved player
+			Assert.Null(_service.CreatePlayer(id));										// player should not be created as id already exists
 		}
 	}
 }

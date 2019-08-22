@@ -10,7 +10,6 @@ namespace CardGame.Tests.FakeRepositories
 		private readonly List<Game> _games;
 		private readonly List<Player> _players;
 		private readonly List<Card> _cards;
-		private readonly List<Hand> _hands;
 
 		public FakeServicesRepository()
 		{
@@ -24,7 +23,6 @@ namespace CardGame.Tests.FakeRepositories
 		public List<Player> Players { get => _players; }
 
 		public List<Card> Cards { get => _cards; }
-
-		public List<Hand> Hands { get => _hands; }
+		
 	}
 }

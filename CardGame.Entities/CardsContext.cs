@@ -9,7 +9,6 @@ namespace CardGame.Entities
 
 		public DbSet<Card> Cards { get; set; }
 		public DbSet<Deck> Decks { get; set; }
-		public DbSet<Hand> Hands { get; set; }
 		public DbSet<Game> Games { get; set; }
 		public DbSet<Player> Players { get; set; }
 
@@ -28,9 +27,6 @@ namespace CardGame.Entities
 				.WithMany(g => g.Players)
 				.HasForeignKey(p => p.GameId)
 				.OnDelete(DeleteBehavior.SetNull);
-			/*builder.Entity<Game>()
-				.HasMany(g => g.Players)
-				.WithOne(p => p.Game);*/
 		}
 	}
 

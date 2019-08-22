@@ -25,13 +25,13 @@ namespace CardGame.Services
 			_logger = logger;
 		}
 
-		public bool AddCardToHand(int cardId, int handId)
+		public bool AddCardToHand(int cardId, string playerId)
 		{
-			Hand hand = _repository.GetHand(handId);
+			Player player = _repository.GetPlayer(playerId);
 			Card card = _repository.GetCard(cardId);
 
-			hand.Cards.Add(card);
-			if (card.HandId != handId)
+			player.Cards.Add(card);
+			if (card.UserId != playerId)
 				return false;
 
 			return true;

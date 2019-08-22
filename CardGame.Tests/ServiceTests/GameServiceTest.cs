@@ -216,26 +216,24 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
-		public void ServeCardsTest()
+		public void ServeStartingHandsTest()
 		{
 			int gameId = _gameService.CreateGame();
 			Game game = _repository.GetGames().Find(g => g.GameId == gameId);
 			game.MinPlayers = 2;
-			//var mockPlayer1 = new Mock<Player>();
-			//var mockPlayer2 = new Mock<Player>();
-			var player1 = new Player();// mockPlayer1.Object;
-			var player2 = new Player();// mockPlayer2.Object;
-			player1.Hand = new Hand();
-			player2.Hand = new Hand();
+			string player1Id = "ServerP1";
+			string player2Id = "ServerP2";
+			var player1 = new Player(player1Id);
+			var player2 = new Player(player2Id);
 			game.Players.Add(player1);
 			game.Players.Add(player2);
 			game.StartingHand = 4;
 			_gameService.StartGame(gameId);
 
-			Assert.True(_gameService.ServeCards(gameId));   // serve method returns true when successfull
-			Assert.Equal(4, player1.Hand.Cards.Count);
-			Assert.Equal(player2.Hand.Cards.Count, player1.Hand.Cards.Count); //both hands should hold 4 cards
-			Assert.NotEqual(player1.Hand.Cards, player2.Hand.Cards);
+			Assert.True(_gameService.ServeStartingHands(gameId));   // serve method returns true when successfull
+			Assert.Equal(4, player1.Cards.Count);
+			Assert.Equal(player2.Cards.Count, player1.Cards.Count); //both hands should hold 4 cards
+			Assert.NotEqual(player1.Cards, player2.Cards);
 		}
 
 		

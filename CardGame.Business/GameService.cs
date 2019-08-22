@@ -181,10 +181,16 @@ namespace CardGame.Services
 		}
 
 		// serve cards 
-		public bool ServeCards(int gameId)
+		public bool ServeStartingHands(int gameId)
 		{
 			Game game = GetGame(gameId);
 			if (game == null)
+				return false;
+
+			if (game.GameStarted != true)
+				return false;
+
+			if (game.Players.Count < game.MinPlayers || game.Players.Count > game.MaxPlayers)
 				return false;
 
 			for (int i = 0; i < game.StartingHand; i++)
@@ -195,7 +201,7 @@ namespace CardGame.Services
 					if (card == null)
 						return false;
 
-					player.Hand.Cards.Add(card);
+					player.Cards.Add(card);
 				}
 			}
 

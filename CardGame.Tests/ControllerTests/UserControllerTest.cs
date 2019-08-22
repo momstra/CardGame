@@ -54,7 +54,7 @@ namespace CardGame.Tests
 			var token = ((TokenContainer)okResult.Value).Token;		
 
 			var player = _service.GetPlayer(id);		// get player object
-			List<Card> cards = new List<Card>()			// create cards for test hand
+			List<Card> cards = new List<Card>()			// create cards for test player's hand
 			{
 				new Card()
 				{
@@ -67,16 +67,12 @@ namespace CardGame.Tests
 					Rank = "r2"
 				},
 			};
+			player.Cards = cards;						// add cards to player
 
 			List<string> cardsControl = new List<string>();			// create control for comparison
 			foreach (Card card in cards)
 				cardsControl.Add(card.Color + card.Rank);
 
-			player.Hand = new Hand()								// create test Hand
-			{
-				HandId = 1,
-				Cards = cards,
-			};
 			
 			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(id);	// set up context for UserController
 

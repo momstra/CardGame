@@ -59,7 +59,7 @@ namespace CardGame.API.Controllers
 			if (player == null)
 				return null;
 
-			var cards = player.Hand.Cards;
+			var cards = player.Cards;
 			if (cards == null)
 				return null;
 

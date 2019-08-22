@@ -57,8 +57,6 @@ namespace CardGame.Tests
 		{
 			string playerId = "TestPlayerDC";
 			var player = new Player(playerId);		// create player
-			player.Hand = new Hand();
-			player.Hand.Cards = new List<Card>();
 			_repository.Players.Add(player);		// add player to database
 
 			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(playerId);  // set up context for controller

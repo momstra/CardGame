@@ -67,22 +67,11 @@ namespace CardGame.Repositories
 
 			return deck;
 		}
-
-		public Hand CreateHand()
-		{
-			Hand hand = new Hand();
-			_context.Hands.Add(hand);
-			SaveChanges();
-
-			return hand;
-		}
 	
 		public Player CreatePlayer(string playerId)
 		{
 			Player player = new Player(playerId);
 			_context.Players.Add(player);
-
-			player.Hand = CreateHand();
 
 			SaveChanges();
 
@@ -104,7 +93,7 @@ namespace CardGame.Repositories
 
 		public List<Game> GetGames() => _context.Games.ToList();
 
-		public Hand GetHand(int handId) => _context.Hands.Find(handId);
+		public List<Card> GetHand(string playerId) => _context.Players.Find(playerId).Cards.ToList();
 
 		public Player GetPlayer(string name) => _context.Players.Find(name);
 
