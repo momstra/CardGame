@@ -87,7 +87,13 @@ namespace CardGame.Tests.FakeServices
 		public int JoinGame(string playerId, int gameId)
 		{
 			var game = _repository.Games.Find(g => g.GameId == gameId);
+			if (game == null)
+				return 0;
+
 			var player = _repository.Players.Find(p => p.UserId == playerId);
+			if (player == null)
+				return 0;
+
 			game.Players.Add(player);
 			player.Game = game;
 			player.GameId = gameId;

@@ -132,5 +132,34 @@ namespace CardGame.Tests
 			// Assert
 			Assert.Equal(player.GameId, gameIdResult);	// should return gameId of player's joined game
 		}
+
+		[Fact]
+		public void JoinGameTest()
+		{
+			string playerId = "TestPlayerJoin";
+			var player = new Player(playerId);      // create player
+			_repository.Players.Add(player);        // add player to database
+
+			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(playerId);  // set up context for controller
+
+			int gameId = 1;
+			var game = new Game(gameId);        // create game to join
+			_repository.Games.Add(game);		// add game to database
+
+			// Act
+			var result = _controller.JoinGame(gameId);	// existing game
+			var okResult = result as OkObjectResult;
+			var gameIdResult = okResult.Value;
+
+			result = _controller.JoinGame(1000000);     // non existing game
+			var notFoundResult = result as NotFoundObjectResult;
+
+			// Assert
+			Assert.Equal(player.GameId, gameIdResult);  // should return gameId of player's joined game
+			Assert.Equal(game, player.Game);			// player's game should be game
+			Assert.Contains(player, game.Players);      // game's players list should contain player
+
+			Assert.IsType<NotFoundObjectResult>(notFoundResult);	// non existing gameId should return NotFound
+		}
 	}
 }
