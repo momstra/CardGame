@@ -38,24 +38,26 @@ namespace CardGame.Tests
 		[Fact]
 		public void CreateGameTest()
 		{
-			string playerId = "TestPlayerCG";
+			string playerId = "TestPlayerCreate";
 			var player = new Player(playerId);
 			_repository.Players.Add(player);
 			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(playerId);  // set up context for controller
 
+			// Act
 			var result = _controller.CreateGame();
 			var okResult = result as OkObjectResult;
 			int gameId = (int)okResult.Value;
 			var game = _repository.Games.Find(g => g.GameId == gameId);
 
-			Assert.Equal(gameId, player.GameId);
-			Assert.Contains(player, game.Players);
+			// Assert
+			Assert.Equal(gameId, player.GameId);		// player's GameId should be gameId
+			Assert.Contains(player, game.Players);		// game's players should contain player
 		}
 
 		[Fact]
 		public void DrawCardTest()
 		{
-			string playerId = "TestPlayerDC";
+			string playerId = "TestPlayerDraw";
 			var player = new Player(playerId);		// create player
 			_repository.Players.Add(player);		// add player to database
 
@@ -94,11 +96,41 @@ namespace CardGame.Tests
 			game.GameStarted = true;		// "start" test game 
 			_repository.Games.Add(game);	// add game to database
 
+			// Act
 			var result = _controller.DrawCard();
 			var okResult = result as OkObjectResult;
 			var cardResult = okResult.Value;
 
-			Assert.Equal("Tr1", cardResult);
+			// Assert
+			Assert.Equal(card1.Color + card1.Rank, cardResult);		// return should be Color+Rank from first card in deck
+		}
+
+		[Fact]
+		public void GetPlayerGameTest()
+		{
+			string playerId = "TestPlayerGet";
+			var player = new Player(playerId);      // create player
+			_repository.Players.Add(player);        // add player to database
+
+			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(playerId);  // set up context for controller
+
+			int gameId = 1;
+			var game = new Game(gameId);        // create game and add player
+			game.Players = new List<Player>()
+			{
+				player,
+			};
+			player.Game = game;
+			player.GameId = gameId;
+			_repository.Games.Add(game);    // add game to database
+
+			// Act
+			var result = _controller.GetPlayerGame();
+			var okResult = result as OkObjectResult;
+			var gameIdResult = okResult.Value;
+
+			// Assert
+			Assert.Equal(player.GameId, gameIdResult);	// should return gameId of player's joined game
 		}
 	}
 }
