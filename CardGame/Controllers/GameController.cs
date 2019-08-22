@@ -66,7 +66,7 @@ namespace CardGame.API.Controllers
 			return Ok(card.Color + card.Rank);
 		}
 
-		// get asking player's currently joined game
+		// get asking player's currently joined game's id
 		[HttpGet("get")]
 		public IActionResult GetPlayerGame()
 		{
@@ -127,7 +127,7 @@ namespace CardGame.API.Controllers
 			if (game == null)
 				return NotFound("Game could not be found");
 
-			if (_gameService.StartGame(game.GameId))
+			if (!_gameService.StartGame(game.GameId))
 				return NotFound("Game could not be started");
 
 			return Ok();

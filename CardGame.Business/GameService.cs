@@ -236,17 +236,17 @@ namespace CardGame.Services
 		public bool StartGame(int gameId)
 		{
 			Game game = _repository.GetGame(gameId);
-			if (game != null)
-			{
-				if (game.MinPlayers <= game.Players.Count && game.MaxPlayers >= game.Players.Count)
-				{
-					Shuffle(gameId);
-					game.GameStarted = true;
-					_repository.SaveChanges();
-					return true;
-				}
-			}
-			return false;
+			if (game == null)
+				return false;
+
+			if (game.MinPlayers > game.Players.Count || game.MaxPlayers < game.Players.Count)
+				return false;
+			
+			Shuffle(gameId);
+			game.GameStarted = true;
+			_repository.SaveChanges();
+
+			return true;
 		}
 	}
 }

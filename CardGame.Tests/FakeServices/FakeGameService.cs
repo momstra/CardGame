@@ -123,19 +123,24 @@ namespace CardGame.Tests.FakeServices
 			return game.Players.Remove(player);
 		}
 
-		public void Shuffle(int gameId)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Shuffle(List<Card> cards, int gameId)
-		{
-			throw new NotImplementedException();
-		}
-
 		public bool StartGame(int gameId)
 		{
-			throw new NotImplementedException();
+			var game = _repository.Games.Find(g => g.GameId == gameId);
+			if (game == null)
+				return false;
+
+			if (game.MinPlayers > game.Players.Count || game.MaxPlayers < game.Players.Count)
+				return false;
+
+			game.GameStarted = true;
+
+			return true;
 		}
+
+		// only for Interface implementation
+		// Shuffle methods are not needed for Controller testing
+		public void Shuffle(int gameId) => throw new NotImplementedException();
+
+		public void Shuffle(List<Card> cards, int gameId) => throw new NotImplementedException();
 	}
 }
