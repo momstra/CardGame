@@ -135,7 +135,7 @@ namespace CardGame.API.Controllers
 
 		// returns serialized List<string> of current game's joined player's ids
 		[HttpGet("users")]
-		public JsonResult GetGamePlayers()
+		public JsonResult GetGamePlayerIds()
 		{
 			string playerId = _authService.GetUserId(HttpContext);
 			Game game = _gameService.GetGame(playerId);

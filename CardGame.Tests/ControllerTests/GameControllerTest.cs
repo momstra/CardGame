@@ -5,6 +5,7 @@ using Moq;
 using Xunit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 using CardGame.API.Controllers;
 using CardGame.Services.Interfaces;
@@ -244,14 +245,12 @@ namespace CardGame.Tests
 
 			int gameId = 123;
 			var game = new Game(gameId, 2, 2);      // create game for exactly 2 players 
-			_repository.Games.Add(game);            // add game to database
+			_repository.Games.Add(game);            // and add it to database
 
 			game.Players.Add(player1);              // one already joined
 			player1.GameId = gameId;
 			player1.Game = game;
-
-
-
+					   
 			// Act
 			var result = _controller.StartGame();
 			var result1 = result as NotFoundObjectResult;
@@ -268,6 +267,53 @@ namespace CardGame.Tests
 			Assert.IsType<NotFoundObjectResult>(result1);   // one player is not enough to start game
 			Assert.IsType<OkResult>(result2);				// two are just right
 			Assert.IsType<NotFoundObjectResult>(result3);   // three are too many
+		}
+
+		[Fact]
+		public void GetGamePlayersTest()
+		{
+			string player1Id = "TestPlayerUsers1";
+			string player2Id = "TestPlayerUsers2";
+			var player1 = new Player(player1Id);    // create players
+			var player2 = new Player(player2Id);
+			_repository.Players.Add(player1);       // add players to database
+			_repository.Players.Add(player2);
+
+			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(player1Id);  // set up context for controller
+
+			int gameId = 1;
+			var game = new Game(gameId);			// create game and
+			_repository.Games.Add(game);            // add it to database
+			
+			game.Players.Add(player1);              // one already joined
+			player1.GameId = gameId;
+			player1.Game = game;
+
+			// Act
+			var result = _controller.GetGamePlayerIds();
+			var result1 = result as JsonResult;
+
+			game.Players.Add(player2);
+			result = _controller.GetGamePlayerIds();
+			var result2 = result as JsonResult;
+
+			game.Players.Remove(player2);
+			result = _controller.GetGamePlayerIds();
+			var result3 = result as JsonResult;
+
+			// Assert
+			Assert.IsType<JsonResult>(result1);									// result is serialized list of playerIds
+			Assert.Contains(player1Id, result1.Value as List<string>);			// player1's id should be in result1
+			Assert.DoesNotContain(player2Id, result1.Value as List<string>);    // player2's id should not
+
+			Assert.IsType<JsonResult>(result2);           
+			Assert.Contains(player1Id, result2.Value as List<string>);          // player1's id should be in result2
+			Assert.Contains(player2Id, result2.Value as List<string>);          // player2's id should as well
+			Assert.DoesNotContain("TestPlayerUsers3", result2.Value as List<string>); // but a random string should not
+
+			Assert.IsType<JsonResult>(result3);
+			Assert.Contains(player1Id, result1.Value as List<string>);          // player1's id should be in result3
+			Assert.DoesNotContain(player2Id, result1.Value as List<string>);    // player2's id should not any longer
 		}
 	}
 }
