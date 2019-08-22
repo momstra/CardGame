@@ -103,8 +103,23 @@ namespace CardGame.Tests.FakeServices
 
 		public bool LeaveGame(string playerId, int? gameId = null)
 		{
-			var game = _repository.Games.Find(g => g.GameId == gameId);
 			var player = _repository.Players.Find(p => p.UserId == playerId);
+			if (player == null)
+				return false;
+
+			if (gameId == null)
+				gameId = player.GameId;
+
+			var game = _repository.Games.Find(g => g.GameId == gameId);
+			if (game == null)
+				return false;
+
+			var playerList = game.Players as List<Player>;
+			if (playerList.Find(p => p.UserId == playerId) == null)
+				return false;
+
+			player.Game = null;
+			player.GameId = null;
 			return game.Players.Remove(player);
 		}
 

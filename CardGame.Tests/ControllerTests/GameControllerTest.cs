@@ -115,14 +115,14 @@ namespace CardGame.Tests
 			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(playerId);  // set up context for controller
 
 			int gameId = 1;
-			var game = new Game(gameId);        // create game and add player
+			var game = new Game(gameId);			// create game and add player
 			game.Players = new List<Player>()
 			{
 				player,
 			};
 			player.Game = game;
 			player.GameId = gameId;
-			_repository.Games.Add(game);    // add game to database
+			_repository.Games.Add(game);			// add game to database
 
 			// Act
 			var result = _controller.GetPlayerGame();
@@ -160,6 +160,45 @@ namespace CardGame.Tests
 			Assert.Contains(player, game.Players);      // game's players list should contain player
 
 			Assert.IsType<NotFoundObjectResult>(notFoundResult);	// non existing gameId should return NotFound
+		}
+
+		[Fact]
+		public void LeaveGameTest()
+		{
+			string playerId = "TestPlayerLeave";
+			var player = new Player(playerId);      // create player
+			_repository.Players.Add(player);        // add player to database
+
+			_controller.ControllerContext = _authRepository.CreateFakeControllerContext(playerId);  // set up context for controller
+
+			int gameId = 1;
+			var game = new Game(gameId);			// create game and add player
+			game.Players = new List<Player>()
+			{
+				player,
+			};
+			player.Game = game;
+			player.GameId = gameId;
+			_repository.Games.Add(game);			// add game to database
+			
+			var before = player.GameId.ToString();  // save player's gameId before acting
+			
+
+			// Act
+			var result = _controller.LeaveGame();		
+
+			// Assert
+			Assert.IsType<OkResult>(result);
+			Assert.Equal(gameId.ToString(), before);		// make sure player was joined
+			Assert.NotEqual(gameId, player.GameId);         // but is not any more
+			Assert.DoesNotContain(player, game.Players);	// really is not
+			Assert.Null(player.Game);                       // and is not joined to anything else
+
+			// Act again
+			result = _controller.LeaveGame();               // no game to leave
+
+			// Assert again
+			Assert.IsType<NotFoundResult>(result);	// therefore nothing should have been done
 		}
 	}
 }
