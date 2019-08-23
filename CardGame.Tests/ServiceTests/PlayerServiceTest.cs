@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
-using CardGame.Tests.FakeRepositories;
-using CardGame.Services;
+using Xunit;
 using CardGame.Entities;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+using CardGame.Services;
+using CardGame.Tests.FakeRepositories;
+
 
 namespace CardGame.Tests
 {

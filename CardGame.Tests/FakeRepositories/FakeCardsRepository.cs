@@ -1,11 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using CardGame.Repositories.Interfaces;
 using CardGame.Entities;
-using Moq;
-using Microsoft.EntityFrameworkCore;
 
 namespace CardGame.Tests.FakeRepositories
 {
@@ -37,7 +34,7 @@ namespace CardGame.Tests.FakeRepositories
 		}
 
 
-		public void AddPlayer(Player player)
+		public void AddPlayer(Player player)    // obsolete, use CreatePlayer 
 		{
 			_context.Players.Add(player);
 			SaveChanges();
@@ -62,6 +59,7 @@ namespace CardGame.Tests.FakeRepositories
 					deck.Cards.Add(card);
 				}
 			}
+
 			SaveChanges();
 
 			return true;
@@ -71,6 +69,7 @@ namespace CardGame.Tests.FakeRepositories
 		{
 			Deck deck = new Deck();
 			_context.Decks.Add(deck);
+
 			SaveChanges();
 
 			return deck;

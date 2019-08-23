@@ -1,12 +1,11 @@
-using System;
-using Xunit;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication;
+using System.Threading.Tasks;
+using Xunit;
+
 using CardGame.API.Hubs;
 
 namespace CardGame.Tests

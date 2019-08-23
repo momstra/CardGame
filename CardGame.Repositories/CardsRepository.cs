@@ -30,7 +30,7 @@ namespace CardGame.Repositories
 			return false;
 		}
 
-		public void AddPlayer(Player player)	// obsolete
+		public void AddPlayer(Player player)	// obsolete, use CreatePlayer 
 		{
 			_context.Players.Add(player);
 			_context.SaveChanges();

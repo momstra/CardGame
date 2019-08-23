@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
+using System.Collections.Generic;
 using Xunit;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 using CardGame.API.Controllers;
+using CardGame.Entities;
 using CardGame.Services.Interfaces;
 using CardGame.Tests.FakeServices;
 using CardGame.Tests.FakeRepositories;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using CardGame.Entities;
 
 namespace CardGame.Tests
 {
