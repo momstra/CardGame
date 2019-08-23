@@ -37,10 +37,13 @@ namespace CardGame.Tests
 		{
 			var id = "TestplayerCreate";
 			var before = _service.GetPlayers().Count;	// count before creation
+
+			// Act
 			var result = _controller.CreatePlayer(id);
-			var okResult = result as OkObjectResult;	// cast from IActionResult
+			var okResult = result as OkObjectResult;
 			var after = _service.GetPlayers().Count;    // count after creation
 			
+			// Assert
 			Assert.True(before == after - 1);							// player count before and after creation should differ
 			Assert.Equal(id, ((TokenContainer)okResult.Value).Token);	// result should be "token" which is id for test purposes
 		}

@@ -34,9 +34,11 @@ namespace CardGame.Tests
 			string userId = "TestUser";
 			var httpContext = _authRepository.CreateFakeContext(userId);
 
+			// Act
 			var response = _service.GetUserId(httpContext);
 
-			Assert.Equal(userId, response);
+			// Assert
+			Assert.Equal(userId, response);		// returned "token" is userId for test purposes
 		}
 	}
 }

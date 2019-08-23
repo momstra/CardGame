@@ -101,14 +101,13 @@ namespace CardGame.Tests.FakeServices
 			return game.GameId;
 		}
 
-		public bool LeaveGame(string playerId, int? gameId = null)
+		public bool LeaveGame(string playerId)
 		{
 			var player = _repository.Players.Find(p => p.UserId == playerId);
 			if (player == null)
 				return false;
 
-			if (gameId == null)
-				gameId = player.GameId;
+			var gameId = player.GameId;
 
 			var game = _repository.Games.Find(g => g.GameId == gameId);
 			if (game == null)

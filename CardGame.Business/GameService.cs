@@ -56,11 +56,11 @@ namespace CardGame.Services
 			while (_repository.GetGame(id) != null)
 				id = random.Next(1000, 9999);
 
-			_logger.LogInformation("Deck for game [" + id + "] is being created...");
+			_logger.LogInformation($"Deck for game [{id}] is being created...");
 			Deck deck = _repository.CreateDeck();
 			_repository.CreateCards(deck);
 
-			_logger.LogInformation("Game [" + id + "] is being created...");
+			_logger.LogInformation($"Game [{id}] is being created...");
 			if (_repository.AddGame(id, deck) == true)
 				return id;
 
@@ -158,14 +158,16 @@ namespace CardGame.Services
 		}
 
 		// remove player with PlayerID from game with GameId
-		public bool LeaveGame(string playerId, int? gameId = null)
+		public bool LeaveGame(string playerId) //, int? gameId = null)
 		{
 			Player player = _repository.GetPlayer(playerId);
 			if (player == null)
 				return false;
 
-			if (gameId == null)
-				gameId = player.GameId;
+			if (player.GameId == null)
+				return false;
+
+			var gameId = player.GameId;
 
 			Game game = _repository.GetGame((int)gameId);
 			if (game == null)
