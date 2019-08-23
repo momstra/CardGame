@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace CardGame.Entities
 {
@@ -17,12 +18,21 @@ namespace CardGame.Entities
 			builder.Entity<Card>()
 				.Property(p => p.CardId)
 				.ValueGeneratedOnAdd();
+
 			builder.Entity<Deck>()
 				.Property(p => p.DeckId)
 				.ValueGeneratedOnAdd();
+
+			builder.Entity<Game>()
+				.Property(e => e.PlayersReady)
+				.HasConversion(
+					v => string.Join(',', v),
+					v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+
 			builder.Entity<Player>()
 				.HasKey(k => k.UserId);
-			builder.Entity<Player>()
+
+			builder.Entity<Player>()				// setting delete behaviour for Player >-| Game relationship
 				.HasOne(p => p.Game)
 				.WithMany(g => g.Players)
 				.HasForeignKey(p => p.GameId)

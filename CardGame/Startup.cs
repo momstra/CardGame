@@ -1,21 +1,19 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.SignalR;
-using CardGame.Entities;
-using CardGame.Services;
-using CardGame.Services.Interfaces;
-using CardGame.Repositories;
-using CardGame.Repositories.Interfaces;
-using CardGame.API.Hubs;
-using CardGame.API.signalr.auth;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.Tasks;
+using CardGame.API.Hubs;
+using CardGame.Entities;
+using CardGame.Repositories;
+using CardGame.Repositories.Interfaces;
+using CardGame.Services;
+using CardGame.Services.Interfaces;
 
 namespace CardGame
 {
@@ -64,7 +62,6 @@ namespace CardGame
 			services.AddScoped<IPlayerService, PlayerService>();
 			services.AddScoped<IAuthService, AuthService>();
 			services.AddSignalR();
-			services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

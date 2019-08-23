@@ -114,6 +114,16 @@ namespace CardGame.Tests.FakeServices
 			return game.Players.Remove(player);
 		}
 
+		public bool ServeStartingHands(int gameId)
+		{
+			throw new NotImplementedException();
+		}
+
+		public byte SetPlayerReady(string playerId)
+		{
+			throw new NotImplementedException();
+		}
+
 		public bool StartGame(int gameId)
 		{
 			var game = _repository.Games.Find(g => g.GameId == gameId);

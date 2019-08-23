@@ -303,6 +303,7 @@ namespace CardGame.Tests
 			Assert.Equal(game.GameId, after1stJoin);		// first join should be successful and return correct gameId
 			Assert.True(after1stCount == before + 1);		// Players count should have increased after successful join
 			Assert.Equal(player1.GameId, game.GameId);
+			Assert.Equal(player1.Game, game);
 			Assert.Contains(player1, game.Players);			// player1 should be assigned after successful join
 			
 			Assert.Equal(0, after2ndJoin);					// player2 should not have been able to join as maxplayers has been reached
@@ -338,7 +339,7 @@ namespace CardGame.Tests
 			Assert.True(leaving);							// leave returns true if successfull
 			Assert.DoesNotContain(player1, game.Players);	// should not contain player1 any longer
 		}
-
+		
 		[Fact]
 		public void ServeStartingHandsTest()
 		{
@@ -361,8 +362,7 @@ namespace CardGame.Tests
 
 			// Act
 			var serve = _gameService.ServeStartingHands(gameId);
-
-
+			
 			// Assert
 			Assert.True(serve);								// serve method returns true when successfull
 			Assert.Equal(handSize, player1.Hand.Count);		// both hands should hold defined number of cards
@@ -373,7 +373,57 @@ namespace CardGame.Tests
 				Assert.DoesNotContain(card, player2.Hand);
 		}
 
-		
+		[Fact]
+		public void SetPlayerReadyTest()
+		{
+			string player1Id = "ReadyPlayer1";			// create and add players to game
+			var player1 = CreatePlayer(player1Id);
+
+			string player2Id = "ReadyPlayer2";
+			var player2 = CreatePlayer(player2Id);
+
+			string player3Id = "ReadyPlayer3";
+			var player3 = CreatePlayer(player3Id);
+
+			string player4Id = "ReadyPlayer4";
+			var player4 = CreatePlayer(player4Id);
+						
+			var game = CreateGame();
+			var gameId = game.GameId;
+			game.MinPlayers = 2;						// set up game for testing
+			game.MaxPlayers = 4;
+
+			// Act
+			var ready0 = _gameService.SetPlayerReady("idonotexist");    // non joined player 
+
+			_gameService.JoinGame(player1Id, gameId);			
+			var ready1 = _gameService.SetPlayerReady(player1Id);		// 1 player, 1 ready
+
+			_gameService.JoinGame(player2Id, gameId);
+			_gameService.JoinGame(player3Id, gameId);
+			var ready2 = _gameService.SetPlayerReady(player2Id);		// 3 players, 2 ready
+
+			var ready3 = _gameService.SetPlayerReady(player3Id);		// 3 players, 3 ready
+
+			_gameService.JoinGame(player4Id, gameId);
+			var ready4 = _gameService.SetPlayerReady(player4Id);		// 4 players, 4 ready
+			
+			// Assert 
+			Assert.Equal(0, ready0);					// 0, there should be an error
+
+			Assert.Equal(1, ready1);					// 1, still waiting for others to join
+			Assert.Contains(player1Id, game.PlayersReady);
+
+			Assert.Equal(2, ready2);                    // 2, enough players joined but still waiting for others to get ready 
+			Assert.Contains(player2Id, game.PlayersReady);
+
+			Assert.Equal(3, ready3);                    // 3, enough players joined and all ready, but max count not yet reached
+			Assert.Contains(player3Id, game.PlayersReady);
+
+			Assert.Equal(4, ready4);                    // 4, max number of players joined and all ready
+			Assert.Contains(player4Id, game.PlayersReady);
+		}
+
 		[Fact]
 		public void ShuffleTest()
 		{

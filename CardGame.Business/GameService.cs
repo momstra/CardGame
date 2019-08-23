@@ -210,6 +210,41 @@ namespace CardGame.Services
 			return true;
 		}
 
+		// set asking player ready, returns:
+		// 0 => failure
+		// 1 => not yet enough players joined
+		// 2 => enough players joined but still waiting for others to get ready
+		// 3 => enough players joined and all ready, but max count not yet reached
+		// 4 => max number of players joined and all ready
+		public Byte SetPlayerReady(string playerId)
+		{
+			Player player = _repository.GetPlayer(playerId);
+			if (player == null)
+				return 0;
+
+			Game game = player.Game;
+			if (game == null)
+				return 0;
+
+			var list = game.PlayersReady.ToList();
+			list.Add(playerId);
+			game.PlayersReady = list.ToArray();		    // add player to array of players ready
+
+			if (!game.PlayersReady.Contains(playerId))	// and make sure it was successful
+				return 0;
+
+			if (game.Players.Count < game.MinPlayers)
+				return 1;
+
+			if (list.Count < game.Players.Count)
+				return 2;
+
+			if (game.Players.Count < game.MaxPlayers)
+				return 3;
+
+			return 4;
+		}
+
 		// initiate shuffling for game with GameId
 		public void Shuffle(int gameId)
 		{
