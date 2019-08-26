@@ -40,8 +40,8 @@ $(document).ready(function () {
 		});
 
 		connection.on("GameStarted", () => {
-			//GetHand();
-			connection.invoke("GetHand");
+			GetHand();
+			//connection.invoke("GetHand");
 		});
 
 		connection.on("JoinSuccess", (gameid) => {
@@ -60,13 +60,6 @@ $(document).ready(function () {
 
 		connection.on("PlayerLeft", (username) => {
 			GetGamePlayer();
-		});
-
-		connection.on("ReceiveHand", (json) => {
-			//$("#cards").empty();
-			$.each(json, function (_key, card) {
-				$("#cardcontainer").append('<input type="button" id="' + card + '" value="' + card + '" />');
-			});
 		});
 
 		connection.on("ReceiveMessage", (message) => {
@@ -132,7 +125,7 @@ $(document).ready(function () {
 			},
 			success: function (json) {
 				$.each(json, function (_key, card) {
-					$("#cardcontainer").append(card);
+					$("#cardcontainer").append(card + "<br />");
 				});
 			}
 		});

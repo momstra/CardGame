@@ -17,7 +17,6 @@ namespace CardGame.API.Hubs
 		Task JoinSuccess(int gameId);
 		Task LeaveSuccess();
 		Task NewUser(string name);
-		Task ReceiveHand(string list);
 		Task ReceiveMessage(string message);
 		Task PlayerJoined(string username);
 		Task PlayerLeft(string username);

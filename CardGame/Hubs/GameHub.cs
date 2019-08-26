@@ -52,15 +52,6 @@ namespace CardGame.API.Hubs
 			await Clients.Caller.JoinSuccess(gameId);
 		}
 
-		public async Task GetHand()
-		{
-			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			//int gameId = _gameService.GetGame(playerId).GameId;
-			var hand = _playerService.GetHand(playerId);
-
-			await Clients.Caller.ReceiveHand(JsonConvert.SerializeObject(hand));
-		}
-
 		public async Task JoinGame(int id)
 		{
 			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;

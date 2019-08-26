@@ -27,6 +27,7 @@ namespace CardGame.Entities
 			GameStarted = false;
 			MinPlayers = min;
 			MaxPlayers = max;
+			StartingHand = 5;
 			PlayersReady = new string[0];
 			CardsRemaining = new List<Card>();
 			Players = new List<Player>();

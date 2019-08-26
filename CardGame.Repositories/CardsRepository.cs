@@ -87,6 +87,8 @@ namespace CardGame.Repositories
 
 			return _context.Games
 				.Include(g => g.Players)
+				.ThenInclude(p => p.Hand)
+				.Include(g => g.CardsRemaining)
 				.Include(g => g.Deck)
 					.ThenInclude(d => d.Cards)
 				.Single(g => g.GameId == gameId);
