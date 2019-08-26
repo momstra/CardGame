@@ -82,20 +82,29 @@ namespace CardGame.Repositories
 
 		public Game GetGame(int gameId)
 		{
-			if (_context.Games.Find(gameId) != null)
-				return _context.Games
-					.Include(g => g.Players)
-					.Include(g => g.Deck)
-					.Single(g => g.GameId == gameId);
+			if (_context.Games.Find(gameId) == null)
+				return null;
 
-			return null;
+			return _context.Games
+				.Include(g => g.Players)
+				.Include(g => g.Deck)
+					.ThenInclude(d => d.Cards)
+				.Single(g => g.GameId == gameId);
 		}
 
 		public List<Game> GetGames() => _context.Games.ToList();
 
 		public List<Card> GetHand(string playerId) => _context.Players.Find(playerId).Hand.ToList();
 
-		public Player GetPlayer(string name) => _context.Players.Find(name);
+		public Player GetPlayer(string playerId)
+		{
+			if (_context.Players.Find(playerId) == null)
+				return null;
+
+			return _context.Players
+				.Include(p => p.Hand)
+				.Single(p => p.UserId == playerId);
+		}
 
 		public List<Player> GetPlayers() => _context.Players.ToList();
 			   

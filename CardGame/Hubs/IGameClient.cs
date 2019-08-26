@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CardGame.API.Hubs
 {
@@ -15,6 +17,7 @@ namespace CardGame.API.Hubs
 		Task JoinSuccess(int gameId);
 		Task LeaveSuccess();
 		Task NewUser(string name);
+		Task ReceiveHand(string list);
 		Task ReceiveMessage(string message);
 		Task PlayerJoined(string username);
 		Task PlayerLeft(string username);

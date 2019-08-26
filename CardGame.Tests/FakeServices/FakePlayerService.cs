@@ -33,7 +33,16 @@ namespace CardGame.Tests.FakeServices
 
 		public List<string> GetHand(string playerId)
 		{
-			return null;
+			var hand = GetPlayer(playerId).Hand;
+
+			if (hand == null)
+				return null;
+
+			List<string> list = new List<string>();
+			foreach (Card card in hand)
+				list.Add(card.Color + card.Rank);
+
+			return list;
 		}
 
 		public Player GetPlayer(string playerId) => _repository.Players.Find(p => p.UserId == playerId);

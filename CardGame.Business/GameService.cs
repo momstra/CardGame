@@ -284,6 +284,7 @@ namespace CardGame.Services
 				return false;
 			
 			Shuffle(gameId);
+			ServeStartingHands(gameId);
 			game.GameStarted = true;
 			_repository.SaveChanges();
 

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using CardGame.Services.Interfaces;
 using System.Linq;
 using System.Security.Claims;
@@ -54,9 +55,10 @@ namespace CardGame.API.Hubs
 		public async Task GetHand()
 		{
 			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			int gameId = _gameService.GetGame(playerId).GameId;
+			//int gameId = _gameService.GetGame(playerId).GameId;
+			var hand = _playerService.GetHand(playerId);
 
-
+			await Clients.Caller.ReceiveHand(JsonConvert.SerializeObject(hand));
 		}
 
 		public async Task JoinGame(int id)
@@ -125,6 +127,8 @@ namespace CardGame.API.Hubs
 		{
 			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			int gameId = _gameService.GetGame(playerId).GameId;
+
+			_gameService.StartGame(gameId);
 
 			await Clients.Group(gameId.ToString()).GameStarted();
 		}

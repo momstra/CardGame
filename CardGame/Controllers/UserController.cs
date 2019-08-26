@@ -55,17 +55,7 @@ namespace CardGame.API.Controllers
 		public JsonResult GetHand()
 		{
 			var playerId = _authService.GetUserId(HttpContext);
-			var player = _playerService.GetPlayer(playerId);
-			if (player == null)
-				return null;
-
-			var cards = player.Hand;
-			if (cards == null)
-				return null;
-
-			List<string> list = new List<string>();
-			foreach (Card card in cards)
-				list.Add(card.Color + card.Rank);
+			var list = _playerService.GetHand(playerId);
 
 			return Json(list);
 		}

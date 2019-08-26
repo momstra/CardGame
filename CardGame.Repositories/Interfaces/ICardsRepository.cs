@@ -15,7 +15,7 @@ namespace CardGame.Repositories.Interfaces
 		Game GetGame(int gameId);
 		List<Game> GetGames();
 		List<Card> GetHand(string playerId);
-		Player GetPlayer(string name);
+		Player GetPlayer(string playerId);
 		List<Player> GetPlayers();
 		void SaveChanges();
 	}

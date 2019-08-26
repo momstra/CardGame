@@ -57,12 +57,13 @@ namespace CardGame.Services
 
 		public List<String> GetHand(string playerId)
 		{
-			var player = _repository.GetPlayer(playerId);
-			if (player == null)
+			var hand = _repository.GetPlayer(playerId).Hand;
+
+			if (hand == null)
 				return null;
 
 			List<string> list = new List<string>();
-			foreach (Card card in player.Hand)
+			foreach (Card card in hand)
 				list.Add(card.Color + card.Rank);
 
 			return list;

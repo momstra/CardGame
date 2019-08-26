@@ -102,7 +102,7 @@ namespace CardGame.Tests.FakeRepositories
 
 		public List<Card> GetHand(string playerId) => _context.Players.Find(playerId).Hand.ToList();
 
-		public Player GetPlayer(string name) => _context.Players.Find(name);
+		public Player GetPlayer(string playerId) => _context.Players.Find(playerId);
 
 		public List<Player> GetPlayers() => _context.Players.ToList();
 	}

@@ -6,6 +6,8 @@ $(document).ready(function () {
 	var token;
 	var username;
 
+	$("#startgame").hide();
+
 	// connect to gamehub
 	function ConnectR(token) {
 		connection = new signalR.HubConnectionBuilder()
@@ -34,11 +36,12 @@ $(document).ready(function () {
 		});
 
 		connection.on("GameReady", () => {
-			$("#activegame").append('<input type="button" id="startgame" value="start" />');
+			$("#startgame").show();
 		});
 
 		connection.on("GameStarted", () => {
-			GetHand();
+			//GetHand();
+			connection.invoke("GetHand");
 		});
 
 		connection.on("JoinSuccess", (gameid) => {
@@ -57,6 +60,13 @@ $(document).ready(function () {
 
 		connection.on("PlayerLeft", (username) => {
 			GetGamePlayer();
+		});
+
+		connection.on("ReceiveHand", (json) => {
+			//$("#cards").empty();
+			$.each(json, function (_key, card) {
+				$("#cardcontainer").append('<input type="button" id="' + card + '" value="' + card + '" />');
+			});
 		});
 
 		connection.on("ReceiveMessage", (message) => {
@@ -113,6 +123,7 @@ $(document).ready(function () {
 
 	// retrieve player's hand
 	function GetHand() {
+
 		var uri = "/api/user/hand";
 		$.ajax({
 			url: uri,
@@ -121,12 +132,16 @@ $(document).ready(function () {
 			},
 			success: function (json) {
 				$.each(json, function (_key, card) {
-					$("#cardcontainer").append('<input type="button" id="' + card + '" value="' + card + '" />');
+					$("#cardcontainer").append(card);
 				});
 			}
 		});
 	}
 
+	// start game manually
+	function StartGame() {
+		connection.invoke("StartGame");
+	}
 
 	// create new user
 	$("#createuser").click(function () {
@@ -198,7 +213,6 @@ $(document).ready(function () {
 		connection.invoke("PlayerReady");
 	});
 
-	// start game
 	$("#startgame").click(function () {
 		connection.invoke("StartGame");
 	});
