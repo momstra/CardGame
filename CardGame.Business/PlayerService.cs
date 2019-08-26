@@ -55,6 +55,15 @@ namespace CardGame.Services
 			return player;
 		}
 
+		public List<Card> GetHand(string playerId)
+		{
+			var player = _repository.GetPlayer(playerId);
+			if (player == null)
+				return null;
+
+			return player.Hand.ToList();
+		}
+
 		// get player by PlayerId
 		public Player GetPlayer(string playerId) => _repository.GetPlayer(playerId);
 

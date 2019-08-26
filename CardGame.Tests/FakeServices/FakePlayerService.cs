@@ -31,8 +31,18 @@ namespace CardGame.Tests.FakeServices
 			return player;
 		}
 
+		public List<Card> GetHand(string playerId)
+		{
+			return null;
+		}
+
 		public Player GetPlayer(string playerId) => _repository.Players.Find(p => p.UserId == playerId);
 
 		public List<Player> GetPlayers() => _repository.Players;
+
+		public void SetHubId(string playerId, string hubId)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

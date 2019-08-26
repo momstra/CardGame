@@ -193,8 +193,13 @@ $(document).ready(function () {
 			connection.invoke("LeaveGame");
 	});
 
-	// start game
+	// set player ready
 	$("#playerready").click(function () {
 		connection.invoke("PlayerReady");
+	});
+
+	// start game
+	$("#startgame").click(function () {
+		connection.invoke("StartGame");
 	});
 });

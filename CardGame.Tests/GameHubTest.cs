@@ -20,11 +20,12 @@ namespace CardGame.Tests
 			var webHostBuilder = new WebHostBuilder()
 			.ConfigureServices(services =>
 			{
+				
 				services.AddSignalR();
 			})
 			.Configure(app =>
 			{
-				app.UseSignalR(routes => routes.MapHub<GameHub>("/gamehub"));
+				app.UseSignalR(routes => routes.MapHub<GameHub>("/game"));
 			});
 
 			// Initiate TestServer
@@ -32,7 +33,7 @@ namespace CardGame.Tests
 
 			// Initiate mock hub
 			_mockHub = new HubConnectionBuilder()
-				.WithUrl("ws://localhost/gamehub",
+				.WithUrl("ws://localhost/game",
 				o => o.HttpMessageHandlerFactory = _ => server.CreateHandler())
 				.Build();
 		}

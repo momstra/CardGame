@@ -7,7 +7,7 @@ namespace CardGame.Services.Interfaces
 	{
 		bool AddCardToHand(int cardId, string playerId);
 		Player CreatePlayer(string playerId);
-//		string GenerateJWT(string user);
+		List<Card> GetHand(string playerId);
 		Player GetPlayer(string playerId);
 		List<Player> GetPlayers();
 		void SetHubId(string playerId, string hubId);

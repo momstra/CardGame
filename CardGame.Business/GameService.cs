@@ -130,8 +130,7 @@ namespace CardGame.Services
 			}
 			return playerIds;
 		}
-
-
+		
 		// join player with PlayerId to game with GameId
 		// returns GameId of joined game on success, otherwise 0
 		public int JoinGame(string playerId, int gameId)

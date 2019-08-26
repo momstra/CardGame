@@ -51,6 +51,14 @@ namespace CardGame.API.Hubs
 			await Clients.Caller.JoinSuccess(gameId);
 		}
 
+		public async Task GetHand()
+		{
+			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			int gameId = _gameService.GetGame(playerId).GameId;
+
+
+		}
+
 		public async Task JoinGame(int id)
 		{
 			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
@@ -87,9 +95,8 @@ namespace CardGame.API.Hubs
 			Byte playerReady = _gameService.SetPlayerReady(playerId);
 			if (playerReady == 0)
 				return;
-
-			// TODO
-			if (playerReady == 1)                               // not yet enough players
+			
+			if (playerReady == 1)									// not yet enough players
 				await Clients.Caller.AwaitingPlayersToJoin();
 
 			else if (playerReady == 2)                               // not yet everybody ready
@@ -100,7 +107,7 @@ namespace CardGame.API.Hubs
 				await Clients.Group(gameId.ToString()).AllReadyWaiting();
 				var activePlayerId = _gameService.GetGame((int)gameId).ActivePlayer;
 				var activePlayer = _playerService.GetPlayer(activePlayerId);
-				await Clients.Client(activePlayer.HubId).GameReady();
+				await Clients.Client(activePlayer.HubId).GameReady();// ActivePlayer is set to game creator
 			}
 
 			else if (playerReady == 4)                               // max players reached, all ready
@@ -112,6 +119,14 @@ namespace CardGame.API.Hubs
 		public async Task SendMessage(string message)
 		{
 			await Clients.All.ReceiveMessage(message);
+		}
+
+		public async Task StartGame()
+		{
+			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			int gameId = _gameService.GetGame(playerId).GameId;
+
+			await Clients.Group(gameId.ToString()).GameStarted();
 		}
 	}
 }
