@@ -63,24 +63,36 @@ namespace CardGame.Tests
 		{
 			var playerId = "TestPlayerGetHand";
 			
-			var player = _repository.CreatePlayer(playerId);      // create test player 
-			var card = new Card();
+			var player = _repository.CreatePlayer(playerId);    // create test player 
+			var card = new Card()								// create test card
+			{
+				Color = "T",
+				Rank = "1",
+			};
 
-			var beforeCount = player.Hand.Count;
-			var beforeContains = player.Hand.Contains(card);
+			string cardId = card.Color + card.Rank;				// get test card's value
+
+			List<string> control = new List<string>				// and add to a list as control for what should be returned
+			{
+				cardId,
+			};
 
 			// Act
-			player.Hand.Add(card);
-			var hand = _service.GetHand(playerId);
+			var handBefore = _service.GetHand(playerId);		// get hand before adding card
 
-			var afterCount = hand.Count;
-			var afterContains = hand.Contains(card);
+			player.Hand.Add(card);
+
+			var handAfter = _service.GetHand(playerId);			// and after adding it
 
 			// Assert
-			Assert.Equal(beforeCount, afterCount - 1);
-			Assert.False(beforeContains);
-			Assert.True(afterContains);
-			Assert.Equal(hand, player.Hand);
+			Assert.Equal(handBefore.Count, handAfter.Count - 1);// hand count should have increased by one
+
+			Assert.DoesNotContain(cardId, handBefore);			// card should not have been in hand before adding it
+			Assert.NotEqual(control, handBefore);
+			Assert.Empty(handBefore);							// instead, hand should have been empty
+
+			Assert.Contains(cardId, handAfter);					// card should be in hand after adding it
+			Assert.Equal(control, handAfter);
 		}
 	}
 }

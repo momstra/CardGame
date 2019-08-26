@@ -31,7 +31,7 @@ namespace CardGame.Tests.FakeServices
 			return player;
 		}
 
-		public List<Card> GetHand(string playerId)
+		public List<string> GetHand(string playerId)
 		{
 			return null;
 		}
