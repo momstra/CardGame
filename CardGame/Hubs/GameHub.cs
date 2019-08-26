@@ -25,7 +25,7 @@ namespace CardGame.API.Hubs
 		public override Task OnConnectedAsync()
 		{
 			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			_playerService.GetPlayer(playerId).HubId = Context.ConnectionId;
+			_playerService.SetHubId(playerId, Context.ConnectionId);
 
 			return base.OnConnectedAsync();
 		}
@@ -36,10 +36,13 @@ namespace CardGame.API.Hubs
 		{
 			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-			int gameId = _gameService.CreateGame();
+			int gameId = _gameService.CreateGame(playerId);
 			if (gameId != 0)
 			{
 				_gameService.JoinGame(playerId, gameId);
+				_gameService.GetGame(gameId).ActivePlayer = playerId;
+				
+
 				await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
 			}
 
@@ -74,17 +77,35 @@ namespace CardGame.API.Hubs
 			}
 		}
 
-		public async Task StartGame()
+		public async Task PlayerReady()
 		{
 			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			int? gameId = _gameService.GetGame(playerId).GameId;
-			if (gameId != null)
+			if (gameId == null)
+				return;
+
+			Byte playerReady = _gameService.SetPlayerReady(playerId);
+			if (playerReady == 0)
+				return;
+
+			// TODO
+			if (playerReady == 1)                               // not yet enough players
+				await Clients.Caller.AwaitingPlayersToJoin();
+
+			else if (playerReady == 2)                               // not yet everybody ready
+				await Clients.Caller.AwaitingPlayersReady();
+
+			else if (playerReady == 3)                               // all joined ready
 			{
-				if (_gameService.StartGame((int)gameId))
-				{
-					await Clients.Group(gameId.ToString()).GameStarted();
-				}
+				await Clients.Group(gameId.ToString()).AllReadyWaiting();
+				var activePlayerId = _gameService.GetGame((int)gameId).ActivePlayer;
+				var activePlayer = _playerService.GetPlayer(activePlayerId);
+				await Clients.Client(activePlayer.HubId).GameReady();
 			}
+
+			else if (playerReady == 4)                               // max players reached, all ready
+				await Clients.Group(gameId.ToString()).AllReady();
+
 		}
 
 

@@ -45,7 +45,7 @@ namespace CardGame.Services
 		
 		// create new game (and deck)
 		// returns GameId on success, otherwise 0
-		public int CreateGame()
+		public int CreateGame(string playerId)
 		{
 			Random random = new Random();
 			int id = random.Next(1000, 9999);
@@ -62,7 +62,11 @@ namespace CardGame.Services
 
 			_logger.LogInformation($"Game [{id}] is being created...");
 			if (_repository.AddGame(id, deck) == true)
+			{
+				GetGame(id).ActivePlayer = playerId;
+				_repository.SaveChanges();
 				return id;
+			}
 
 			return 0;
 		}
@@ -228,7 +232,8 @@ namespace CardGame.Services
 
 			var list = game.PlayersReady.ToList();
 			list.Add(playerId);
-			game.PlayersReady = list.ToArray();		    // add player to array of players ready
+			game.PlayersReady = list.ToArray();         // add player to array of players ready
+			_repository.SaveChanges();
 
 			if (!game.PlayersReady.Contains(playerId))	// and make sure it was successful
 				return 0;

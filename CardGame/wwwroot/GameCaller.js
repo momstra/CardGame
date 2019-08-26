@@ -13,8 +13,28 @@ $(document).ready(function () {
 			.configureLogging(signalR.LogLevel.Information)
 			.build();
 
+		connection.on("AllReady 4:", () => {
+			$("#gamestatus").val("Everyone ready, game starting")
+		});
+
+		connection.on("AllReadyWaiting", () => {
+			$("#gamestatus").val("3: Waiting for players to join")
+		});
+
+		connection.on("AwaitingPlayersReady", () => {
+			$("#gamestatus").val("2: Waiting for players to get ready")
+		});
+
+		connection.on("AwaitingPlayersToJoin", () => {
+			$("#gamestatus").val("1: Not enough players, waiting for more to join")
+		});
+
 		connection.on("GameAdded", (gameid) => {
 			GetGameList();
+		});
+
+		connection.on("GameReady", () => {
+			$("#activegame").append('<input type="button" id="startgame" value="start" />');
 		});
 
 		connection.on("GameStarted", () => {
@@ -31,16 +51,16 @@ $(document).ready(function () {
 			$("#ingameusers").empty();
 		});
 
-		connection.on("ReceiveMessage", (message) => {
-			$("#answertext").val(message);
-		});
-
 		connection.on("PlayerJoined", (username) => {
 			GetGamePlayer();
 		});
 
 		connection.on("PlayerLeft", (username) => {
 			GetGamePlayer();
+		});
+
+		connection.on("ReceiveMessage", (message) => {
+			$("#answertext").val(message);
 		});
 
 		connection.start();
@@ -160,61 +180,21 @@ $(document).ready(function () {
 	// create new game
 	$("#creategame").click(function () {
 		connection.invoke("CreateGame").catch(err => console.error(err));
-		/*
-			var uri = "/api/game/create";
-			$.ajax({
-				url: uri,
-				headers: {
-					"Authorization": "Bearer " + token
-				},
-				success: function (gameid) {
-					$("#usergame").val(gameid);
-					$("#games").append('<option>' + gameid + '</option>');
-					GetGamePlayer();
-				}
-			});
-		*/
 	});
 
 	// active user join game [game]
 	$("#joingame").click(function () {
 		var game = $("#games option:selected").text();
 		connection.invoke("JoinGame", game);
-		/*
-			var uri = "/api/game/join/" + game;
-			$.ajax({
-				url: uri,
-				headers: {
-					"Authorization": "Bearer " + token
-				},
-				success: function (gameid) {
-					$("#usergame").val(gameid);
-					GetGamePlayer();
-				}
-			});
-		*/
 	});
 
 	// active user leave current game
 	$("#leavegame").click(function () {
 			connection.invoke("LeaveGame");
-		/*
-			var uri = "/api/game/leave";
-			$.ajax({
-				url: uri,
-				headers: {
-					"Authorization": "Bearer " + token
-				},
-				success: function () {
-					$("#usergame").val("");
-					$("#ingameusers").empty();
-				}
-			});
-		*/
 	});
 
 	// start game
-	$("#startgame").click(function () {
-		connection.invoke("StartGame");
+	$("#playerready").click(function () {
+		connection.invoke("PlayerReady");
 	});
 });

@@ -37,7 +37,7 @@ namespace CardGame.API.Controllers
 			string playerId = _authService.GetUserId(HttpContext);
 			_logger.LogInformation("Player [" + playerId + "] requested to create a new game");
 
-			int gameId = _gameService.CreateGame();
+			int gameId = _gameService.CreateGame(playerId);
 			if (gameId == 0)
 				return NotFound("Game could not be created");
 		

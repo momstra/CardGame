@@ -10,6 +10,6 @@ namespace CardGame.Services.Interfaces
 //		string GenerateJWT(string user);
 		Player GetPlayer(string playerId);
 		List<Player> GetPlayers();
-
+		void SetHubId(string playerId, string hubId);
 	}
 }

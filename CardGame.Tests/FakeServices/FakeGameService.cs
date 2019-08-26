@@ -22,7 +22,7 @@ namespace CardGame.Tests.FakeServices
 			_repository = repository;
 		}
 
-		public int CreateGame()
+		public int CreateGame(string playerId)
 		{
 			Random random = new Random();
 			var gameId = random.Next(10, 20);

@@ -60,5 +60,11 @@ namespace CardGame.Services
 
 		// get all players
 		public List<Player> GetPlayers() => _repository.GetPlayers();
+
+		public void SetHubId(string playerId, string hubId)
+		{
+			GetPlayer(playerId).HubId = hubId;
+			_repository.SaveChanges();
+		}
 	}
 }

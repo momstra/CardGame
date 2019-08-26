@@ -4,7 +4,13 @@ namespace CardGame.API.Hubs
 {
 	public interface IGameClient
 	{
+		Task AllReady();
+		Task AllReadyWaiting();
+		Task AwaitingPlayersReady();
+		Task AwaitingPlayersToJoin();
+
 		Task GameAdded(int gameId);
+		Task GameReady();
 		Task GameStarted();
 		Task JoinSuccess(int gameId);
 		Task LeaveSuccess();

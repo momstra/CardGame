@@ -101,13 +101,15 @@ namespace CardGame.Tests
 		public void CreateGameTest()
 		{
 			int beforeCount = _repository.GetGames().Count;
+			string playerid1 = "player1";
+			string playerid2 = "player2";
 
 			// Act
-			var gameId1 = _gameService.CreateGame(); 
+			var gameId1 = _gameService.CreateGame(playerid1); 
 			var game1 = _gameService.GetGame(gameId1); 
 			int after1stCount = _repository.GetGames().Count;
 
-			var gameId2 = _gameService.CreateGame();
+			var gameId2 = _gameService.CreateGame(playerid2);
 			var game2 = _gameService.GetGame(gameId2);
 			int after2ndCount = _repository.GetGames().Count;
 
@@ -128,6 +130,9 @@ namespace CardGame.Tests
 
 			Assert.NotEmpty(game1.Deck.Cards);				// and their decks should not be empty
 			Assert.NotEmpty(game2.Deck.Cards);
+
+			Assert.Equal(playerid1, game1.ActivePlayer);    // and game creator set as active player
+			Assert.Equal(playerid2, game2.ActivePlayer);
 		}
 		
 		[Fact]

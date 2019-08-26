@@ -35,14 +35,14 @@
 				<input type="button" id="joingame" value="join game" /><br />
 				<input type="button" id="creategame" value="create new game" />
 			</p>
-			<p>
+			<p id="activegame">
 				Active Game:<br />
+				<input type="text" id="gamestatus" readonly="readonly" value="game not started"/>
+				<input type="button" id="playerready" value="ready to start" /><br />
 				<select size="5" id="ingameusers"></select>
-				<input type="button" id="startgame" value="start game" />
 			</p>
-			<p>
+			<p id="cardcontainer">
 				Cards:<br />
-				<div id="cardcontainer"></div>
 			</p>
 
 
