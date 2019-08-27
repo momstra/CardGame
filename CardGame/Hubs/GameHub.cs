@@ -67,6 +67,24 @@ namespace CardGame.API.Hubs
 			await Clients.Caller.JoinSuccess(gameId);
 		}
 
+		public async Task GetGames()
+		{
+			var list = _gameService.GetGameIdsList();
+			if (list != null)
+				await Clients.Caller.ReceiveGameList(JsonConvert.SerializeObject(list));
+		}
+
+		public async Task GetGamePlayers()
+		{
+			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			var game = _gameService.GetGame(playerId);
+			if (game != null)
+			{
+				var list = _gameService.GetPlayersIds(game.GameId);
+				await Clients.Caller.ReceiveGamePlayers(JsonConvert.SerializeObject(list));
+			}
+		}
+
 		public async Task GetHand()
 		{
 			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;

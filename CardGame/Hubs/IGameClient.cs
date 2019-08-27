@@ -19,7 +19,9 @@ namespace CardGame.API.Hubs
 		Task JoinSuccess(int gameId);
 		Task LeaveSuccess();
 		Task NewUser(string name);
-		Task ReceiveHand(string hand);
+		Task ReceiveGamePlayers(string json);
+		Task ReceiveHand(string json);
+		Task ReceiveGameList(string json);
 		Task ReceiveMessage(string message);
 		Task PlayerJoined(string username);
 		Task PlayerLeft(string username);

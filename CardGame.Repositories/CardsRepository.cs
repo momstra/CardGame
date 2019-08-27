@@ -90,6 +90,7 @@ namespace CardGame.Repositories
 					.ThenInclude(p => p.Hand)
 				.Include(g => g.PlayersReady)
 				.Include(g => g.CardsRemaining)
+				.Include(g => g.CardsPlayed)
 				.Include(g => g.Set)
 					.ThenInclude(d => d.Cards)
 				.Single(g => g.GameId == gameId);

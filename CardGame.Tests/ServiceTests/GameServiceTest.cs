@@ -438,7 +438,8 @@ namespace CardGame.Tests
 			_gameService.JoinGame(player3Id, gameId);
 			var ready2 = _gameService.SetPlayerReady(player2Id);		// 3 players, 2 ready
 
-			var ready3 = _gameService.SetPlayerReady(player3Id);		// 3 players, 3 ready
+			var ready3 = _gameService.SetPlayerReady(player3Id);        // 3 players, 3 ready
+			var ready3a = _gameService.SetPlayerReady(player3Id);		// try again
 
 			_gameService.JoinGame(player4Id, gameId);
 			var ready4 = _gameService.SetPlayerReady(player4Id);		// 4 players, 4 ready
@@ -454,6 +455,7 @@ namespace CardGame.Tests
 
 			Assert.Equal(3, ready3);                    // 3, enough players joined and all ready, but max count not yet reached
 			Assert.Contains(player3, game.PlayersReady);
+			Assert.Equal(0, ready3a);					// should not have worked, player already ready
 
 			Assert.Equal(4, ready4);                    // 4, max number of players joined and all ready
 			Assert.Contains(player4, game.PlayersReady);

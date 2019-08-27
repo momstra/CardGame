@@ -247,6 +247,9 @@ namespace CardGame.Services
 			if (game == null)
 				return 0;
 
+			if (game.PlayersReady.Contains(player))
+				return 0;
+
 			game.PlayersReady.Add(player);
 			_repository.SaveChanges();
 
