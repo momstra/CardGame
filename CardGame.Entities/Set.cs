@@ -10,7 +10,7 @@ namespace CardGame.Entities
 		//public int GameId { get; set; }
 		public virtual Game Game { get; set; }
 
-		public virtual ICollection<Card> Cards { get; set; }
+		public virtual List<Card> Cards { get; set; }
 
 
 		public Set() 

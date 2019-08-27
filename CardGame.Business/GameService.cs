@@ -188,11 +188,13 @@ namespace CardGame.Services
 		// play card
 		public bool PlayCard(int gameId, Card card)
 		{
-			Game game = _repository.GetGame((int)gameId);
+			Game game = _repository.GetGame(gameId);
 			if (game == null)
 				return false;
 
 			game.CardsPlayed.Add(card);
+
+			card.UserId = null;
 			_repository.SaveChanges();
 
 			if (!game.CardsPlayed.Contains(card))

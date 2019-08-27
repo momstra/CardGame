@@ -34,7 +34,7 @@ namespace CardGame.Entities
 			builder.Entity<Player>()
 				.HasKey(k => k.UserId);
 
-			builder.Entity<Player>()				// setting delete behaviour for Player >-| Game relationship
+			builder.Entity<Player>()
 				.HasOne(p => p.Game)
 				.WithMany(g => g.Players)
 				.HasForeignKey(p => p.GameId)

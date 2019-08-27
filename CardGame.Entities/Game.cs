@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CardGame.Entities
 {
@@ -11,8 +12,14 @@ namespace CardGame.Entities
 		public int StartingHand { get; set; }
 		public string ActivePlayer { get; set; }
 		public string[] PlayersReady { get; set; }
-		public List<Card> CardsRemaining { get; set; }
-		public List<Card> CardsPlayed { get; set; }
+
+		public int CardsRemainingId { get; set; }
+		[ForeignKey("CardsRemainingId")]
+		public virtual List<Card> CardsRemaining { get; set; }
+
+		public int CardsPlayedId { get; set; }
+		[ForeignKey("CardsPlayedId")]
+		public virtual List<Card> CardsPlayed { get; set; }
 
 		public int SetId { get; set; }
 		public virtual Set Set { get; set; }
