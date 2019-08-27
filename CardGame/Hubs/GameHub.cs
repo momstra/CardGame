@@ -128,10 +128,11 @@ namespace CardGame.API.Hubs
 			int gameId = _gameService.GetGame(playerId).GameId;
 
 			var card = _playerService.PlayCard(playerId, cardId);
-			if (_gameService.PlayCard(gameId, card))
+			var cardObject = _gameService.PlayCard(gameId, card);
+			if (cardObject != null)
 			{
 				await Clients.Caller.CardPlayedSuccess();
-				await Clients.Group(gameId.ToString()).CardPlayed();
+				await Clients.Group(gameId.ToString()).CardPlayed(JsonConvert.SerializeObject(cardObject));
 			}
 
 		}

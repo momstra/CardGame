@@ -10,7 +10,7 @@ namespace CardGame.API.Hubs
 		Task AllReadyWaiting();
 		Task AwaitingPlayersReady();
 		Task AwaitingPlayersToJoin();
-		Task CardPlayed();
+		Task CardPlayed(string json);
 		Task CardPlayedSuccess();
 
 		Task GameAdded(int gameId);

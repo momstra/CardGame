@@ -360,11 +360,11 @@ namespace CardGame.Tests
 			var ownerBefore = card.Owner.ToString();
 
 			// Act 
-			var success = _gameService.PlayCard(game.GameId, card);
+			var cardPlayed = _gameService.PlayCard(game.GameId, card);
 			var playedAfter = game.CardsPlayed.Find(c => c.CardId == card.CardId);
 
 			// Assert
-			Assert.True(success);
+			Assert.Contains(card.CardId.ToString(), cardPlayed.ToString());
 			Assert.Null(playedBefore);                  // shouldn't have been in played cards at the beginning
 			
 			Assert.Equal(card, playedAfter);			// should have been last card played after being played

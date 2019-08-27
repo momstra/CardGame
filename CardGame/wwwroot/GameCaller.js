@@ -36,8 +36,8 @@ $(document).ready(function () {
 		});
 
 		// return of "PlayCard" to whole Group (aka game)
-		connection.on("CardPlayed", () => {
-			// TODO
+		connection.on("CardPlayed", (json) => {
+			ShowCardPlayed(json);
 		});
 
 		// return of "PlayCard"
@@ -146,6 +146,16 @@ $(document).ready(function () {
 
 			$("#cardcontainer").append(input);
 		});
+	}
+
+	// displayed last card played
+	function ShowCardPlayed(json) {
+		$("#table").empty();
+
+		var card = JSON.parse(json);
+		var cardstring = card.Color + card.Rank;
+
+		$("#table").text(cardstring);
 	}
 
 	// play card when clicked

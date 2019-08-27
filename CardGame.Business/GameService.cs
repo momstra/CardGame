@@ -186,11 +186,11 @@ namespace CardGame.Services
 		}
 
 		// play card
-		public bool PlayCard(int gameId, Card card)
+		public object PlayCard(int gameId, Card card)
 		{
 			Game game = _repository.GetGame(gameId);
 			if (game == null)
-				return false;
+				return null;
 
 			game.CardsPlayed.Add(card);
 
@@ -198,9 +198,9 @@ namespace CardGame.Services
 			_repository.SaveChanges();
 
 			if (!game.CardsPlayed.Contains(card))
-				return false;
+				return null;
 
-			return true;
+			return new { CardId = card.CardId, Color = card.Color, Rank = card.Rank };
 		}
 
 		// serve cards 
