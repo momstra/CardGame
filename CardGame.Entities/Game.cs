@@ -11,7 +11,10 @@ namespace CardGame.Entities
 		public int MaxPlayers { get; set; }
 		public int StartingHand { get; set; }
 		public string ActivePlayer { get; set; }
-		public string[] PlayersReady { get; set; }
+
+		public int PlayersReadyId { get; set; }
+		[ForeignKey("PlayersReadyId")]
+		public virtual List<Player> PlayersReady { get; set; }
 
 		public int CardsRemainingId { get; set; }
 		[ForeignKey("CardsRemainingId")]
@@ -35,7 +38,7 @@ namespace CardGame.Entities
 			MinPlayers = min;
 			MaxPlayers = max;
 			StartingHand = 5;
-			PlayersReady = new string[0];
+			PlayersReady = new List<Player>(); // string[0];
 			CardsRemaining = new List<Card>();
 			Players = new List<Player>();
 			CardsPlayed = new List<Card>();

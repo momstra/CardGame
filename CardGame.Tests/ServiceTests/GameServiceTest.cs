@@ -447,16 +447,16 @@ namespace CardGame.Tests
 			Assert.Equal(0, ready0);					// 0, there should be an error
 
 			Assert.Equal(1, ready1);					// 1, still waiting for others to join
-			Assert.Contains(player1Id, game.PlayersReady);
+			Assert.Contains(player1, game.PlayersReady);
 
 			Assert.Equal(2, ready2);                    // 2, enough players joined but still waiting for others to get ready 
-			Assert.Contains(player2Id, game.PlayersReady);
+			Assert.Contains(player2, game.PlayersReady);
 
 			Assert.Equal(3, ready3);                    // 3, enough players joined and all ready, but max count not yet reached
-			Assert.Contains(player3Id, game.PlayersReady);
+			Assert.Contains(player3, game.PlayersReady);
 
 			Assert.Equal(4, ready4);                    // 4, max number of players joined and all ready
-			Assert.Contains(player4Id, game.PlayersReady);
+			Assert.Contains(player4, game.PlayersReady);
 		}
 
 		[Fact]

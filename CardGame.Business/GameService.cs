@@ -247,18 +247,16 @@ namespace CardGame.Services
 			if (game == null)
 				return 0;
 
-			var list = game.PlayersReady.ToList();
-			list.Add(playerId);
-			game.PlayersReady = list.ToArray();         // add player to array of players ready
+			game.PlayersReady.Add(player);
 			_repository.SaveChanges();
 
-			if (!game.PlayersReady.Contains(playerId))	// and make sure it was successful
+			if (!game.PlayersReady.Contains(player))	// and make sure it was successful
 				return 0;
 
 			if (game.Players.Count < game.MinPlayers)
 				return 1;
 
-			if (list.Count < game.Players.Count)
+			if (game.PlayersReady.Count < game.Players.Count)
 				return 2;
 
 			if (game.Players.Count < game.MaxPlayers)

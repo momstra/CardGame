@@ -25,11 +25,11 @@ namespace CardGame.Entities
 				.HasForeignKey(c => c.UserId)
 				.OnDelete(DeleteBehavior.SetNull);
 
-			builder.Entity<Game>()
+			/*builder.Entity<Game>()
 				.Property(e => e.PlayersReady)
 				.HasConversion(
 					v => string.Join(',', v),
-					v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+					v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));*/
 
 			builder.Entity<Player>()
 				.HasKey(k => k.UserId);
