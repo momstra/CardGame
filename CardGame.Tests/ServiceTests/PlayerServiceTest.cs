@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
+using System.Collections.Generic;
 using Xunit;
+
 using CardGame.Entities;
 using CardGame.Services;
 using CardGame.Tests.FakeRepositories;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace CardGame.Tests
 {
@@ -66,15 +68,18 @@ namespace CardGame.Tests
 			var player = _repository.CreatePlayer(playerId);    // create test player 
 			var card = new Card()								// create test card
 			{
+				CardId = 456,
 				Color = "T",
 				Rank = "1",
 			};
 
+			object cardObject = new { CardId = card.CardId, Color = card.Color, Rank = card.Rank };
+			var jsonCard = JsonConvert.SerializeObject(cardObject);
 			string cardId = card.Color + card.Rank;				// get test card's value
 
 			List<string> control = new List<string>				// and add to a list as control for what should be returned
 			{
-				cardId,
+				jsonCard,
 			};
 
 			// Act
@@ -87,11 +92,11 @@ namespace CardGame.Tests
 			// Assert
 			Assert.Equal(handBefore.Count, handAfter.Count - 1);// hand count should have increased by one
 
-			Assert.DoesNotContain(cardId, handBefore);			// card should not have been in hand before adding it
+			Assert.DoesNotContain(jsonCard, handBefore);			// card should not have been in hand before adding it
 			Assert.NotEqual(control, handBefore);
 			Assert.Empty(handBefore);							// instead, hand should have been empty
 
-			Assert.Contains(cardId, handAfter);					// card should be in hand after adding it
+			Assert.Contains(jsonCard, handAfter);					// card should be in hand after adding it
 			Assert.Equal(control, handAfter);
 		}
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -55,7 +56,7 @@ namespace CardGame.Services
 			return player;
 		}
 
-		public List<String> GetHand(string playerId)
+		public List<string> GetHand(string playerId)
 		{
 			var hand = _repository.GetPlayer(playerId).Hand;
 
@@ -64,7 +65,10 @@ namespace CardGame.Services
 
 			List<string> list = new List<string>();
 			foreach (Card card in hand)
-				list.Add(card.Color + card.Rank);
+			{
+				var cardObject = new { CardId = card.CardId, Color = card.Color, Rank = card.Rank };
+				list.Add(JsonConvert.SerializeObject(cardObject));
+			}
 
 			return list;
 		}

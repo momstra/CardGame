@@ -15,8 +15,8 @@ $(document).ready(function () {
 			.configureLogging(signalR.LogLevel.Information)
 			.build();
 
-		connection.on("AllReady 4:", () => {
-			$("#gamestatus").val("Everyone ready, game starting")
+		connection.on("AllReady", () => {
+			$("#gamestatus").val("4: Everyone ready, game starting")
 		});
 
 		connection.on("AllReadyWaiting", () => {
@@ -31,6 +31,10 @@ $(document).ready(function () {
 			$("#gamestatus").val("1: Not enough players, waiting for more to join")
 		});
 
+		connection.on("CardPlayedSuccess", () => {
+			connection.invoke("GetHand");
+		});
+
 		connection.on("GameAdded", (gameid) => {
 			GetGameList();
 		});
@@ -40,7 +44,8 @@ $(document).ready(function () {
 		});
 
 		connection.on("GameStarted", () => {
-			GetHand();
+			$("#startgame").hide();
+			connection.invoke("GetHand");
 		});
 
 		connection.on("JoinSuccess", (gameid) => {
@@ -61,6 +66,10 @@ $(document).ready(function () {
 			GetGamePlayer();
 		});
 
+		connection.on("ReceiveHand", (hand) => {
+			DisplayHand(hand);
+		});
+
 		connection.on("ReceiveMessage", (message) => {
 			$("#answertext").val(message);
 		});
@@ -68,12 +77,7 @@ $(document).ready(function () {
 		connection.start();
 	}
 
-	$("#sendmessage").click(function () {
-		var message = $("#textmessage").val();
-		connection.invoke("SendMessage", message).catch(err => console.error(err));
-	});
-
-	// get list of games
+	// get list of games, maybe replaced by hub method
 	function GetGameList() {
 		var uri = "/api/game/list";
 		$.ajax({
@@ -93,7 +97,7 @@ $(document).ready(function () {
 		});
 	}
 
-	// get game's player list
+	// get game's player list, maybe replaced by hub method
 	function GetGamePlayer() {
 		var uri = "/api/game/users";
 		$.ajax({
@@ -113,30 +117,30 @@ $(document).ready(function () {
 		});
 	}
 
-	// retrieve player's hand
-	function GetHand() {
-
-		var uri = "/api/user/hand";
-		$.ajax({
-			url: uri,
-			headers: {
-				"Authorization": "Bearer " + token
-			},
-			success: function (json) {
-				$.each(json, function (_key, card) {
-					$("#cardcontainer").append(card + "<br />");
-				});
-			}
+	function DisplayHand(json) {
+		$("#cardcontainer").empty();
+		var hand = JSON.parse(json);
+		$.each(hand, function (_key, val) {
+			var card = JSON.parse(val);
+			var cardstring = card.Color + card.Rank;
+			var input = '<input type="button" id="'
+				+ card.CardId
+				+ '" value="'
+				+ cardstring
+				+ '" class="card" />';
+			$("#cardcontainer").append(input);
 		});
 	}
+	
+	$("#cardcontainer").on("click", ".card", function (event) {
+		var cardid = $(event.target).attr("id");
+		connection.invoke("PlayCard", cardid);
+		connection.invoke("GetHand");
+	});
+	
 
-	// start game manually
-	function StartGame() {
-		connection.invoke("StartGame");
-	}
-
-	// create new user
-	$("#createuser").click(function () {
+	// create new user, connection to hub is set up at the end, using the returned token
+	$("#createuser").on("click", function () {
 		var name = $("#username").val();
 		var uri = "/api/user/create/" + name;
 		$.ajax({
@@ -155,8 +159,8 @@ $(document).ready(function () {
 		});
 	});
 
-	// on user change get new users game
-	$("#changeuser").click(function () {
+	// on user change get new users game, purely for testing purposes
+	$("#changeuser").on("click", function () {
 		username = $("#users option:selected").text();
 		var uri = "/api/game/get";
 		$("#activeuser").val(username);
@@ -185,27 +189,34 @@ $(document).ready(function () {
 	});
 
 	// create new game
-	$("#creategame").click(function () {
+	$("#creategame").on("click", function () {
 		connection.invoke("CreateGame").catch(err => console.error(err));
 	});
 
 	// active user join game [game]
-	$("#joingame").click(function () {
+	$("#joingame").on("click", function () {
 		var game = $("#games option:selected").text();
 		connection.invoke("JoinGame", game);
 	});
 
 	// active user leave current game
-	$("#leavegame").click(function () {
+	$("#leavegame").on("click", function () {
 			connection.invoke("LeaveGame");
 	});
 
 	// set player ready
-	$("#playerready").click(function () {
+	$("#playerready").on("click", function () {
 		connection.invoke("PlayerReady");
 	});
 
-	$("#startgame").click(function () {
+	// not really used at the moment
+	$("#sendmessage").on("click", function () {
+		var message = $("#textmessage").val();
+		connection.invoke("SendMessage", message).catch(err => console.error(err));
+	});
+
+	// starting the game manually before max player count is reached
+	$("#startgame").on("click", function () {
 		connection.invoke("StartGame");
 	});
 });

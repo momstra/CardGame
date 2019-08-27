@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
-using CardGame.Services.Interfaces;
+using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
+using CardGame.Services.Interfaces;
 
 
 namespace CardGame.API.Hubs
@@ -67,6 +67,17 @@ namespace CardGame.API.Hubs
 			await Clients.Caller.JoinSuccess(gameId);
 		}
 
+		public async Task GetHand()
+		{
+			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			var hand = _playerService.GetHand(playerId);
+
+			if (hand != null)
+			{
+				await Clients.Caller.ReceiveHand(JsonConvert.SerializeObject(hand));
+			}
+		}
+
 		public async Task JoinGame(int id)
 		{
 			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
@@ -92,6 +103,21 @@ namespace CardGame.API.Hubs
 				await Clients.Group(gameId.ToString()).PlayerLeft(playerId);
 			}
 		}
+
+		public async Task PlayCard(int cardId)
+		{
+			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			int gameId = _gameService.GetGame(playerId).GameId;
+
+			var card = _playerService.PlayCard(playerId, cardId);
+			if (_gameService.PlayCard(gameId, card))
+			{
+				await Clients.Caller.CardPlayedSuccess();
+				await Clients.Group(gameId.ToString()).CardPlayed();
+			}
+
+		}
+
 
 		public async Task PlayerReady()
 		{
@@ -120,7 +146,6 @@ namespace CardGame.API.Hubs
 
 			else if (playerReady == 4)                               // max players reached, all ready
 				await Clients.Group(gameId.ToString()).AllReady();
-
 		}
 
 
