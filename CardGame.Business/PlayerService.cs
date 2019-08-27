@@ -92,6 +92,8 @@ namespace CardGame.Services
 			return null;
 		}
 
+		public void RemovePlayer(string playerId) => _repository.RemovePlayer(playerId);
+
 		public void SetHubId(string playerId, string hubId)
 		{
 			GetPlayer(playerId).HubId = hubId;

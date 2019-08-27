@@ -54,6 +54,11 @@ namespace CardGame.Tests.FakeServices
 			throw new System.NotImplementedException();
 		}
 
+		public void RemovePlayer(string playerId)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public void SetHubId(string playerId, string hubId)
 		{
 			throw new System.NotImplementedException();

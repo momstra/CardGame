@@ -101,15 +101,6 @@ namespace CardGame.Tests
 			string playerId = "PlayCardTestPlayer";
 			var player = _repository.CreatePlayer(playerId);
 
-			/*			int cardId = 1;
-						Card card = new Card()
-						{
-							CardId = cardId,
-							Color = "T",
-							Rank = "2",
-						};
-			*/
-
 			Set set = _repository.CreateSet();
 
 			_repository.CreateCards(set);
@@ -128,6 +119,23 @@ namespace CardGame.Tests
 			Assert.DoesNotContain(card, player.Hand);
 			Assert.Null(card.UserId);
 			Assert.Null(card.Owner);
+		}
+
+		[Fact]
+		public void RemovePlayerTest()
+		{
+			string playerId = "RemoveTestPlayer";
+			var player = _repository.CreatePlayer(playerId);
+
+			var before = _repository.GetPlayers().Contains(player);
+
+			// Act
+			_service.RemovePlayer(playerId);
+			var players = _repository.GetPlayers();
+
+			// Assert
+			Assert.True(before);					// player should have existed before removal
+			Assert.DoesNotContain(player, players);	// but after removal not any more
 		}
 	}
 }

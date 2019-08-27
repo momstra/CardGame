@@ -104,5 +104,16 @@ namespace CardGame.Tests.FakeRepositories
 		public Player GetPlayer(string playerId) => _context.Players.Find(playerId);
 
 		public List<Player> GetPlayers() => _context.Players.ToList();
+
+		public void RemovePlayer(string playerId)
+		{
+			Player player = GetPlayer(playerId);
+
+			if(player != null)
+			{
+				_context.Players.Remove(player);
+				SaveChanges();
+			}
+		}
 	}
 }

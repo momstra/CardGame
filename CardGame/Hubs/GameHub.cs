@@ -23,12 +23,27 @@ namespace CardGame.API.Hubs
 			_playerService = playerService;
 		}
 
+		// set up hub related player properties
 		public override Task OnConnectedAsync()
 		{
 			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			_playerService.SetHubId(playerId, Context.ConnectionId);
 
 			return base.OnConnectedAsync();
+		}
+
+		// remove player on disconnect
+		public override async Task OnDisconnectedAsync(Exception exception)
+		{
+			string playerId = Context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			var player = _playerService.GetPlayer(playerId);
+
+			if (player.Game != null)
+				await LeaveGame();//Groups.RemoveFromGroupAsync(Context.ConnectionId, player.GameId.ToString());
+
+			_playerService.RemovePlayer(playerId);
+
+			await base.OnDisconnectedAsync(exception);
 		}
 
 		// create new game and join asking player

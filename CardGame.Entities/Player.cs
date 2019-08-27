@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace CardGame.Entities
@@ -14,6 +15,7 @@ namespace CardGame.Entities
 
 		// game player has joined
 		public int? GameId { get; set; }
+		[ForeignKey("GameId")]
 		public virtual Game Game { get; set; }
 
 		public Player() { }

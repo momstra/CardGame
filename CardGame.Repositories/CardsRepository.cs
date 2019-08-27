@@ -106,10 +106,21 @@ namespace CardGame.Repositories
 
 			return _context.Players
 				.Include(p => p.Hand)
+				.Include(p => p.Game)
 				.Single(p => p.UserId == playerId);
 		}
 
 		public List<Player> GetPlayers() => _context.Players.ToList();
+
+		public void RemovePlayer(string playerId)
+		{
+			Player player = GetPlayer(playerId);
+			if (player != null)
+			{
+				_context.Players.Remove(player);
+				SaveChanges();
+			}
+		}
 			   
 		public void SaveChanges()
 		{

@@ -17,6 +17,7 @@ namespace CardGame.Repositories.Interfaces
 		List<Card> GetHand(string playerId);
 		Player GetPlayer(string playerId);
 		List<Player> GetPlayers();
+		void RemovePlayer(string playerId);
 		void SaveChanges();
 	}
 }
