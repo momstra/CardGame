@@ -2,10 +2,10 @@
 
 namespace CardGame.Entities
 {
-	public class Deck
+	public class Set
 	{
-		public int DeckId { get; set; }
-		public int DeckSize { get; set; }
+		public int SetId { get; set; }
+		public int SetSize { get; set; }
 
 		//public int GameId { get; set; }
 		public virtual Game Game { get; set; }
@@ -13,9 +13,9 @@ namespace CardGame.Entities
 		public virtual ICollection<Card> Cards { get; set; }
 
 
-		public Deck() 
+		public Set() 
 		{
-			DeckSize = 52;
+			SetSize = 52;
 			Cards = new List<Card>();
 		}
 	}

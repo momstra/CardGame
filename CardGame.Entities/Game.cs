@@ -14,8 +14,8 @@ namespace CardGame.Entities
 		public List<Card> CardsRemaining { get; set; }
 		public List<Card> CardsPlayed { get; set; }
 
-		public int DeckId { get; set; }
-		public virtual Deck Deck { get; set; }
+		public int SetId { get; set; }
+		public virtual Set Set { get; set; }
 		
 		public virtual ICollection<Player> Players { get; set; }
 

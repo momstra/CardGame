@@ -16,12 +16,12 @@ namespace CardGame.Repositories
 			_context = context;
 		}
 
-		public bool AddGame(int gameId, Deck deck)
+		public bool AddGame(int gameId, Set set)
 		{
 			Game game = new Game(gameId);
 			if (game != null)
 			{
-				game.Deck = deck;
+				game.Set = set;
 				_context.Games.Add(game);
 				_context.SaveChanges();
 				if (_context.Games.Find(gameId) != null)
@@ -36,7 +36,7 @@ namespace CardGame.Repositories
 			_context.SaveChanges();
 		}
 
-		public bool CreateCards(Deck deck)
+		public bool CreateCards(Set set)
 		{
 			string[] colors = { "D", "H", "S", "C" };
 			string[] ranks = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
@@ -51,7 +51,7 @@ namespace CardGame.Repositories
 						Rank = rank
 					};
 					_context.Cards.Add(card);
-					deck.Cards.Add(card);
+					set.Cards.Add(card);
 				}
 			}
 			SaveChanges();
@@ -59,13 +59,13 @@ namespace CardGame.Repositories
 			return true;
 		}
 
-		public Deck CreateDeck()
+		public Set CreateSet()
 		{
-			Deck deck = new Deck();
-			_context.Decks.Add(deck);
+			Set set = new Set();
+			_context.Sets.Add(set);
 			SaveChanges();
 
-			return deck;
+			return set;
 		}
 	
 		public Player CreatePlayer(string playerId)
@@ -89,7 +89,7 @@ namespace CardGame.Repositories
 				.Include(g => g.Players)
 				.ThenInclude(p => p.Hand)
 				.Include(g => g.CardsRemaining)
-				.Include(g => g.Deck)
+				.Include(g => g.Set)
 					.ThenInclude(d => d.Cards)
 				.Single(g => g.GameId == gameId);
 		}

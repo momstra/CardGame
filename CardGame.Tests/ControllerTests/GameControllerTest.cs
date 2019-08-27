@@ -84,11 +84,11 @@ namespace CardGame.Tests
 				card2,
 			};
 
-			Deck deck = new Deck()			// create deck for test game
+			Set set = new Set()			// create deck for test game
 			{
 				Cards = cards,
 			};
-			game.Deck = deck;
+			game.Set = set;
 			game.GameStarted = true;		// "start" test game 
 			_repository.Games.Add(game);	// add game to database
 

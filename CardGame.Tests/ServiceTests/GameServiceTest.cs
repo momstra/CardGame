@@ -30,8 +30,8 @@ namespace CardGame.Tests
 
 		public Game CreateGame()
 		{
-			Deck deck = _repository.CreateDeck();
-			if (!_repository.CreateCards(deck))
+			Set set = _repository.CreateSet();
+			if (!_repository.CreateCards(set))
 				return null;
 
 			Random random = new Random();
@@ -40,7 +40,7 @@ namespace CardGame.Tests
 			while (_repository.GetGame(gameId) != null)
 				gameId = random.Next(1000, 9999);
 
-			if (!_repository.AddGame(gameId, deck))
+			if (!_repository.AddGame(gameId, set))
 				return null;
 
 			Game game = _repository.GetGames().Find(g => g.GameId == gameId);
@@ -57,7 +57,7 @@ namespace CardGame.Tests
 
 		public List<Card> Shuffle(Game game)
 		{
-			foreach (Card card in game.Deck.Cards)
+			foreach (Card card in game.Set.Cards)
 				game.CardsRemaining.Add(card);
 
 			return game.CardsRemaining;
@@ -128,8 +128,8 @@ namespace CardGame.Tests
 			Assert.NotNull(game1);							// and they should not be null
 			Assert.NotNull(game2);					
 
-			Assert.NotEmpty(game1.Deck.Cards);				// and their decks should not be empty
-			Assert.NotEmpty(game2.Deck.Cards);
+			Assert.NotEmpty(game1.Set.Cards);				// and their sets should not be empty
+			Assert.NotEmpty(game2.Set.Cards);
 
 			Assert.Equal(playerid1, game1.ActivePlayer);    // and game creator set as active player
 			Assert.Equal(playerid2, game2.ActivePlayer);
@@ -359,11 +359,11 @@ namespace CardGame.Tests
 				Rank = "1",
 			};
 			
-			var before = game.CardsPlayed.FindLast(c => c.DeckId == game.DeckId);
+			var before = game.CardsPlayed.FindLast(c => c.SetId == game.SetId);
 
 			// Act 
 			var success = _gameService.PlayCard(game.GameId, card);
-			var after = game.CardsPlayed.FindLast(c => c.DeckId == game.DeckId);
+			var after = game.CardsPlayed.FindLast(c => c.SetId == game.SetId);
 
 			// Assert
 			Assert.True(success);

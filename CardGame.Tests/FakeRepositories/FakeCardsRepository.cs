@@ -21,13 +21,13 @@ namespace CardGame.Tests.FakeRepositories
 		public void SaveChanges() => _context.SaveChanges();
 		
 
-		public bool AddGame(int gameId, Deck deck)
+		public bool AddGame(int gameId, Set set)
 		{
 			Game game = new Game(gameId);
 			if (game == null)
 				return false;
 
-			game.Deck = deck;
+			game.Set = set;
 			_context.Games.Add(game);
 			SaveChanges();
 			return true;
@@ -40,7 +40,7 @@ namespace CardGame.Tests.FakeRepositories
 			SaveChanges();
 		}
 
-		public bool CreateCards(Deck deck)
+		public bool CreateCards(Set set)
 		{
 
 			string[] colors = { "D", "H", "S", "C" };
@@ -56,7 +56,7 @@ namespace CardGame.Tests.FakeRepositories
 						Rank = rank
 					};
 					_context.Cards.Add(card);
-					deck.Cards.Add(card);
+					set.Cards.Add(card);
 				}
 			}
 
@@ -65,14 +65,13 @@ namespace CardGame.Tests.FakeRepositories
 			return true;
 		}
 
-		public Deck CreateDeck()
+		public Set CreateSet()
 		{
-			Deck deck = new Deck();
-			_context.Decks.Add(deck);
-
+			Set set = new Set();
+			_context.Sets.Add(set);
 			SaveChanges();
 
-			return deck;
+			return set;
 		}
 
 		public Player CreatePlayer(string playerId)
@@ -92,7 +91,7 @@ namespace CardGame.Tests.FakeRepositories
 			if (_context.Games.Find(gameId) != null)
 				return _context.Games
 					.Include(g => g.Players)
-					.Include(g => g.Deck)
+					.Include(g => g.Set)
 					.First(g => g.GameId == gameId);
 
 			return null;

@@ -9,9 +9,9 @@ namespace CardGame.Entities
 			: base(options) { }
 
 		public DbSet<Card> Cards { get; set; }
-		public DbSet<Deck> Decks { get; set; }
 		public DbSet<Game> Games { get; set; }
 		public DbSet<Player> Players { get; set; }
+		public DbSet<Set> Sets { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -24,10 +24,6 @@ namespace CardGame.Entities
 				.WithMany(p => p.Hand)
 				.HasForeignKey(c => c.UserId)
 				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.Entity<Deck>()
-				.Property(p => p.DeckId)
-				.ValueGeneratedOnAdd();
 
 			builder.Entity<Game>()
 				.Property(e => e.PlayersReady)
@@ -43,6 +39,16 @@ namespace CardGame.Entities
 				.WithMany(g => g.Players)
 				.HasForeignKey(p => p.GameId)
 				.OnDelete(DeleteBehavior.SetNull);
+
+			builder.Entity<Set>()
+				.Property(p => p.SetId)
+				.ValueGeneratedOnAdd();
+
+			/*builder.Entity<Set>()
+				.HasOne(s => s.Game)
+				.WithOne(g => g.Set)
+				.HasForeignKey<Game>(s => s.GameId)
+				.OnDelete(DeleteBehavior.Cascade);*/
 		}
 	}
 

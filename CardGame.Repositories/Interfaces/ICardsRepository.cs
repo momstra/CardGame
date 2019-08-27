@@ -6,10 +6,10 @@ namespace CardGame.Repositories.Interfaces
 {
 	public interface ICardsRepository
 	{
-		bool AddGame(int gameId, Deck deck);
+		bool AddGame(int gameId, Set set);
 		void AddPlayer(Player player);
-		bool CreateCards(Deck deck);
-		Deck CreateDeck();
+		bool CreateCards(Set set);
+		Set CreateSet();
 		Player CreatePlayer(string playerId);
 		Card GetCard(int cardId);
 		Game GetGame(int gameId);

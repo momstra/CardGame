@@ -57,7 +57,7 @@ namespace CardGame.Services
 				id = random.Next(1000, 9999);
 
 			_logger.LogInformation($"Deck for game [{id}] is being created...");
-			Deck deck = _repository.CreateDeck();
+			Set deck = _repository.CreateSet();
 			_repository.CreateCards(deck);
 
 			_logger.LogInformation($"Game [{id}] is being created...");
@@ -269,7 +269,7 @@ namespace CardGame.Services
 		public void Shuffle(int gameId)
 		{
 			_repository.GetGame(gameId).CardsRemaining.Clear();
-			List<Card> cards = _repository.GetGame(gameId).Deck.Cards.ToList();
+			List<Card> cards = _repository.GetGame(gameId).Set.Cards.ToList();
 			
 			Shuffle(cards, gameId);
 		}

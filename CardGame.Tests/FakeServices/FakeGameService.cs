@@ -27,7 +27,7 @@ namespace CardGame.Tests.FakeServices
 			Random random = new Random();
 			var gameId = random.Next(10, 20);
 			var game = new Game(gameId);
-			game.Deck = new Deck();
+			game.Set = new Set();
 			_repository.Games.Add(game);
 
 			return gameId;
@@ -39,7 +39,7 @@ namespace CardGame.Tests.FakeServices
 			if (game == null)
 				return null;
 
-			List<Card> cards = game.Deck.Cards as List<Card>;
+			List<Card> cards = game.Set.Cards as List<Card>;
 			if (cards == null)
 				return null;
 

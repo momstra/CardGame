@@ -9,8 +9,8 @@ namespace CardGame.Entities
 		public string Rank { get; set; }
 
 		// foreign key to containing deck
-		public int DeckId { get; set; }
-		public virtual Deck Deck { get; set; }
+		public int SetId { get; set; }
+		public virtual Set Set { get; set; }
 
 		// foreign key to card holder
 		public string UserId { get; set; }

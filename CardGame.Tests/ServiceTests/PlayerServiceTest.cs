@@ -28,7 +28,7 @@ namespace CardGame.Tests
 			
 			var player = _repository.CreatePlayer(id);	// create test player 
 			
-			Deck deck = new Deck();						// create deck for test game
+			Set deck = new Set();						// create deck for test game
 			Card card = new Card()						// create a card and add it
 			{
 				CardId = cardId,
@@ -110,10 +110,10 @@ namespace CardGame.Tests
 						};
 			*/
 
-			Deck deck = _repository.CreateDeck();
+			Set set = _repository.CreateSet();
 
-			_repository.CreateCards(deck);
-			var cards = deck.Cards as List<Card>;
+			_repository.CreateCards(set);
+			var cards = set.Cards as List<Card>;
 			var card = cards[0];
 			var cardId = card.CardId;
 
