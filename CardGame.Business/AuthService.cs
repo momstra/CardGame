@@ -19,9 +19,11 @@ namespace CardGame.Services
 	{
 		private readonly ILogger _logger;
 		private readonly IConfiguration _config;
+		private readonly ICardsRepository _repository;
 
-		public AuthService(IConfiguration config, ILogger<AuthService> logger)
+		public AuthService(ICardsRepository repository, IConfiguration config, ILogger<AuthService> logger)
 		{
+			_repository = repository;
 			_config = config;
 			_logger = logger;
 		}
@@ -32,7 +34,11 @@ namespace CardGame.Services
 			if (currentUser.Claims == null)
 				return null;
 
-			return currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			var playerId = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			if (_repository.GetPlayer(playerId) == null)				// making sure player still exists
+				return null;
+
+			return playerId;
 		}
 		
 		// generate JWT with claim for (ClaimTypes.NameIdentifier: {user})
