@@ -344,7 +344,39 @@ namespace CardGame.Tests
 			Assert.True(leaving);							// leave returns true if successfull
 			Assert.DoesNotContain(player1, game.Players);	// should not contain player1 any longer
 		}
-		
+
+		[Fact]
+		public void PlayCardTest()
+		{
+			var game = CreateGame();
+			string playerId = "TestPlayerPlay";
+			Player player = new Player(playerId);
+			int cardId = 12345;
+			Card card = new Card()
+			{
+				CardId = cardId,
+				Color = "T",
+				Rank = "1",
+			};
+			
+			var before = game.CardsPlayed.FindLast(c => c.DeckId == game.DeckId);
+
+			// Act 
+			var success = _gameService.PlayCard(game.GameId, card);
+			var after = game.CardsPlayed.FindLast(c => c.DeckId == game.DeckId);
+
+			// Assert
+			Assert.True(success);
+			Assert.Null(before);                    // shouldn't have been in played cards at the beginning
+													//TODO
+			Assert.IsType<List<Card>>(game.CardsPlayed);
+			Assert.Equal(card, after);				// should have been last card played after being played
+			Assert.Contains(card, game.CardsPlayed);// and therefore contained in CardsPlayed
+
+			Assert.Null(card.Owner);				// and not owned by anyone
+		}
+
+
 		[Fact]
 		public void ServeStartingHandsTest()
 		{

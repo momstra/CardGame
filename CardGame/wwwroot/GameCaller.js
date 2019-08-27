@@ -41,7 +41,6 @@ $(document).ready(function () {
 
 		connection.on("GameStarted", () => {
 			GetHand();
-			//connection.invoke("GetHand");
 		});
 
 		connection.on("JoinSuccess", (gameid) => {

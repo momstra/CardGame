@@ -75,6 +75,23 @@ namespace CardGame.Services
 		// get all players
 		public List<Player> GetPlayers() => _repository.GetPlayers();
 
+		public Card PlayCard(string playerId, int cardId)
+		{
+			var player = GetPlayer(playerId);
+			var card = _repository.GetCard(cardId);
+
+			if (card.Owner != player)
+				return null;
+
+			if (player.Hand.Remove(card))
+			{
+				_repository.SaveChanges();
+				return card;
+			}
+
+			return null;
+		}
+
 		public void SetHubId(string playerId, string hubId)
 		{
 			GetPlayer(playerId).HubId = hubId;

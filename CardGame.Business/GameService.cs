@@ -185,6 +185,22 @@ namespace CardGame.Services
 			return false;
 		}
 
+		// play card
+		public bool PlayCard(int gameId, Card card)
+		{
+			Game game = _repository.GetGame((int)gameId);
+			if (game == null)
+				return false;
+
+			game.CardsPlayed.Add(card);
+			_repository.SaveChanges();
+
+			if (!game.CardsPlayed.Contains(card))
+				return false;
+
+			return true;
+		}
+
 		// serve cards 
 		public bool ServeStartingHands(int gameId)
 		{

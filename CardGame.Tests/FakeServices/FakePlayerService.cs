@@ -49,6 +49,11 @@ namespace CardGame.Tests.FakeServices
 
 		public List<Player> GetPlayers() => _repository.Players;
 
+		public Card PlayCard(string playerId, int cardId)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public void SetHubId(string playerId, string hubId)
 		{
 			throw new System.NotImplementedException();

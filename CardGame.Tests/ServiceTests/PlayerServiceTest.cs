@@ -94,5 +94,40 @@ namespace CardGame.Tests
 			Assert.Contains(cardId, handAfter);					// card should be in hand after adding it
 			Assert.Equal(control, handAfter);
 		}
+
+		[Fact]
+		public void PlayCardTest()
+		{
+			string playerId = "PlayCardTestPlayer";
+			var player = _repository.CreatePlayer(playerId);
+
+			/*			int cardId = 1;
+						Card card = new Card()
+						{
+							CardId = cardId,
+							Color = "T",
+							Rank = "2",
+						};
+			*/
+
+			Deck deck = _repository.CreateDeck();
+
+			_repository.CreateCards(deck);
+			var cards = deck.Cards as List<Card>;
+			var card = cards[0];
+			var cardId = card.CardId;
+
+			player.Hand.Add(card);
+			_repository.SaveChanges();
+
+			// Act
+			var playedCard = _service.PlayCard(playerId, cardId);
+
+			// Assert
+			Assert.Equal(card, playedCard);
+			Assert.DoesNotContain(card, player.Hand);
+			Assert.Null(card.UserId);
+			Assert.Null(card.Owner);
+		}
 	}
 }

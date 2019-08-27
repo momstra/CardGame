@@ -10,6 +10,7 @@ namespace CardGame.Services.Interfaces
 		List<string> GetHand(string playerId);
 		Player GetPlayer(string playerId);
 		List<Player> GetPlayers();
+		Card PlayCard(string playerId, int cardId);
 		void SetHubId(string playerId, string hubId);
 	}
 }

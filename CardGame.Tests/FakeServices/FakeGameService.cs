@@ -143,5 +143,10 @@ namespace CardGame.Tests.FakeServices
 		public void Shuffle(int gameId) => throw new NotImplementedException();
 
 		public void Shuffle(List<Card> cards, int gameId) => throw new NotImplementedException();
+
+		public bool PlayCard(int gameId, Card card)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

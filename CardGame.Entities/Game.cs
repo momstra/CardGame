@@ -31,7 +31,7 @@ namespace CardGame.Entities
 			PlayersReady = new string[0];
 			CardsRemaining = new List<Card>();
 			Players = new List<Player>();
-			//CardsPlayed = new Stack<Card>();
+			CardsPlayed = new List<Card>();
 		}
 	}
 }
