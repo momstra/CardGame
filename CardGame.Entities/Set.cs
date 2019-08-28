@@ -5,18 +5,15 @@ namespace CardGame.Entities
 	public class Set
 	{
 		public int SetId { get; set; }
-		public int SetSize { get; set; }
+		public int Size { get; set; }
 
-		//public int GameId { get; set; }
+		// assigned game
 		public virtual Game Game { get; set; }
 
-		public virtual List<Card> Cards { get; set; }
+		// assigned cards
+		public virtual List<Card> Cards { get; set; } = new List<Card>();
 
 
-		public Set() 
-		{
-			SetSize = 52;
-			Cards = new List<Card>();
-		}
+		public Set(int size = 52) => Size = size;
 	}
 }

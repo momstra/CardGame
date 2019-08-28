@@ -126,7 +126,7 @@ namespace CardGame.Services
 			List<string> playerIds = new List<string>();
 			foreach (Player player in players)
 			{
-				playerIds.Add(player.UserId);
+				playerIds.Add(player.PlayerId);
 			}
 			return playerIds;
 		}

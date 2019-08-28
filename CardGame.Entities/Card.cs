@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CardGame.Entities
+﻿namespace CardGame.Entities
 {
 	public class Card
 	{
@@ -8,7 +6,15 @@ namespace CardGame.Entities
 		public string Color { get; set; }
 		public string Rank { get; set; }
 
-		// foreign key to containing deck
+		// foreign key to Game.CardsPlayed
+		public int? PlayedId { get; set; }
+		public virtual Game CardsPlayed { get; set; }
+
+		// foreign key to Game.CardsRemaining
+		public int? RemainingId { get; set; }
+		public virtual Game CardsRemaining { get; set; }
+
+		// foreign key to containing set 
 		public int SetId { get; set; }
 		public virtual Set Set { get; set; }
 

@@ -1,27 +1,25 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CardGame.Entities
 {
 	public class Player
 	{
-		public string UserId { get; set; }
+		public string PlayerId { get; set; }
 		public string HubId { get; set; }
 		
-		// players hand 
-		public virtual ICollection<Card> Hand { get; set; }
+		public virtual ICollection<Card> Hand { get; set; } = new List<Card>();
 
-		// game player has joined
+		// foreign key to Game
 		public int? GameId { get; set; }
-		[ForeignKey("GameId")]
 		public virtual Game Game { get; set; }
+
+		// foreign key to Game.PlayersReady
+		public int? ReadyId { get; set; }
+		public virtual Game PlayersReady { get; set; }
+
 
 		public Player() { }
 
-		public Player(string userId)
-		{
-			UserId = userId;
-			Hand = new List<Card>();
-		}
+		public Player(string playerId) => PlayerId = playerId;
 	}
 }

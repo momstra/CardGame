@@ -108,7 +108,7 @@ namespace CardGame.Repositories
 			return _context.Players
 				.Include(p => p.Hand)
 				.Include(p => p.Game)
-				.Single(p => p.UserId == playerId);
+				.Single(p => p.PlayerId == playerId);
 		}
 
 		public List<Player> GetPlayers() => _context.Players.ToList();

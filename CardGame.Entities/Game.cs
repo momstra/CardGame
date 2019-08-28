@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CardGame.Entities
 {
@@ -12,22 +11,16 @@ namespace CardGame.Entities
 		public int StartingHand { get; set; }
 		public string ActivePlayer { get; set; }
 
-		public int PlayersReadyId { get; set; }
-		[ForeignKey("PlayersReadyId")]
-		public virtual List<Player> PlayersReady { get; set; }
+		public virtual List<Card> CardsPlayed { get; set; } = new List<Card>();
+		public virtual List<Card> CardsRemaining { get; set; } = new List<Card>();
 
-		public int CardsRemainingId { get; set; }
-		[ForeignKey("CardsRemainingId")]
-		public virtual List<Card> CardsRemaining { get; set; }
+		public virtual List<Player> PlayersReady { get; set; } = new List<Player>();
+		public virtual List<Player> Players { get; set; } = new List<Player>();
 
-		public int CardsPlayedId { get; set; }
-		[ForeignKey("CardsPlayedId")]
-		public virtual List<Card> CardsPlayed { get; set; }
-
+		// foreign key to assigned Set
 		public int SetId { get; set; }
 		public virtual Set Set { get; set; }
 		
-		public virtual ICollection<Player> Players { get; set; }
 
 		public Game() { }
 
@@ -38,10 +31,6 @@ namespace CardGame.Entities
 			MinPlayers = min;
 			MaxPlayers = max;
 			StartingHand = 5;
-			PlayersReady = new List<Player>(); // string[0];
-			CardsRemaining = new List<Card>();
-			Players = new List<Player>();
-			CardsPlayed = new List<Card>();
 		}
 	}
 }

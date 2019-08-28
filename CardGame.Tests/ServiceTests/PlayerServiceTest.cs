@@ -56,7 +56,7 @@ namespace CardGame.Tests
 
 			// Assert	
 			Assert.True(_repository.GetPlayers().Count == count + 1);					// player count should have increased
-			Assert.Equal(_repository.GetPlayers().Find(p => p.UserId == id), player);   // player should match saved player
+			Assert.Equal(_repository.GetPlayers().Find(p => p.PlayerId == id), player);   // player should match saved player
 			Assert.Null(_service.CreatePlayer(id));										// player should not be created as id already exists
 		}
 

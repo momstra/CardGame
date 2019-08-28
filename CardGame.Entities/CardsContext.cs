@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace CardGame.Entities
 {
@@ -25,14 +24,20 @@ namespace CardGame.Entities
 				.HasForeignKey(c => c.UserId)
 				.OnDelete(DeleteBehavior.SetNull);
 
-			/*builder.Entity<Game>()
-				.Property(e => e.PlayersReady)
-				.HasConversion(
-					v => string.Join(',', v),
-					v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));*/
+			builder.Entity<Card>()
+				.HasOne(c => c.CardsPlayed)
+				.WithMany(p => p.CardsPlayed)
+				.HasForeignKey(c => c.PlayedId)
+				.OnDelete(DeleteBehavior.SetNull);
+
+			builder.Entity<Card>()
+				.HasOne(c => c.CardsRemaining)
+				.WithMany(r => r.CardsRemaining)
+				.HasForeignKey(c => c.RemainingId)
+				.OnDelete(DeleteBehavior.SetNull);
 
 			builder.Entity<Player>()
-				.HasKey(k => k.UserId);
+				.HasKey(k => k.PlayerId);
 
 			builder.Entity<Player>()
 				.HasOne(p => p.Game)
@@ -40,15 +45,15 @@ namespace CardGame.Entities
 				.HasForeignKey(p => p.GameId)
 				.OnDelete(DeleteBehavior.SetNull);
 
+			builder.Entity<Player>()
+				.HasOne(p => p.PlayersReady)
+				.WithMany(g => g.PlayersReady)
+				.HasForeignKey(p => p.ReadyId)
+				.OnDelete(DeleteBehavior.SetNull);
+
 			builder.Entity<Set>()
 				.Property(p => p.SetId)
 				.ValueGeneratedOnAdd();
-
-			/*builder.Entity<Set>()
-				.HasOne(s => s.Game)
-				.WithOne(g => g.Set)
-				.HasForeignKey<Game>(s => s.GameId)
-				.OnDelete(DeleteBehavior.Cascade);*/
 		}
 	}
 

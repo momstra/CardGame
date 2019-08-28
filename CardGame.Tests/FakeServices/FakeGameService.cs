@@ -51,7 +51,7 @@ namespace CardGame.Tests.FakeServices
 
 		public Game GetGame(int gameId) => _repository.Games.Find(g => g.GameId == gameId);
 
-		public Game GetGame(string userId) => _repository.Players.Find(p => p.UserId == userId).Game;
+		public Game GetGame(string userId) => _repository.Players.Find(p => p.PlayerId == userId).Game;
 
 		public List<Game> GetGames() => _repository.Games;
 
@@ -71,7 +71,7 @@ namespace CardGame.Tests.FakeServices
 			var list = new List<string>();
 			var players = _repository.Games.Find(g => g.GameId == gameId).Players;
 			foreach (Player player in players)
-				list.Add(player.UserId);
+				list.Add(player.PlayerId);
 
 			return list;
 		}
@@ -82,7 +82,7 @@ namespace CardGame.Tests.FakeServices
 			if (game == null)
 				return 0;
 
-			var player = _repository.Players.Find(p => p.UserId == playerId);
+			var player = _repository.Players.Find(p => p.PlayerId == playerId);
 			if (player == null)
 				return 0;
 
@@ -95,7 +95,7 @@ namespace CardGame.Tests.FakeServices
 
 		public bool LeaveGame(string playerId)
 		{
-			var player = _repository.Players.Find(p => p.UserId == playerId);
+			var player = _repository.Players.Find(p => p.PlayerId == playerId);
 			if (player == null)
 				return false;
 
@@ -106,7 +106,7 @@ namespace CardGame.Tests.FakeServices
 				return false;
 
 			var playerList = game.Players as List<Player>;
-			if (playerList.Find(p => p.UserId == playerId) == null)
+			if (playerList.Find(p => p.PlayerId == playerId) == null)
 				return false;
 
 			player.Game = null;

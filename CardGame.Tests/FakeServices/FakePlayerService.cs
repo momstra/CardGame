@@ -17,7 +17,7 @@ namespace CardGame.Tests.FakeServices
 
 		public bool AddCardToHand(int cardId, string playerId)
 		{
-			Player player = _repository.Players.Find(p => p.UserId == playerId);
+			Player player = _repository.Players.Find(p => p.PlayerId == playerId);
 			Card card = _repository.Cards.Find(c => c.CardId == cardId);
 			player.Hand.Add(card);
 			return true;
@@ -26,7 +26,7 @@ namespace CardGame.Tests.FakeServices
 		public Player CreatePlayer(string playerId)
 		{
 			Player player = new Player();
-			player.UserId = playerId;
+			player.PlayerId = playerId;
 			_repository.Players.Add(player);
 			return player;
 		}
@@ -45,7 +45,7 @@ namespace CardGame.Tests.FakeServices
 			return list;
 		}
 
-		public Player GetPlayer(string playerId) => _repository.Players.Find(p => p.UserId == playerId);
+		public Player GetPlayer(string playerId) => _repository.Players.Find(p => p.PlayerId == playerId);
 
 		public List<Player> GetPlayers() => _repository.Players;
 
