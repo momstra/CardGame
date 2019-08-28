@@ -14,7 +14,7 @@ namespace CardGame.Entities
 		public virtual Game Game { get; set; }
 
 		// foreign key to Game.PlayersReady
-		public int? ReadyId { get; set; }
+		public int? PlayersReadyId { get; set; }
 		public virtual Game PlayersReady { get; set; }
 
 

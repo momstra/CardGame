@@ -13,7 +13,7 @@ namespace CardGame.Entities
 
 		public virtual List<Card> CardsPlayed { get; set; } = new List<Card>();
 		public virtual List<Card> CardsRemaining { get; set; } = new List<Card>();
-
+		
 		public virtual List<Player> PlayersReady { get; set; } = new List<Player>();
 		public virtual List<Player> Players { get; set; } = new List<Player>();
 

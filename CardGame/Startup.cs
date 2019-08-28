@@ -57,8 +57,9 @@ namespace CardGame
 			 });
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-			//var connection = @"Server=(localdb)\mssqllocaldb;Database=EFGetStarted.AspNetCore.NewDb;Trusted_Connection=True;ConnectRetryCount=0";
-			services.AddDbContext<CardsContext>(options => options.UseInMemoryDatabase("CardGameDb"));
+			var connection = @"Server=(localdb)\mssqllocaldb;Database=CardGameDb;Trusted_Connection=True;ConnectRetryCount=0";
+			services.AddDbContext<CardsContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly("CardGame.API")));
+			//services.AddDbContext<CardsContext>(options => options.UseInMemoryDatabase("CardGameDb"));
 
 			services.AddScoped<ICardsRepository, CardsRepository>();
 			services.AddScoped<IGameService, GameService>();

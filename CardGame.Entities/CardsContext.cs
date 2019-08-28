@@ -14,10 +14,23 @@ namespace CardGame.Entities
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
+			// Primary Keys
 			builder.Entity<Card>()
 				.Property(p => p.CardId)
 				.ValueGeneratedOnAdd();
 
+			builder.Entity<Game>()
+				.Property(p => p.GameId)
+				.ValueGeneratedNever();
+
+			builder.Entity<Player>()
+				.HasKey(k => k.PlayerId);
+
+			builder.Entity<Set>()
+				.Property(p => p.SetId)
+				.ValueGeneratedOnAdd();
+
+			// Foreign Keys
 			builder.Entity<Card>()
 				.HasOne(c => c.Player)
 				.WithMany(p => p.Hand)
@@ -27,17 +40,17 @@ namespace CardGame.Entities
 			builder.Entity<Card>()
 				.HasOne(c => c.CardsPlayed)
 				.WithMany(p => p.CardsPlayed)
-				.HasForeignKey(c => c.PlayedId)
-				.OnDelete(DeleteBehavior.SetNull);
+				.HasForeignKey(c => c.PlayedId);
 
 			builder.Entity<Card>()
 				.HasOne(c => c.CardsRemaining)
 				.WithMany(r => r.CardsRemaining)
-				.HasForeignKey(c => c.RemainingId)
-				.OnDelete(DeleteBehavior.SetNull);
+				.HasForeignKey(c => c.RemainingId);
 
-			builder.Entity<Player>()
-				.HasKey(k => k.PlayerId);
+			builder.Entity<Card>()
+				.HasOne(c => c.Set)
+				.WithMany(s => s.Cards)
+				.HasForeignKey(c => c.SetId);
 
 			builder.Entity<Player>()
 				.HasOne(p => p.Game)
@@ -48,12 +61,8 @@ namespace CardGame.Entities
 			builder.Entity<Player>()
 				.HasOne(p => p.PlayersReady)
 				.WithMany(g => g.PlayersReady)
-				.HasForeignKey(p => p.ReadyId)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.Entity<Set>()
-				.Property(p => p.SetId)
-				.ValueGeneratedOnAdd();
+				.HasForeignKey(p => p.PlayersReadyId)
+				.OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 
