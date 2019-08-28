@@ -357,7 +357,7 @@ namespace CardGame.Tests
 			_repository.SaveChanges();					// make player owner of card
 
 			var playedBefore = game.CardsPlayed.Find(c => c.CardId == card.CardId);
-			var ownerBefore = card.Owner.ToString();
+			var ownerBefore = card.Player.ToString();
 
 			// Act 
 			var cardPlayed = _gameService.PlayCard(game.GameId, card);
@@ -371,7 +371,7 @@ namespace CardGame.Tests
 			Assert.Contains(card, game.CardsPlayed);	// and therefore contained in CardsPlayed
 
 			Assert.NotNull(ownerBefore);				// card should have been owned before
-			Assert.Null(card.Owner);					// and not owned by anyone afterwards
+			Assert.Null(card.Player);					// and not owned by anyone afterwards
 		}
 
 

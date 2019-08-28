@@ -194,7 +194,7 @@ namespace CardGame.Services
 
 			game.CardsPlayed.Add(card);
 
-			card.UserId = null;
+			card.PlayerId = null;
 			_repository.SaveChanges();
 
 			if (!game.CardsPlayed.Contains(card))

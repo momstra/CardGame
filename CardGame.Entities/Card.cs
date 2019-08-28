@@ -19,7 +19,7 @@
 		public virtual Set Set { get; set; }
 
 		// foreign key to card holder
-		public string UserId { get; set; }
-		public virtual Player Owner { get; set; }
+		public string PlayerId { get; set; }
+		public virtual Player Player { get; set; }
 	}
 }

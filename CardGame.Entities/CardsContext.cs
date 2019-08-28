@@ -19,9 +19,9 @@ namespace CardGame.Entities
 				.ValueGeneratedOnAdd();
 
 			builder.Entity<Card>()
-				.HasOne(c => c.Owner)
+				.HasOne(c => c.Player)
 				.WithMany(p => p.Hand)
-				.HasForeignKey(c => c.UserId)
+				.HasForeignKey(c => c.PlayerId)
 				.OnDelete(DeleteBehavior.SetNull);
 
 			builder.Entity<Card>()

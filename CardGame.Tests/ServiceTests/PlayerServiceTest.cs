@@ -122,8 +122,8 @@ namespace CardGame.Tests
 			// Assert
 			Assert.Equal(card, playedCard);
 			Assert.DoesNotContain(card, player.Hand);
-			Assert.Null(card.UserId);
-			Assert.Null(card.Owner);
+			Assert.Null(card.PlayerId);
+			Assert.Null(card.Player);
 		}
 
 		[Fact]

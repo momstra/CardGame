@@ -32,7 +32,7 @@ namespace CardGame.Services
 			Card card = _repository.GetCard(cardId);
 
 			player.Hand.Add(card);
-			if (card.UserId != playerId)
+			if (card.PlayerId != playerId)
 				return false;
 
 			return true;
@@ -84,7 +84,7 @@ namespace CardGame.Services
 			var player = GetPlayer(playerId);
 			var card = _repository.GetCard(cardId);
 
-			if (card.Owner != player)
+			if (card.Player != player)
 				return null;
 
 			if (player.Hand.Remove(card))
