@@ -81,7 +81,7 @@ namespace CardGame.Repositories
 		public Card GetCard(int cardId) => _context.Cards.Find(cardId);
 
 		public Game GetGame(int gameId)
-		{
+ 		{
 			if (_context.Games.Find(gameId) == null)
 				return null;
 
@@ -96,10 +96,13 @@ namespace CardGame.Repositories
 				.Single(g => g.GameId == gameId);
 		}
 
+		// get list of all registered game objects
 		public List<Game> GetGames() => _context.Games.ToList();
 
+		// get card objects assigned to player's hand 
 		public List<Card> GetHand(string playerId) => _context.Players.Find(playerId).Hand.ToList();
 
+		// get player object by id
 		public Player GetPlayer(string playerId)
 		{
 			if (_context.Players.Find(playerId) == null)
@@ -111,8 +114,22 @@ namespace CardGame.Repositories
 				.Single(p => p.PlayerId == playerId);
 		}
 
+		// get list of all registered player objects
 		public List<Player> GetPlayers() => _context.Players.ToList();
 
+		// remove game from database
+		public bool RemoveGame(int gameId)
+		{
+			Game game = GetGame(gameId);
+			if (game == null)
+				return false;
+
+			_context.Games.Remove(game);
+			SaveChanges();
+			return true;
+		}
+
+		// remove player from database
 		public void RemovePlayer(string playerId)
 		{
 			Player player = GetPlayer(playerId);
@@ -122,7 +139,8 @@ namespace CardGame.Repositories
 				SaveChanges();
 			}
 		}
-			   
+
+		// save changes to database   
 		public void SaveChanges()
 		{
 			_context.SaveChanges();

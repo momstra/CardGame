@@ -203,6 +203,20 @@ namespace CardGame.Services
 			return new { CardId = card.CardId, Color = card.Color, Rank = card.Rank };
 		}
 
+		// remove game from db
+		public bool RemoveGame(int gameId)
+		{
+			Game game = _repository.GetGame(gameId);
+			if (game == null)
+				return true;            // TODO: maybe change 
+
+			if (game.Players.Count > 0)
+				return false;
+
+			var result = _repository.RemoveGame(gameId);
+			return result;
+		}
+
 		// serve cards 
 		public bool ServeStartingHands(int gameId)
 		{

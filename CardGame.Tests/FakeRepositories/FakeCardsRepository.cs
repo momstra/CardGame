@@ -115,5 +115,16 @@ namespace CardGame.Tests.FakeRepositories
 				SaveChanges();
 			}
 		}
+
+		public bool RemoveGame(int gameId)
+		{
+			Game game = GetGame(gameId);
+			if (game == null)
+				return false;
+
+			_context.Games.Remove(game);
+			SaveChanges();
+			return true;
+		}
 	}
 }

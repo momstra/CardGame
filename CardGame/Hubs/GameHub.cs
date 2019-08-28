@@ -39,7 +39,7 @@ namespace CardGame.API.Hubs
 			var player = _playerService.GetPlayer(playerId);
 
 			if (player.Game != null)
-				await LeaveGame();//Groups.RemoveFromGroupAsync(Context.ConnectionId, player.GameId.ToString());
+				await LeaveGame();
 
 			_playerService.RemovePlayer(playerId);
 
@@ -116,6 +116,7 @@ namespace CardGame.API.Hubs
 
 			if (_gameService.LeaveGame(playerId))
 			{
+				_gameService.RemoveGame(gameId);
 				await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameId.ToString());
 				await Clients.Caller.LeaveSuccess();
 				await Clients.Group(gameId.ToString()).PlayerLeft(playerId);

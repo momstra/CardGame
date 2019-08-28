@@ -374,6 +374,30 @@ namespace CardGame.Tests
 			Assert.Null(card.Player);					// and not owned by anyone afterwards
 		}
 
+		[Fact]
+		public void RemoveGameTest()
+		{
+			var game = CreateGame();
+			var gameId = game.GameId;
+
+			string player1Id = "RemovePlayer1";              // create and add player to game
+			var player1 = CreatePlayer(player1Id);
+			game.Players.Add(player1);
+			var playersCount = _gameService.GetPlayers(gameId).Count;
+
+			// Act
+			var firstTry = _gameService.RemoveGame(gameId); // should be false, players not empty
+
+			game.Players.Clear();
+			var secondTry = _gameService.RemoveGame(gameId);// should work
+
+			// Assert
+			Assert.Equal(1, playersCount);					// one player should have been assigned 
+			Assert.False(firstTry);							// therefore could not be removed
+			Assert.True(secondTry);							// Players empty, therefore should work
+			Assert.Null(_gameService.GetGame(gameId));		// should not exist any more
+		}
+
 
 		[Fact]
 		public void ServeStartingHandsTest()

@@ -114,6 +114,11 @@ namespace CardGame.Tests.FakeServices
 			return game.Players.Remove(player);
 		}
 
+		public bool RemoveGame(int gameId)
+		{
+			throw new NotImplementedException();
+		}
+
 		public bool ServeStartingHands(int gameId)
 		{
 			throw new NotImplementedException();
