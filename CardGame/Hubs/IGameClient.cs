@@ -13,9 +13,9 @@ namespace CardGame.API.Hubs
 		Task CardPlayed(string json);
 		Task CardPlayedSuccess();
 
-		Task GameAdded(int gameId);
 		Task GameReady();
 		Task GameStarted();
+		Task GamesUpdated();
 		Task JoinSuccess(int gameId);
 		Task LeaveSuccess();
 		Task NewUser(string name);

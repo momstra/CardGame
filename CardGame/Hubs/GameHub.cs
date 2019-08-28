@@ -62,7 +62,7 @@ namespace CardGame.API.Hubs
 				await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
 			}
 
-			await Clients.All.GameAdded(gameId);
+			await Clients.All.GamesUpdated();
 			await Clients.Group(gameId.ToString()).PlayerJoined(playerId);
 			await Clients.Caller.JoinSuccess(gameId);
 		}
@@ -116,7 +116,9 @@ namespace CardGame.API.Hubs
 
 			if (_gameService.LeaveGame(playerId))
 			{
-				_gameService.RemoveGame(gameId);
+				if (_gameService.RemoveGame(gameId))
+					await Clients.All.GamesUpdated();		// if game has been removed, clients should reload gameslist
+
 				await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameId.ToString());
 				await Clients.Caller.LeaveSuccess();
 				await Clients.Group(gameId.ToString()).PlayerLeft(playerId);

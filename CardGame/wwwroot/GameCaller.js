@@ -45,11 +45,6 @@ $(document).ready(function () {
 			connection.invoke("GetHand");			// update player's hand
 		});
 
-		// return of/occurs at "CreateGame"
-		connection.on("GameAdded", (gameid) => {
-			connection.invoke("GetGames");			// update list of games
-		});
-
 		// occurs when everybody's ready (only for game creator)
 		connection.on("GameReady", () => {
 			$("#startgame").show();					// when everyone ready, show button
@@ -59,6 +54,11 @@ $(document).ready(function () {
 		connection.on("GameStarted", () => {
 			$("#startgame").hide();					// game started, button can be hid again
 			connection.invoke("GetHand");			// get player's hand
+		});
+
+		// return of/occurs at "CreateGame"
+		connection.on("GamesUpdated", () => {
+			connection.invoke("GetGames");			// update list of games
 		});
 
 		// return of "JoinGame"
