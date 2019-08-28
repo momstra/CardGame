@@ -386,6 +386,59 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
+		public void MoveToNextTurnTest()
+		{
+			var game = CreateGame();
+			var gameId = game.GameId;
+
+			string player1Id = "NextTurnPlayer1";
+			string player2Id = "NextTurnPlayer2";
+			var player1 = new Player(player1Id);
+			var player2 = new Player(player2Id);
+			_repository.AddPlayer(player1);
+			_repository.AddPlayer(player2);
+
+			game.Players.Add(player1);
+			player1.Game = game;
+			player1.GameId = gameId;
+
+			game.Players.Add(player2);
+			player2.Game = game;
+			player2.GameId = gameId;
+
+			game.ActivePlayer = player1Id;
+			game.TurnCompleted = false;
+
+			// Act
+			var firstTry = _gameService.MoveToNextTurn(gameId);			// should not work
+
+			game.TurnCompleted = true;									
+			var secondTry = _gameService.MoveToNextTurn(gameId);		// should work as turn completed
+			var activeAfterSecondTry = game.ActivePlayer.ToString();    // should have changed
+			var turnAfterSecondTry = game.TurnCompleted.ToString();		// should be false
+
+			var thirdTry = _gameService.MoveToNextTurn(gameId);         // should not work
+
+			game.TurnCompleted = true;
+			var fourthTry = _gameService.MoveToNextTurn(gameId);        // should work as turn completed again
+			var activeAfterFourthTry = game.ActivePlayer.ToString();    // should have changed again
+			var turnAfterFourthTry = game.TurnCompleted.ToString();     // should be false again
+
+			// Assert
+			Assert.False(firstTry);										// MoveToNextTurn returns bool
+
+			Assert.True(secondTry);
+			Assert.Equal(player2Id, activeAfterSecondTry);              // should have moved from player1 to player2
+			Assert.Equal("false", turnAfterSecondTry);                  // TurnCompleted should have been set back to false
+
+			Assert.False(thirdTry);
+
+			Assert.True(fourthTry);
+			Assert.Equal(player1Id, activeAfterFourthTry);              // should have moved back to player1
+			Assert.Equal("false", turnAfterFourthTry);					// TurnCompleted should have been set back
+		}
+
+		[Fact]
 		public void PlayCardTest()
 		{
 			var game = CreateGame();					// set up test game

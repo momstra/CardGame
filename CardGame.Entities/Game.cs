@@ -10,6 +10,7 @@ namespace CardGame.Entities
 		public int MaxPlayers { get; set; }
 		public int StartingHand { get; set; }
 		public string ActivePlayer { get; set; }
+		public bool TurnCompleted { get; set; }
 
 		public virtual List<Card> CardsPlayed { get; set; } = new List<Card>();
 		public virtual List<Card> CardsRemaining { get; set; } = new List<Card>();

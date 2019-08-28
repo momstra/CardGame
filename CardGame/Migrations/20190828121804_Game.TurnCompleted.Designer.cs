@@ -4,14 +4,16 @@ using CardGame.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CardGame.API.Migrations
 {
     [DbContext(typeof(CardsContext))]
-    partial class CardsContextModelSnapshot : ModelSnapshot
+    [Migration("20190828121804_Game.TurnCompleted")]
+    partial class GameTurnCompleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

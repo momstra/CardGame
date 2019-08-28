@@ -20,6 +20,7 @@ namespace CardGame.Services.Interfaces
 		string GetTurnPlayer(int gameId);
 		int JoinGame(string playerId, int gameId);
 		bool LeaveGame(string playerId);
+		bool MoveToNextTurn(int gameId);
 		object PlayCard(int gameId, Card card);
 		bool RemoveGame(int gameId);
 		bool ServeStartingHands(int gameId);

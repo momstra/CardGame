@@ -119,6 +119,16 @@ namespace CardGame.Tests.FakeServices
 			return game.Players.Remove(player);
 		}
 
+		public bool MoveToNextTurn(int gameId)
+		{
+			throw new NotImplementedException();
+		}
+
+		public object PlayCard(int gameId, Card card)
+		{
+			throw new NotImplementedException();
+		}
+
 		public bool RemoveGame(int gameId)
 		{
 			throw new NotImplementedException();
@@ -153,10 +163,5 @@ namespace CardGame.Tests.FakeServices
 		public void Shuffle(int gameId) => throw new NotImplementedException();
 
 		public void Shuffle(List<Card> cards, int gameId) => throw new NotImplementedException();
-
-		public object PlayCard(int gameId, Card card)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

@@ -195,6 +195,11 @@ namespace CardGame.Services
 			return false;
 		}
 
+		public bool MoveToNextTurn(int gameId)
+		{
+			return false;
+		}
+
 		// play card
 		public object PlayCard(int gameId, Card card)
 		{
