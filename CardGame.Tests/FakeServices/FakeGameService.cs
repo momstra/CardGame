@@ -76,6 +76,11 @@ namespace CardGame.Tests.FakeServices
 			return list;
 		}
 
+		public string GetTurnPlayer(int gameId)
+		{
+			throw new NotImplementedException();
+		}
+
 		public int JoinGame(string playerId, int gameId)
 		{
 			var game = _repository.Games.Find(g => g.GameId == gameId);

@@ -274,6 +274,46 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
+		public void GetTurnPlayerTest()
+		{
+			var game = CreateGame();
+			var gameId = game.GameId;
+
+			string player1Id = "TurnPlayer1";
+			string player2Id = "TurnPlayer2";
+			var player1 = new Player(player1Id);
+			var player2 = new Player(player2Id);
+			_repository.AddPlayer(player1);
+			_repository.AddPlayer(player2);
+
+			game.Players.Add(player1);
+			player1.Game = game;
+			player1.GameId = gameId;
+
+			game.Players.Add(player2);
+			player2.Game = game;
+			player2.GameId = gameId;
+
+			game.ActivePlayer = player1Id;
+
+			// Act
+			var firstTurn = _gameService.GetTurnPlayer(gameId);
+
+			game.ActivePlayer = player2Id;
+			var secondTurn = _gameService.GetTurnPlayer(gameId);
+
+			game.ActivePlayer = player1Id;
+			var thirdTurn = _gameService.GetTurnPlayer(gameId);
+
+			// Assert
+			Assert.Equal(player1Id, firstTurn);     // should return player1's id
+			Assert.Equal(player2Id, secondTurn);    // active player changed, should return player2's id
+			Assert.Equal(player1Id, thirdTurn);     // active player changed back, should return player1's id
+
+			Assert.Null(_gameService.GetTurnPlayer(123456)); // non-existent game, should return null
+		}
+
+		[Fact]
 		public void JoinGameTest()
 		{
 			var game = CreateGame();

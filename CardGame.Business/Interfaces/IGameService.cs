@@ -17,6 +17,7 @@ namespace CardGame.Services.Interfaces
 		List<int> GetGameIdsList();
 		List<Player> GetPlayers(int gameId);
 		List<string> GetPlayersIds(int gameId);
+		string GetTurnPlayer(int gameId);
 		int JoinGame(string playerId, int gameId);
 		bool LeaveGame(string playerId);
 		object PlayCard(int gameId, Card card);

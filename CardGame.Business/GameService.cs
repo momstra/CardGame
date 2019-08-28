@@ -130,6 +130,16 @@ namespace CardGame.Services
 			}
 			return playerIds;
 		}
+
+		public string GetTurnPlayer(int gameId)
+		{
+			var game = GetGame(gameId);
+			if (game == null)
+				return null;
+
+			return game.ActivePlayer;
+		}
+
 		
 		// join player with PlayerId to game with GameId
 		// returns GameId of joined game on success, otherwise 0
