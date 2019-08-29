@@ -173,5 +173,20 @@ namespace CardGame.Tests.FakeServices
 		{
 			throw new NotImplementedException();
 		}
+
+		public bool LeaveGame(Player player)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ReShuffleCardsRemaining(Game game)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Shuffle(List<Card> cards, Game game)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

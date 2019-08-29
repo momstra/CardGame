@@ -355,11 +355,11 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
-		public void LeaveGame_GameNotStarted_Test()
+		public void LeaveGame_Test()
 		{
 			var game = CreateGame();					// creating game with helper method
 			var gameId = game.GameId;
-			game.GameStatus = 0;					// making sure it is not started
+			game.GameStatus = 0;						// making sure it is not started
 
 			string player1Id = "Leave1Player1";
 			var player1 = CreatePlayer(player1Id);      // creating test player using helper method
@@ -379,34 +379,6 @@ namespace CardGame.Tests
 			Assert.Contains(player1, players);				// making sure player was added to game
 			Assert.True(leaving);							// leave returns true if successfull
 			Assert.DoesNotContain(player1, game.Players);   // should not contain player1 any longer
-		}
-
-		[Fact]
-		public void LeaveGame_GameStarted_Test()
-		{
-			var game = CreateGame();					// creating test game using helper method
-			var gameId = game.GameId;
-
-			string player1Id = "Leave2Player1";			// creating test players using helper method
-			string player2Id = "Leave2Player2";
-			var player1 = CreatePlayer(player1Id);
-			var player2 = CreatePlayer(player2Id);
-
-			game.Players.Add(player1);					// assigning players
-			player1.Game = game;
-			player1.GameId = gameId;
-			game.Players.Add(player2);
-			player2.Game = game;
-			player2.GameId = gameId;
-
-			List<Player> players = new List<Player>();	// create control
-			foreach (Player player in game.Players)
-				players.Add(player);
-
-			game.GameStatus = 1;						// setting game started
-
-			// Act
-			// TODO
 		}
 
 		[Fact]
@@ -451,18 +423,18 @@ namespace CardGame.Tests
 
 			var cardsRemainingCount1 = game.CardsRemaining.Count;	// getting count of cards still in deck
 
-			game.GameStatus = 1;						// setting game started
-			game.ActivePlayer = player2Id;              // making it player2's turn
+			game.GameStatus = 1;									// setting game started
+			game.ActivePlayer = player2Id;							// making it player2's turn
 			var activePlayer1 = game.ActivePlayer.ToString();
 
 			// Act
 			_gameService.LeaveRunningGame(player2);
-			var cardsRemainingCount2 = game.CardsRemaining.Count;   // getting count of cards in deck after player3 leaving
+			var cardsRemainingCount2 = game.CardsRemaining.Count;   // getting count of cards in deck after player2 leaving
 			var activePlayer2 = game.ActivePlayer.ToString();		// getting active player after old active player leaving
 		
 			_gameService.LeaveRunningGame(player3);
-			var activePlayer3 = game.ActivePlayer.ToString();       // getting active player after player3 & player2 left
-			var gameStatus3 = game.GameStatus.ToString();           // getting game status after player3 & player2 left
+			var activePlayer3 = game.ActivePlayer.ToString();       // getting active player after player2 & player3 left
+			var gameStatus3 = game.GameStatus.ToString();           // getting game status after player2 & player3 left
 
 			// Assert
 			Assert.Equal(cardsRemainingCount2, cardsRemainingCount1 + handSize);    // leaving player's cards should be added back to remaining ones
