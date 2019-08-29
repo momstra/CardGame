@@ -14,6 +14,8 @@ using CardGame.Repositories;
 using CardGame.Repositories.Interfaces;
 using CardGame.Services;
 using CardGame.Services.Interfaces;
+using CardGame.Services.Rules.Interfaces;
+using CardGame.Services.Rules;
 
 namespace CardGame
 {
@@ -65,6 +67,7 @@ namespace CardGame
 			services.AddScoped<IGameService, GameService>();
 			services.AddScoped<IPlayerService, PlayerService>();
 			services.AddScoped<IAuthService, AuthService>();
+			services.AddScoped<IGameRules, MauMauRules>();
 			services.AddSignalR();
 		}
 

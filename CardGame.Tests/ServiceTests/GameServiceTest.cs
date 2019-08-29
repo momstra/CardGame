@@ -6,6 +6,8 @@ using Xunit;
 using CardGame.Entities;
 using CardGame.Services;
 using CardGame.Tests.FakeRepositories;
+using CardGame.Services.Rules.Interfaces;
+using CardGame.Tests.FakeRules;
 
 namespace CardGame.Tests
 {
@@ -14,6 +16,7 @@ namespace CardGame.Tests
 		private readonly FakeCardsRepository _repository;
 		private readonly GameService _gameService;
 		private readonly ILogger<GameService> _logger;
+		private readonly IGameRules _rules;
 
 		public GameServiceTest()
 		{
@@ -24,7 +27,8 @@ namespace CardGame.Tests
 			_logger = factory.CreateLogger<GameService>();
 
 			_repository = new FakeCardsRepository("GameServiceTestDb");
-			_gameService = new GameService(_repository, _logger);
+			_rules = new FakeGameRules();
+			_gameService = new GameService(_repository, _logger, _rules);
 		}
 
 		#region Helper methods
@@ -503,11 +507,12 @@ namespace CardGame.Tests
 		{
 			var game = CreateGame();					// set up test game
 			string playerId = "TestPlayerPlay";
-			var player = CreatePlayer(playerId);		// set up test player
+			var player = CreatePlayer(playerId);        // set up test player
 
-			Card card = game.Set.Cards[0];				// get a card
-			player.Hand.Add(card);
-			_repository.SaveChanges();					// make player owner of card
+			Card card = game.Set.Cards[0];				// put card into player's hand		
+			player.Hand.Add(card);			
+
+			_repository.SaveChanges();			
 
 			var playedBefore = game.CardsPlayed.Find(c => c.CardId == card.CardId);
 			var ownerBefore = card.Player.ToString();

@@ -8,6 +8,8 @@ using CardGame.Entities;
 using CardGame.Services.Interfaces;
 using CardGame.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
+using CardGame.Services.Rules;
+using CardGame.Services.Rules.Interfaces;
 
 namespace CardGame.Services
 {
@@ -15,19 +17,13 @@ namespace CardGame.Services
 	{
 		private readonly ICardsRepository _repository;
 		private readonly ILogger _logger;
-		private readonly IConfiguration _config;
+		private readonly IGameRules _rules;
 
-		public GameService(ICardsRepository repository, IConfiguration config, ILogger<GameService> logger)
-		{
-			_repository = repository;
-			_config = config;
-			_logger = logger;
-		}
-
-		public GameService(ICardsRepository repository, ILogger<GameService> logger)
+		public GameService(ICardsRepository repository, ILogger<GameService> logger, IGameRules rules)
 		{
 			_repository = repository;
 			_logger = logger;
+			_rules = rules;
 		}
 
 		// check game's existence
@@ -294,6 +290,17 @@ namespace CardGame.Services
 
 			if (game.GameStatus != 1)					// game must be running to play card
 				return null;
+
+			if (game.CardsPlayed.Count == 0)
+			{
+				_rules.MoveOnEmptyTable();
+			}
+			else
+			{
+				var lastPlayedCard = game.CardsPlayed.Last();
+				if (!_rules.CheckMoveLegal(lastPlayedCard, card))   // make sure move is legal
+					return null;
+			}
 
 			game.CardsPlayed.Add(card);					// add played card to Played cards
 
