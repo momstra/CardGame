@@ -119,7 +119,7 @@ namespace CardGame.Tests.FakeServices
 			return game.Players.Remove(player);
 		}
 
-		public bool MoveToNextTurn(int gameId)
+		public Player MoveToNextPlayer(int gameId)
 		{
 			throw new NotImplementedException();
 		}

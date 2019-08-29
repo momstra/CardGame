@@ -386,13 +386,13 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
-		public void MoveToNextTurnTest()
+		public void MoveToNextPlayerTest()
 		{
 			var game = CreateGame();
 			var gameId = game.GameId;
 
-			string player1Id = "NextTurnPlayer1";
-			string player2Id = "NextTurnPlayer2";
+			string player1Id = "NextPlayer1";
+			string player2Id = "NextPlayer2";
 			var player1 = new Player(player1Id);
 			var player2 = new Player(player2Id);
 			_repository.AddPlayer(player1);
@@ -410,32 +410,32 @@ namespace CardGame.Tests
 			game.TurnCompleted = false;
 
 			// Act
-			var firstTry = _gameService.MoveToNextTurn(gameId);			// should not work
+			var firstTry = _gameService.MoveToNextPlayer(gameId);		// should not work
 
 			game.TurnCompleted = true;									
-			var secondTry = _gameService.MoveToNextTurn(gameId);		// should work as turn completed
+			var secondTry = _gameService.MoveToNextPlayer(gameId);		// should work as turn completed
 			var activeAfterSecondTry = game.ActivePlayer.ToString();    // should have changed
 			var turnAfterSecondTry = game.TurnCompleted.ToString();		// should be false
 
-			var thirdTry = _gameService.MoveToNextTurn(gameId);         // should not work
+			var thirdTry = _gameService.MoveToNextPlayer(gameId);       // should not work
 
 			game.TurnCompleted = true;
-			var fourthTry = _gameService.MoveToNextTurn(gameId);        // should work as turn completed again
+			var fourthTry = _gameService.MoveToNextPlayer(gameId);      // should work as turn completed again
 			var activeAfterFourthTry = game.ActivePlayer.ToString();    // should have changed again
 			var turnAfterFourthTry = game.TurnCompleted.ToString();     // should be false again
 
 			// Assert
-			Assert.False(firstTry);										// MoveToNextTurn returns bool
+			Assert.Null(firstTry);										// MoveToNextTurn returns null if unsuccessful
 
-			Assert.True(secondTry);
+			Assert.IsType<Player>(secondTry);							// .. or the player whose turn it is next
 			Assert.Equal(player2Id, activeAfterSecondTry);              // should have moved from player1 to player2
-			Assert.Equal("false", turnAfterSecondTry);                  // TurnCompleted should have been set back to false
+			Assert.Equal("False", turnAfterSecondTry);                  // TurnCompleted should have been set back to false
 
-			Assert.False(thirdTry);
+			Assert.Null(thirdTry);
 
-			Assert.True(fourthTry);
+			Assert.IsType<Player>(fourthTry);
 			Assert.Equal(player1Id, activeAfterFourthTry);              // should have moved back to player1
-			Assert.Equal("false", turnAfterFourthTry);					// TurnCompleted should have been set back
+			Assert.Equal("False", turnAfterFourthTry);					// TurnCompleted should have been set back
 		}
 
 		[Fact]

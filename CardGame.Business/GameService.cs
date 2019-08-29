@@ -195,9 +195,24 @@ namespace CardGame.Services
 			return false;
 		}
 
-		public bool MoveToNextTurn(int gameId)
+		public Player MoveToNextPlayer(int gameId)
 		{
-			return false;
+			var game = GetGame(gameId);
+			if (game == null)
+				return null;
+
+			if (game.TurnCompleted == false)		// false is default, therefore no check for GameStarted necessary
+				return null;
+
+			game.TurnCompleted = false;             // set back for next turn
+
+			var activePlayerPosition = game.Players.FindIndex(p => p.PlayerId == game.ActivePlayer);
+			var nextPlayerPosition = (activePlayerPosition + 1) % game.Players.Count;
+			var nextPlayer = game.Players[nextPlayerPosition];
+			game.ActivePlayer = nextPlayer.PlayerId;
+
+			_repository.SaveChanges();
+			return nextPlayer;
 		}
 
 		// play card

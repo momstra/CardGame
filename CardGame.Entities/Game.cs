@@ -32,6 +32,7 @@ namespace CardGame.Entities
 			MinPlayers = min;
 			MaxPlayers = max;
 			StartingHand = 5;
+			TurnCompleted = false;
 		}
 	}
 }
