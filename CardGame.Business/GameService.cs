@@ -292,6 +292,9 @@ namespace CardGame.Services
 			if (game == null)
 				return null;
 
+			if (game.GameStatus != 1)					// game must be running to play card
+				return null;
+
 			game.CardsPlayed.Add(card);					// add played card to Played cards
 
 			card.PlayerId = null;						// and remove ownership

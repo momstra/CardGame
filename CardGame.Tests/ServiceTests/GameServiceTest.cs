@@ -361,7 +361,7 @@ namespace CardGame.Tests
 			var gameId = game.GameId;
 			game.GameStatus = 0;						// making sure it is not started
 
-			string player1Id = "Leave1Player1";
+			string player1Id = "LeavePlayer1";
 			var player1 = CreatePlayer(player1Id);      // creating test player using helper method
 
 			game.Players.Add(player1);					// assigning test player 
@@ -513,10 +513,15 @@ namespace CardGame.Tests
 			var ownerBefore = card.Player.ToString();
 
 			// Act 
+			var tryPlay = _gameService.PlayCard(game.GameId, card);
+			game.GameStatus = 1;						// start game
+
 			var cardPlayed = _gameService.PlayCard(game.GameId, card);
 			var playedAfter = game.CardsPlayed.Find(c => c.CardId == card.CardId);
 
 			// Assert
+			Assert.Null(tryPlay);						// game has not yet started, trying to play card should fail
+
 			Assert.Contains(card.CardId.ToString(), cardPlayed.ToString());
 			Assert.Null(playedBefore);                  // shouldn't have been in played cards at the beginning
 			
