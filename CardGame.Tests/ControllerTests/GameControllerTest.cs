@@ -89,7 +89,7 @@ namespace CardGame.Tests
 				Cards = cards,
 			};
 			game.Set = set;
-			game.GameStarted = true;		// "start" test game 
+			game.GameStatus = 1;		// "start" test game 
 			_repository.Games.Add(game);	// add game to database
 
 			// Act

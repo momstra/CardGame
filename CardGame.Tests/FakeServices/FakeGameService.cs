@@ -153,7 +153,7 @@ namespace CardGame.Tests.FakeServices
 			if (game.MinPlayers > game.Players.Count || game.MaxPlayers < game.Players.Count)
 				return false;
 
-			game.GameStarted = true;
+			game.GameStatus = 1;
 
 			return true;
 		}
@@ -163,5 +163,15 @@ namespace CardGame.Tests.FakeServices
 		public void Shuffle(int gameId) => throw new NotImplementedException();
 
 		public void Shuffle(List<Card> cards, int gameId) => throw new NotImplementedException();
+
+		public bool LeaveRunningGame(string PlayerId)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool LeaveRunningGame(Player player)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

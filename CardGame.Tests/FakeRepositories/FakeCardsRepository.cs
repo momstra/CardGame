@@ -10,10 +10,10 @@ namespace CardGame.Tests.FakeRepositories
 	{
 		private readonly CardsContext _context;
 
-		public FakeCardsRepository()
+		public FakeCardsRepository(string dbName)
 		{
 			var options = new DbContextOptionsBuilder<CardsContext>()
-				.UseInMemoryDatabase("TestCardsDatabase").Options;
+				.UseInMemoryDatabase(dbName).Options;
 			_context = new CardsContext(options);
 		}
 

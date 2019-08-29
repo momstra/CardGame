@@ -56,7 +56,7 @@ namespace CardGame.API.Controllers
 			if (game == null)
 				return NotFound("Game not found");
 
-			if (!game.GameStarted)
+			if (game.GameStatus != 1)
 				return NotFound("Game not started");
 
 			Card card = _gameService.DrawCard(game.GameId);

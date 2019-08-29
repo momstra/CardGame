@@ -16,7 +16,7 @@ namespace CardGame.Tests
 
 		public AuthServiceTest()
 		{
-			_repository = new FakeCardsRepository();
+			_repository = new FakeCardsRepository("AuthServiceTestDb");
 			_authRepository = new AuthRepository();
 			_service = new AuthService(_repository, new Mock<IConfiguration>().Object, new Mock<ILogger<AuthService>>().Object);
 		}

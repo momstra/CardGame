@@ -23,11 +23,11 @@ namespace CardGame.Tests
 			var factory = serviceProvider.GetService<ILoggerFactory>();
 			_logger = factory.CreateLogger<GameService>();
 
-			_repository = new FakeCardsRepository();
+			_repository = new FakeCardsRepository("GameServiceTestDb");
 			_gameService = new GameService(_repository, _logger);
 		}
 
-
+		#region Helper methods
 		public Game CreateGame()
 		{
 			Set set = _repository.CreateSet();
@@ -36,16 +36,14 @@ namespace CardGame.Tests
 
 			Random random = new Random();
 			int gameId = random.Next(1000, 9999);
-
+			
 			while (_repository.GetGame(gameId) != null)
 				gameId = random.Next(1000, 9999);
 
 			if (!_repository.AddGame(gameId, set))
 				return null;
 
-			Game game = _repository.GetGames().Find(g => g.GameId == gameId);
-
-			return game;
+			return _repository.GetGames().Find(g => g.GameId == gameId);
 		}
 
 		public Player CreatePlayer(string playerId)
@@ -62,30 +60,32 @@ namespace CardGame.Tests
 
 			return game.CardsRemaining;
 		}
+		#endregion Helper methods
 
 
+		#region Tests
 		[Fact]
-		public void CheckGameStatusTest()
+		public void CheckGameStatus_Test()
 		{
-			var game = CreateGame();
+			var game = CreateGame();		// create test game using helper method
 			var gameId = game.GameId;
 
 			// Act
 			var before = _gameService.CheckGameStatus(gameId);
 
-			game.GameStarted = true;	// change game status to started
+			game.GameStatus = 1;		// change game status to started
 
 			var after = _gameService.CheckGameStatus(gameId);
 			
 			// Assert
-			Assert.False(before);		// returned status before starting should be false
-			Assert.True(after);         // returned status after starting should be true
+			Assert.Equal(0, before);			// returned status before starting should be 0
+			Assert.Equal(1, after);				// returned status after starting should be 1
 		}
 
 		[Fact]
-		public void CheckGameExistsTest()
+		public void CheckGameExists_Test()
 		{
-			var game = CreateGame();
+			var game = CreateGame();		// create test game using helper method
 			var gameId = game.GameId;
 
 			// Act
@@ -93,84 +93,84 @@ namespace CardGame.Tests
 			var nonexisting = _gameService.CheckGameExists(123);
 
 			// Assert
-			Assert.True(existing);		// game with gameId should exist
-			Assert.False(nonexisting);	// game with random id should not
+			Assert.True(existing);			// game with gameId should exist
+			Assert.False(nonexisting);		// game with random id should not
 		}
 
 		[Fact]
-		public void CreateGameTest()
+		public void CreateGame_Test()
 		{
-			int beforeCount = _repository.GetGames().Count;
-			string playerid1 = "player1";
-			string playerid2 = "player2";
+			int beforeCount = _repository.GetGames().Count;		// games count beforehand
+			string playerid1 = "CreatePlayer1";					// id needed to set active player
+			string playerid2 = "CreatePlayer2";
 
 			// Act
-			var gameId1 = _gameService.CreateGame(playerid1); 
-			var game1 = _gameService.GetGame(gameId1); 
-			int after1stCount = _repository.GetGames().Count;
+			var gameId1 = _gameService.CreateGame(playerid1);	// create game (playerid to simulate asking player)
+			var game1 = _repository.GetGame(gameId1);			// retrieve game
+			int after1stCount = _repository.GetGames().Count;	// save games count
 
-			var gameId2 = _gameService.CreateGame(playerid2);
-			var game2 = _gameService.GetGame(gameId2);
+			var gameId2 = _gameService.CreateGame(playerid2);	// same for 2nd game
+			var game2 = _repository.GetGame(gameId2);
 			int after2ndCount = _repository.GetGames().Count;
 
 			// Assert
-			Assert.IsType<int>(gameId1);					// CreateGame should return an created game's GameId,
-			Assert.InRange(gameId1, 1000, 9999);			// which should be in this range
-			Assert.Equal(beforeCount, after1stCount - 1);	// and be added to database
+			Assert.IsType<int>(gameId1);						// CreateGame should return an created game's GameId,
+			Assert.InRange(gameId1, 1000, 9999);				// which should be in this range
+			Assert.Equal(beforeCount, after1stCount - 1);		// and be added to database
 
-			Assert.IsType<int>(gameId2);					// same for the 2nd game created
+			Assert.IsType<int>(gameId2);						// same for the 2nd game created
 			Assert.InRange(gameId2, 1000, 9999);
 			Assert.Equal(beforeCount, after2ndCount - 2);	
 
-			Assert.NotEqual(gameId1, gameId2);				// both game's ids should differ
-			Assert.NotEqual(game1, game2);					// as should the games themselves
+			Assert.NotEqual(gameId1, gameId2);					// both game's ids should differ
+			Assert.NotEqual(game1, game2);						// as should the games themselves
 
-			Assert.NotNull(game1);							// and they should not be null
+			Assert.NotNull(game1);								// and they should not be null
 			Assert.NotNull(game2);					
 
-			Assert.NotEmpty(game1.Set.Cards);				// and their sets should not be empty
+			Assert.NotEmpty(game1.Set.Cards);					// and their sets should not be empty
 			Assert.NotEmpty(game2.Set.Cards);
 
-			Assert.Equal(playerid1, game1.ActivePlayer);    // and game creator set as active player
+			Assert.Equal(playerid1, game1.ActivePlayer);		// and game creator set as active player
 			Assert.Equal(playerid2, game2.ActivePlayer);
 		}
 		
 		[Fact]
-		public void DrawCardTest()
+		public void DrawCard_Test()
 		{
-			var game = CreateGame();
+			var game = CreateGame();							// create game using helper method
 			var gameId = game.GameId;
-			Shuffle(game);
+			Shuffle(game);										// add cards using helper method
 
 			// Act
-			int beforeDraw = game.CardsRemaining.Count;						// number of cards before drawing
+			int beforeDraw = game.CardsRemaining.Count;			// number of cards before drawing
 
 			Card card1 = _gameService.DrawCard(gameId);
-			int after1stDraw = game.CardsRemaining.Count;					// number of cards after drawing first card
+			int after1stDraw = game.CardsRemaining.Count;		// number of cards after drawing first card
 
 			Card card2 = _gameService.DrawCard(gameId);
-			int after2ndDraw = game.CardsRemaining.Count;					// number of cards after drawing another
+			int after2ndDraw = game.CardsRemaining.Count;		// number of cards after drawing another
 
 			// Assert
 			Assert.IsAssignableFrom<Card>(_gameService.DrawCard(gameId));	// drawing should return object of type Card
 
-			Assert.IsType<Card>(card1);										// returned objects should be cards
+			Assert.IsType<Card>(card1);							// returned objects should be cards
 			Assert.IsType<Card>(card2);
 
-			Assert.NotNull(card1);											// and they should not be null
+			Assert.NotNull(card1);								// and they should not be null
 			Assert.NotNull(card1);
 
-			Assert.NotEqual(card1, card2);                                  // drawn cards should be different ones
+			Assert.NotEqual(card1, card2);                      // drawn cards should be different ones
 
-			Assert.True(after1stDraw == beforeDraw - 1);					// number of remaining cards should have decreased after 1st draw
-			Assert.True(after2ndDraw == after1stDraw - 1);                  // number should have decreased further
+			Assert.True(after1stDraw == beforeDraw - 1);		// number of remaining cards should have decreased after 1st draw
+			Assert.True(after2ndDraw == after1stDraw - 1);      // number should have decreased further
 
-			Assert.DoesNotContain(card1, game.CardsRemaining);				// after drawing cards should not be in list anymore
+			Assert.DoesNotContain(card1, game.CardsRemaining);	// after drawing cards should not be in list anymore
 			Assert.DoesNotContain(card2, game.CardsRemaining);
 		}
 
 		[Fact]
-		public void GetGamesTest()
+		public void GetGames_Test()
 		{
 			int gamesCount = _gameService.GetGames().Count;     // get games count of before (there may already be games in list)
 
@@ -183,10 +183,10 @@ namespace CardGame.Tests
 				gameId2++;
 
 			// Act
-			var game1 = CreateGame();             // create 1st game and get new games count
+			var game1 = CreateGame();                           // create 1st test game using helper method
 			int game1AddedCount = _gameService.GetGames().Count;
 
-			var game2 = CreateGame();                // create 2nd game and get new games count
+			var game2 = CreateGame();                           // create 2nd test game using helper method
 			int game2AddedCount = _gameService.GetGames().Count;
 
 			// Assert
@@ -197,61 +197,61 @@ namespace CardGame.Tests
 		[Fact]
 		public void GetPlayers_Game_Test()
 		{
-			var game = CreateGame();
+			var game = CreateGame();							// create test game using helper method
 			var gameId = game.GameId;
 
 			string player1Id = "GetGamePlayer1";
-			var player1 = CreatePlayer(player1Id);
+			var player1 = CreatePlayer(player1Id);				// create test player using helper method
 
 			string player2Id = "GetGamePlayer2";
-			var player2 = CreatePlayer(player2Id);
+			var player2 = CreatePlayer(player2Id);				// create test player using helper method
 
-			var beforeJoin = _gameService.GetPlayers(gameId);			// get game's assigned players before "joining"
+			var beforeJoin = _gameService.GetPlayers(gameId);	// get game's assigned players before "joining"
 
 			// Act
 			game.Players.Add(player1);
-			var after1stJoin = _gameService.GetPlayers(gameId);			// players after 1st assignment
+			var after1stJoin = _gameService.GetPlayers(gameId);	// players after 1st assignment
 
 			game.Players.Add(player2);
-			var after2ndJoin = _gameService.GetPlayers(gameId);         // players after 2nd assignment
+			var after2ndJoin = _gameService.GetPlayers(gameId); // players after 2nd assignment
 
 			game.Players.Remove(player1);
-			var afterRemove = _gameService.GetPlayers(gameId);          // players after removing player1
+			var afterRemove = _gameService.GetPlayers(gameId);  // players after removing player1
 
 			// Assert
-			Assert.Contains(player1, after1stJoin);                     // returned list should hold player1
-			Assert.DoesNotContain(player2, after1stJoin);				// but not player2
-			Assert.True(beforeJoin.Count == after1stJoin.Count - 1);    // and count should have increased by one
+			Assert.Contains(player1, after1stJoin);             // returned list should hold player1
+			Assert.DoesNotContain(player2, after1stJoin);		// but not player2
+			Assert.True(beforeJoin.Count == after1stJoin.Count - 1);	// and count should have increased by one
 
-			Assert.Contains(player1, after2ndJoin);                     // returned list should hold player1
-			Assert.Contains(player2, after2ndJoin);                     // and player2
-			Assert.DoesNotContain(new Player(), after2ndJoin);			// but not any player
-			Assert.True(after1stJoin.Count == after2ndJoin.Count - 1);  // and count should have increased by one
+			Assert.Contains(player1, after2ndJoin);             // returned list should hold player1
+			Assert.Contains(player2, after2ndJoin);             // and player2
+			Assert.DoesNotContain(new Player(), after2ndJoin);	// but not any player
+			Assert.True(after1stJoin.Count == after2ndJoin.Count - 1);	// and count should have increased by one
 
-			Assert.Contains(player2, afterRemove);						// returned list should still hold player2
-			Assert.DoesNotContain(player1, afterRemove);				// but not player1 anymore
-			Assert.True(afterRemove.Count == after1stJoin.Count);		// and number should again be as after 1st join
+			Assert.Contains(player2, afterRemove);				// returned list should still hold player2
+			Assert.DoesNotContain(player1, afterRemove);		// but not player1 anymore
+			Assert.True(afterRemove.Count == after1stJoin.Count);	// and number should again be as after 1st join
 		}
 
 		[Fact]
 		public void GetPlayersIds_Game_Test()
 		{
-			var game = CreateGame();
+			var game = CreateGame();                            // create test game using helper method
 			var gameId = game.GameId;
 
-			string player1Id = "GetIdsGamePlayer1";
+			string player1Id = "GetIdsGamePlayer1";             // creating test players using helper method
 			var player1 = CreatePlayer(player1Id);
 			string player2Id = "GetIdsGamePlayer2";
 			var player2 = CreatePlayer(player2Id);
 
-			List<string> playerIdsControl = new List<string>			// creating control list 
+			List<string> playerIdsControl = new List<string>	// creating control list 
 			{
 				player1Id,
 				player2Id,
 			};
 
-			game.Players.Clear();										// making sure no players are assigned already
-			game.Players.Add(player1);									// and assign both players
+			game.Players.Clear();								// making sure no players are assigned already
+			game.Players.Add(player1);							// and assign both players
 			game.Players.Add(player2);
 
 			// Act
@@ -261,118 +261,114 @@ namespace CardGame.Tests
 			var playerIdsAfter = _gameService.GetPlayersIds(gameId);	// should return new list holding just player2's id
 
 			// Assert
-			Assert.IsType<List<string>>(playerIdsBefore);				// returned object should be lists of strings,
+			Assert.IsType<List<string>>(playerIdsBefore);		// returned object should be lists of strings,
 			Assert.IsType<List<string>>(playerIdsAfter);
 
-			Assert.NotEmpty(playerIdsBefore);							// which should not be empty
+			Assert.NotEmpty(playerIdsBefore);					// which should not be empty
 			Assert.NotEmpty(playerIdsAfter);
-			Assert.NotEqual(playerIdsBefore, playerIdsAfter);			// nor exactly matching each other
+			Assert.NotEqual(playerIdsBefore, playerIdsAfter);	// nor exactly matching each other
 
-			Assert.Equal(playerIdsControl, playerIdsBefore);			// before removing player1 returned list should be holding the same values as control
+			Assert.Equal(playerIdsControl, playerIdsBefore);	// before removing player1 returned list should be holding the same values as control
 
-			Assert.NotEqual(playerIdsControl, playerIdsAfter);			// after removing player1 returned list should not be equal to control list anymore
+			Assert.NotEqual(playerIdsControl, playerIdsAfter);	// after removing player1 returned list should not be equal to control list anymore
 		}
 
 		[Fact]
-		public void GetTurnPlayerTest()
+		public void GetTurnPlayer_Test()
 		{
-			var game = CreateGame();
+			var game = CreateGame();			// creating test game using helper method
 			var gameId = game.GameId;
 
-			string player1Id = "TurnPlayer1";
+			string player1Id = "TurnPlayer1";   // creating test players using helper method
 			string player2Id = "TurnPlayer2";
-			var player1 = new Player(player1Id);
-			var player2 = new Player(player2Id);
-			_repository.AddPlayer(player1);
-			_repository.AddPlayer(player2);
-
-			game.Players.Add(player1);
+			var player1 = CreatePlayer(player1Id);
+			var player2 = CreatePlayer(player2Id);
+			
+			game.Players.Add(player1);			// assigning player1
 			player1.Game = game;
 			player1.GameId = gameId;
 
-			game.Players.Add(player2);
+			game.Players.Add(player2);			// assigning player2
 			player2.Game = game;
 			player2.GameId = gameId;
 
-			game.ActivePlayer = player1Id;
+			game.ActivePlayer = player1Id;		// setting player1 as active player
 
 			// Act
 			var firstTurn = _gameService.GetTurnPlayer(gameId);
 
-			game.ActivePlayer = player2Id;
+			game.ActivePlayer = player2Id;		// change active player
 			var secondTurn = _gameService.GetTurnPlayer(gameId);
 
-			game.ActivePlayer = player1Id;
+			game.ActivePlayer = player1Id;		// change active player back
 			var thirdTurn = _gameService.GetTurnPlayer(gameId);
 
 			// Assert
-			Assert.Equal(player1Id, firstTurn);     // should return player1's id
-			Assert.Equal(player2Id, secondTurn);    // active player changed, should return player2's id
-			Assert.Equal(player1Id, thirdTurn);     // active player changed back, should return player1's id
+			Assert.Equal(player1Id, firstTurn); // should return player1's id
+			Assert.Equal(player2Id, secondTurn);// active player changed, should return player2's id
+			Assert.Equal(player1Id, thirdTurn); // active player changed back, should return player1's id
 
 			Assert.Null(_gameService.GetTurnPlayer(123456)); // non-existent game, should return null
 		}
 
 		[Fact]
-		public void JoinGameTest()
+		public void JoinGame_Test()
 		{
-			var game = CreateGame();
+			var game = CreateGame();            // creating test game using helper method
 			var gameId = game.GameId;
 
-			string player1Id = "JoinPlayer1";
+			string player1Id = "JoinPlayer1";   // creating test players using helper method
 			string player2Id = "JoinPlayer2";
-			var player1 = new Player(player1Id);
-			var player2 = new Player(player2Id);
-			_repository.AddPlayer(player1);
-			_repository.AddPlayer(player2);
+			var player1 = CreatePlayer(player1Id);
+			var player2 = CreatePlayer(player2Id);
 
-			int before = 0;
+			int before = 0;						// setting player count before actions
 			if (game.Players != null)
 				before = game.Players.Count;
 
 			// Act
-			var after1stJoin = _gameService.JoinGame(player1Id, gameId);	// returns game, which player has been joined to
+			var after1stJoin = _gameService.JoinGame(player1Id, gameId);	// returns game player has been joined to
 			var after1stCount = game.Players.Count;
 
-			game.MaxPlayers = 1;											// MaxPlayer count that has already been reached
+			game.MaxPlayers = 1;						// MaxPlayer count that has already been reached
 			var after2ndJoin = _gameService.JoinGame(player2Id, gameId);
 
-			game.MaxPlayers = 2;											// making sure MaxPlayers count has not been reached,
-			game.GameStarted = true;										// but game has already started
+			game.MaxPlayers = 2;                        // making sure MaxPlayers count has not been reached,
+			game.GameStatus = 1;						// but game has already started
 			var after3rdJoin = _gameService.JoinGame(player2Id, gameId);
 
-			game.GameStarted = false;										// change game to not started
+			game.GameStatus = 0;						// change game to not started
 			var after4thJoin = _gameService.JoinGame(player2Id, gameId);
 
 			// Assert
-			Assert.Equal(game.GameId, after1stJoin);		// first join should be successful and return correct gameId
-			Assert.True(after1stCount == before + 1);		// Players count should have increased after successful join
+			Assert.Equal(game.GameId, after1stJoin);	// first join should be successful and return correct gameId
+			Assert.True(after1stCount == before + 1);	// Players count should have increased after successful join
 			Assert.Equal(player1.GameId, game.GameId);
 			Assert.Equal(player1.Game, game);
-			Assert.Contains(player1, game.Players);			// player1 should be assigned after successful join
+			Assert.Contains(player1, game.Players);		// player1 should be assigned after successful join
 			
-			Assert.Equal(0, after2ndJoin);					// player2 should not have been able to join as maxplayers has been reached
+			Assert.Equal(0, after2ndJoin);				// player2 should not have been able to join as maxplayers has been reached
 			
-			Assert.Equal(0, after3rdJoin);					// player2 should not have been able to join as game already started
+			Assert.Equal(0, after3rdJoin);				// player2 should not have been able to join as game already started
 												
-			Assert.NotEqual(0, after4thJoin);				// player2 should have been able to join after reset to not yet started
+			Assert.NotEqual(0, after4thJoin);			// player2 should have been able to join after reset to not yet started
 		}
 
 		[Fact]
-		public void LeaveGameTest()
+		public void LeaveGame_GameNotStarted_Test()
 		{
-			var game = CreateGame();
+			var game = CreateGame();					// creating game with helper method
 			var gameId = game.GameId;
+			game.GameStatus = 0;					// making sure it is not started
 
-			string player1Id = "LeavePlayer1";
-			var player1 = new Player(player1Id);
-			_repository.AddPlayer(player1);
+			string player1Id = "Leave1Player1";
+			var player1 = CreatePlayer(player1Id);      // creating test player using helper method
 
-			game.Players.Add(player1);
+			game.Players.Add(player1);					// assigning test player 
 			player1.Game = game;
 			player1.GameId = gameId;
 
-			List<Player> players = new List<Player>();		// create control
+			List<Player> players = new List<Player>();	// create control
 			foreach (Player player in game.Players)
 				players.Add(player);
 
@@ -382,11 +378,103 @@ namespace CardGame.Tests
 			// Assert
 			Assert.Contains(player1, players);				// making sure player was added to game
 			Assert.True(leaving);							// leave returns true if successfull
-			Assert.DoesNotContain(player1, game.Players);	// should not contain player1 any longer
+			Assert.DoesNotContain(player1, game.Players);   // should not contain player1 any longer
 		}
 
 		[Fact]
-		public void MoveToNextPlayerTest()
+		public void LeaveGame_GameStarted_Test()
+		{
+			var game = CreateGame();					// creating test game using helper method
+			var gameId = game.GameId;
+
+			string player1Id = "Leave2Player1";			// creating test players using helper method
+			string player2Id = "Leave2Player2";
+			var player1 = CreatePlayer(player1Id);
+			var player2 = CreatePlayer(player2Id);
+
+			game.Players.Add(player1);					// assigning players
+			player1.Game = game;
+			player1.GameId = gameId;
+			game.Players.Add(player2);
+			player2.Game = game;
+			player2.GameId = gameId;
+
+			List<Player> players = new List<Player>();	// create control
+			foreach (Player player in game.Players)
+				players.Add(player);
+
+			game.GameStatus = 1;						// setting game started
+
+			// Act
+			// TODO
+		}
+
+		[Fact]
+		public void LeaveRunningGame_Test()
+		{
+			var game = CreateGame();					// creating test game using helper method
+			var gameId = game.GameId;
+			Shuffle(game);                              // fill cards using helper method
+
+			string player1Id = "LeaveRunningPlayer1";   // creating test players using helper method
+			string player2Id = "LeaveRunningPlayer2";
+			string player3Id = "LeaveRunningPlayer3";
+			var player1 = CreatePlayer(player1Id);
+			var player2 = CreatePlayer(player2Id);
+			var player3 = CreatePlayer(player3Id);
+
+			game.Players.Add(player1);					// assigning players
+			player1.Game = game;
+			player1.GameId = gameId;
+			game.Players.Add(player2);
+			player2.Game = game;
+			player2.GameId = gameId;
+			game.Players.Add(player3);
+			player3.Game = game;
+			player3.GameId = gameId;
+
+			List<Player> players = new List<Player>();	// create control
+			foreach (Player player in game.Players)
+				players.Add(player);
+
+			int handSize = 5;
+
+			foreach (Player player in players)			// assigning cards to players
+			{
+				for (var i = 0; i < handSize; i++)
+				{
+					var card = game.CardsRemaining[0];
+					game.CardsRemaining.Remove(card);
+					player.Hand.Add(card);
+				}
+			}
+
+			var cardsRemainingCount1 = game.CardsRemaining.Count;	// getting count of cards still in deck
+
+			game.GameStatus = 1;						// setting game started
+			game.ActivePlayer = player2Id;              // making it player2's turn
+			var activePlayer1 = game.ActivePlayer.ToString();
+
+			// Act
+			_gameService.LeaveRunningGame(player2);
+			var cardsRemainingCount2 = game.CardsRemaining.Count;   // getting count of cards in deck after player3 leaving
+			var activePlayer2 = game.ActivePlayer.ToString();		// getting active player after old active player leaving
+		
+			_gameService.LeaveRunningGame(player3);
+			var activePlayer3 = game.ActivePlayer.ToString();       // getting active player after player3 & player2 left
+			var gameStatus3 = game.GameStatus.ToString();           // getting game status after player3 & player2 left
+
+			// Assert
+			Assert.Equal(cardsRemainingCount2, cardsRemainingCount1 + handSize);    // leaving player's cards should be added back to remaining ones
+			Assert.NotEqual(activePlayer1, activePlayer2);          // leaving player should not be active player anymore
+			Assert.NotEqual("", activePlayer2);                     // active player should be set
+
+			Assert.Equal("10", gameStatus3);                         // game should have ended as only one player is left
+			Assert.Equal(player1Id, activePlayer3);					// active player should be last player assigned
+			}
+
+		[Fact]
+		public void MoveToNextPlayer_Test()
 		{
 			var game = CreateGame();
 			var gameId = game.GameId;
@@ -439,7 +527,7 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
-		public void PlayCardTest()
+		public void PlayCard_Test()
 		{
 			var game = CreateGame();					// set up test game
 			string playerId = "TestPlayerPlay";
@@ -468,7 +556,7 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
-		public void RemoveGameTest()
+		public void RemoveGame_Test()
 		{
 			var game = CreateGame();
 			var gameId = game.GameId;
@@ -493,7 +581,7 @@ namespace CardGame.Tests
 
 
 		[Fact]
-		public void ServeStartingHandsTest()
+		public void ServeStartingHands_Test()
 		{
 			var game = CreateGame();
 			var gameId = game.GameId;
@@ -509,7 +597,7 @@ namespace CardGame.Tests
 			int handSize = 10;								// setting hand size to test with
 			game.StartingHand = handSize;
 
-			game.GameStarted = true;
+			game.GameStatus = 1;
 			Shuffle(game);
 
 			// Act
@@ -526,7 +614,7 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
-		public void SetPlayerReadyTest()
+		public void SetPlayerReady_Test()
 		{
 			string player1Id = "ReadyPlayer1";			// create and add players to game
 			var player1 = CreatePlayer(player1Id);
@@ -579,7 +667,7 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
-		public void ShuffleTest()
+		public void Shuffle_Test()
 		{
 			var game = CreateGame();
 			var gameId = game.GameId;
@@ -615,7 +703,7 @@ namespace CardGame.Tests
 		}
 
 		[Fact]
-		public void StartGameTest()
+		public void StartGame_Test()
 		{
 			var game = CreateGame();							// set up test game
 			var gameId = game.GameId;
@@ -635,29 +723,31 @@ namespace CardGame.Tests
 
 			// Act
 			var firstStart = _gameService.StartGame(gameId);    // start game without players assigned
-			var firstStatus = game.GameStarted.ToString();		
+			var firstStatus = game.GameStatus.ToString();		
 			
 			game.Players.Add(player1);
 			var secondStart = _gameService.StartGame(gameId);   // start game with player1 assigned
-			var secondStatus = game.GameStarted.ToString();  
+			var secondStatus = game.GameStatus.ToString();  
 
-			game.GameStarted = false;                           // reset status
+			game.GameStatus = 0;                           // reset status
 			game.Players.Add(player2);
 			var thirdStart = _gameService.StartGame(gameId);    // start game with both players assigned
-			var thirdStatus = game.GameStarted.ToString();      
+			var thirdStatus = game.GameStatus.ToString();      
 
 			// Assert	
 			Assert.Equal(0, beforeCount);						// CardsRemaining should have been empty before start
 			Assert.NotEmpty(cards);                             // starting game should fill CardsRemaining deck
 
 			Assert.False(firstStart);                           // should be flase, too few players to start
-			Assert.Equal("False", firstStatus);
+			Assert.Equal("0", firstStatus);
 
 			Assert.True(secondStart);                           // should be true, only game with one player should start
-			Assert.Equal("True", secondStatus);
+			Assert.Equal("1", secondStatus);
 
 			Assert.False(thirdStart);                           // should be false, too many players
-			Assert.Equal("False", thirdStatus);
+			Assert.Equal("0", thirdStatus);
 		}
+
+		#endregion Tests
 	}
 }

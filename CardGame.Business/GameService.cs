@@ -41,7 +41,7 @@ namespace CardGame.Services
 
 		// check GameStarted
 		// returns true if started
-		public bool CheckGameStatus(int gameId) => _repository.GetGame(gameId).GameStarted;
+		public byte CheckGameStatus(int gameId) => _repository.GetGame(gameId).GameStatus;
 		
 		// create new game (and deck)
 		// returns GameId on success, otherwise 0
@@ -153,7 +153,7 @@ namespace CardGame.Services
 			if (game.MaxPlayers <= game.Players.Count)
 				return 0;
 
-			if (game.GameStarted)
+			if (game.GameStatus > 0)
 				return 0;
 
 			Player player = _repository.GetPlayer(playerId);
@@ -186,6 +186,9 @@ namespace CardGame.Services
 			if (game == null)
 				return false;
 
+			if (game.GameStatus == 1)
+				return LeaveRunningGame(player);
+
 			if (game.Players.Remove(player))
 			{
 				_repository.SaveChanges();
@@ -195,6 +198,20 @@ namespace CardGame.Services
 			return false;
 		}
 
+		// remove player from game already started
+		public bool LeaveRunningGame(string PlayerId)
+		{
+			var player = _repository.GetPlayer(PlayerId);
+			return LeaveRunningGame(player);
+		}
+
+		// remove player from game already started
+		public bool LeaveRunningGame(Player player)
+		{
+			return false;
+		}
+
+		// move turn to next player in line
 		public Player MoveToNextPlayer(int gameId)
 		{
 			var game = GetGame(gameId);
@@ -254,7 +271,7 @@ namespace CardGame.Services
 			if (game == null)
 				return false;
 
-			if (game.GameStarted != true)
+			if (game.GameStatus != 1)
 				return false;
 
 			if (game.Players.Count < game.MinPlayers || game.Players.Count > game.MaxPlayers)
@@ -347,7 +364,7 @@ namespace CardGame.Services
 				return false;
 			
 			Shuffle(gameId);
-			game.GameStarted = true;
+			game.GameStatus = 1;
 			ServeStartingHands(gameId);
 			_repository.SaveChanges();
 

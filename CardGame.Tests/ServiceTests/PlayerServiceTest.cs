@@ -17,7 +17,7 @@ namespace CardGame.Tests
 
 		public PlayerServiceTest()
 		{
-			_repository = new FakeCardsRepository();
+			_repository = new FakeCardsRepository("PlayerServiceTestDb");
 			_service = new PlayerService(_repository, new Mock<ILogger<PlayerService>>().Object);
 		}
 
